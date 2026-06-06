@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Services\ImageOptimizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Intervention\Image\Laravel\Facades\Image;
 
 /**
  * CRUD admin de artículos del blog · adaptado a Cursalia.
@@ -180,20 +180,16 @@ class BlogController extends Controller
 
     private function saveImage(\Illuminate\Http\UploadedFile $file): string
     {
-        Storage::disk('public')->makeDirectory('blog');
-
-        // SVGs los conservamos tal cual (mejor calidad).
-        if (strtolower($file->getClientOriginalExtension()) === 'svg') {
-            $name = 'blog/'.uniqid('blog_').'.svg';
-            Storage::disk('public')->put($name, file_get_contents($file->getRealPath()));
-            return $name;
-        }
-
-        // Resto los pasamos por Intervention v3 a WebP 1200×675.
-        $name = 'blog/'.uniqid('blog_').'.webp';
-        Image::read($file->getRealPath())
-            ->cover(1200, 675)
-            ->save(Storage::disk('public')->path($name), 90);
-        return $name;
+        // Delega al ImageOptimizer: genera WebP + AVIF + responsive (480/800/1200)
+        // automáticamente, o minifica si es SVG. El nombre devuelto es el del
+        // archivo "principal" que guardamos en blogs.thumbnail.
+        return app(ImageOptimizer::class)->processUpload(
+            file: $file,
+            folder: 'blog',
+            targetWidth: 1200,
+            targetHeight: 675,
+            cover: true,
+            responsiveSizes: [480, 800, 1200],
+        );
     }
 }

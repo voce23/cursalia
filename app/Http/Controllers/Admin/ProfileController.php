@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PasswordUpdateRequest;
 use App\Http\Requests\Admin\ProfileUpdateRequest;
 use App\Models\Admin;
+use App\Services\ImageOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Intervention\Image\Laravel\Facades\Image;
 
 class ProfileController extends Controller
 {
@@ -39,13 +39,14 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($admin->image);
             }
 
-            $filename = 'avatars/' . uniqid('avatar_') . '.webp';
-
-            Image::decode($request->file('image'))
-                ->cover(200, 200)
-                ->save(Storage::disk('public')->path($filename), 90);
-
-            $data['image'] = $filename;
+            // Avatar: cuadrado 200×200, sin responsive (no necesita tantos tamaños).
+            $data['image'] = app(ImageOptimizer::class)->processUpload(
+                file: $request->file('image'),
+                folder: 'avatars',
+                targetWidth: 200,
+                targetHeight: 200,
+                cover: true,
+            );
         }
 
         $admin->update($data);

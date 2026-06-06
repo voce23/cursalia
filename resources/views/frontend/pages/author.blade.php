@@ -67,9 +67,11 @@
             {{-- Foto --}}
             <div class="text-center sm:text-left">
                 @if ($author->image)
-                    <img src="{{ $author->avatar_url }}"
-                         alt="Foto de {{ $author->name }}"
-                         class="w-40 h-40 rounded-3xl object-cover shadow-lift border-4 border-white mx-auto sm:mx-0">
+                    <x-image :src="$author->image"
+                             :alt="'Foto de '.$author->name"
+                             class="w-40 h-40 rounded-3xl shadow-lift border-4 border-white mx-auto sm:mx-0"
+                             :width="200" :height="200"
+                             eager />
                 @else
                     <span class="grid place-items-center w-40 h-40 rounded-3xl bg-gradient-to-br from-brand-400 to-coral-400 text-white font-display font-extrabold text-5xl shadow-lift mx-auto sm:mx-0">
                         {{ strtoupper(substr($author->name, 0, 1)) }}

@@ -269,8 +269,13 @@
      ═══════════════════════════════════════════════════════════════════ --}}
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2">
     @if ($blog->thumbnail)
-        <img src="{{ asset('storage/'.$blog->thumbnail) }}" alt="{{ $blog->title }}"
-             class="w-full aspect-[1200/630] {{ $blog->thumbnail_fit_class }} {{ $blog->thumbnail_is_svg ? 'bg-white' : '' }} rounded-3xl shadow-lift border border-ink-200/70">
+        <x-image :src="$blog->thumbnail"
+                 :alt="$blog->title"
+                 class="w-full aspect-[1200/630] rounded-3xl shadow-lift border border-ink-200/70"
+                 :fit="$blog->thumbnail_is_svg ? 'contain' : 'cover'"
+                 sizes="(min-width: 1024px) 800px, 100vw"
+                 :width="1200" :height="630"
+                 eager />
     @else
         <div class="aspect-[1200/630] rounded-3xl shadow-lift border border-ink-200/70 bg-gradient-to-br from-brand-400 via-brand-500 to-brand-700 grid place-items-center relative overflow-hidden">
             <div class="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-sun-300/30 blur-3xl"></div>
@@ -564,7 +569,12 @@
             <a href="{{ route('blog.show', $r->slug) }}" class="card-lift group bg-white rounded-3xl border border-ink-200/70 shadow-soft overflow-hidden flex flex-col">
                 <div class="relative aspect-video {{ $r->thumbnail_is_svg ? 'bg-white' : 'bg-gradient-to-br from-coral-300 to-sun-400' }}">
                     @if ($r->thumbnail)
-                        <img loading="lazy" decoding="async" src="{{ asset('storage/'.$r->thumbnail) }}" alt="{{ $r->title }}" class="absolute inset-0 w-full h-full {{ $r->thumbnail_fit_class }}">
+                        <x-image :src="$r->thumbnail"
+                                 :alt="$r->title"
+                                 class="absolute inset-0 w-full h-full"
+                                 :fit="$r->thumbnail_is_svg ? 'contain' : 'cover'"
+                                 sizes="(min-width: 640px) 300px, 100vw"
+                                 :width="1200" :height="630" />
                     @endif
                 </div>
                 <div class="p-4 flex-1 flex flex-col">
