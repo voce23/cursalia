@@ -74,7 +74,7 @@
                             <td class="py-3 px-5">
                                 <div class="flex items-center gap-3 max-w-md">
                                     @if ($b->thumbnail)
-                                        <img src="{{ asset('storage/'.$b->thumbnail) }}" alt="" class="w-16 h-10 rounded-lg object-cover ring-1 ring-ink-200/60">
+                                        <img src="{{ asset('storage/'.$b->thumbnail) }}" alt="" class="w-16 h-10 rounded-lg {{ $b->thumbnail_fit_class }} {{ $b->thumbnail_is_svg ? 'bg-white' : '' }} ring-1 ring-ink-200/60">
                                     @else
                                         <span class="grid place-items-center w-16 h-10 rounded-lg bg-cream-2 text-ink-400"><i class="fa-regular fa-image"></i></span>
                                     @endif

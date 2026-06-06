@@ -69,6 +69,22 @@ class Blog extends Model
         return $path ? asset('storage/'.$path) : null;
     }
 
+    /** ¿El thumbnail es un SVG? Importa para decidir object-cover vs object-contain. */
+    public function getThumbnailIsSvgAttribute(): bool
+    {
+        return $this->thumbnail && str_ends_with(strtolower($this->thumbnail), '.svg');
+    }
+
+    /**
+     * Clase Tailwind para el ajuste del thumbnail dentro de su contenedor.
+     *   - SVG  → object-contain (mantiene proporción, no recorta el diseño del hero)
+     *   - Foto → object-cover   (llena el contenedor, recorta bordes si hace falta)
+     */
+    public function getThumbnailFitClassAttribute(): string
+    {
+        return $this->thumbnail_is_svg ? 'object-contain' : 'object-cover';
+    }
+
     // ── Relaciones ──────────────────────────────────────────────────────────
     public function category(): BelongsTo
     {

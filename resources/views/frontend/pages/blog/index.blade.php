@@ -154,9 +154,9 @@
                 @if ($blogs->currentPage() === 1)
                     <a href="{{ route('blog.show', $featured->slug) }}" class="card-lift group block bg-white rounded-3xl border border-ink-200/70 shadow-soft overflow-hidden mb-8">
                         <div class="grid md:grid-cols-2">
-                            <div class="relative aspect-video md:aspect-auto bg-gradient-to-br from-brand-300 to-brand-600">
+                            <div class="relative aspect-video md:aspect-auto {{ $featured->thumbnail_is_svg ? 'bg-white' : 'bg-gradient-to-br from-brand-300 to-brand-600' }}">
                                 @if ($featured->thumbnail)
-                                    <img loading="lazy" decoding="async" src="{{ asset('storage/'.$featured->thumbnail) }}" alt="{{ $featured->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                    <img loading="lazy" decoding="async" src="{{ asset('storage/'.$featured->thumbnail) }}" alt="{{ $featured->title }}" class="absolute inset-0 w-full h-full {{ $featured->thumbnail_fit_class }}">
                                 @endif
                                 <span class="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 text-brand-700 text-[11px] font-bold uppercase tracking-wider">
                                     <i class="fa-solid fa-star text-sun-500 text-[10px]"></i> Destacado
@@ -192,9 +192,9 @@
                     <div class="grid sm:grid-cols-2 gap-5">
                         @foreach ($list as $b)
                             <a href="{{ route('blog.show', $b->slug) }}" class="card-lift group bg-white rounded-3xl border border-ink-200/70 shadow-soft overflow-hidden flex flex-col">
-                                <div class="relative aspect-video bg-gradient-to-br from-coral-300 to-sun-400">
+                                <div class="relative aspect-video {{ $b->thumbnail_is_svg ? 'bg-white' : 'bg-gradient-to-br from-coral-300 to-sun-400' }}">
                                     @if ($b->thumbnail)
-                                        <img loading="lazy" decoding="async" src="{{ asset('storage/'.$b->thumbnail) }}" alt="{{ $b->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                        <img loading="lazy" decoding="async" src="{{ asset('storage/'.$b->thumbnail) }}" alt="{{ $b->title }}" class="absolute inset-0 w-full h-full {{ $b->thumbnail_fit_class }}">
                                     @else
                                         <span class="absolute inset-0 grid place-items-center text-white font-display font-extrabold text-3xl opacity-90">
                                             {{ strtoupper(substr($b->title, 0, 2)) }}

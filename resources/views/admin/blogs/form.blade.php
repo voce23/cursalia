@@ -185,7 +185,7 @@
         <section class="bg-white border border-ink-200/70 rounded-3xl shadow-soft p-5">
             <h3 class="font-display font-bold text-ink-900 text-sm mb-3">Imagen destacada</h3>
             @if ($blog->thumbnail)
-                <img src="{{ asset('storage/'.$blog->thumbnail) }}" alt="" class="w-full aspect-[1200/630] rounded-xl object-cover border border-ink-200 mb-3">
+                <img src="{{ asset('storage/'.$blog->thumbnail) }}" alt="" class="w-full aspect-[1200/630] rounded-xl {{ $blog->thumbnail_fit_class }} {{ $blog->thumbnail_is_svg ? 'bg-white' : '' }} border border-ink-200 mb-3">
             @endif
             <input type="file" name="thumbnail" accept="image/*"
                 class="w-full text-xs text-ink-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:bg-brand-100 file:text-brand-700 file:font-semibold file:cursor-pointer">

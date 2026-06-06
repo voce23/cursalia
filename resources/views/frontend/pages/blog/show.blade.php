@@ -270,7 +270,7 @@
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2">
     @if ($blog->thumbnail)
         <img src="{{ asset('storage/'.$blog->thumbnail) }}" alt="{{ $blog->title }}"
-             class="w-full aspect-[1200/630] object-cover rounded-3xl shadow-lift border border-ink-200/70">
+             class="w-full aspect-[1200/630] {{ $blog->thumbnail_fit_class }} {{ $blog->thumbnail_is_svg ? 'bg-white' : '' }} rounded-3xl shadow-lift border border-ink-200/70">
     @else
         <div class="aspect-[1200/630] rounded-3xl shadow-lift border border-ink-200/70 bg-gradient-to-br from-brand-400 via-brand-500 to-brand-700 grid place-items-center relative overflow-hidden">
             <div class="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-sun-300/30 blur-3xl"></div>
@@ -562,9 +562,9 @@
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         @foreach ($recentBlogs as $r)
             <a href="{{ route('blog.show', $r->slug) }}" class="card-lift group bg-white rounded-3xl border border-ink-200/70 shadow-soft overflow-hidden flex flex-col">
-                <div class="relative aspect-video bg-gradient-to-br from-coral-300 to-sun-400">
+                <div class="relative aspect-video {{ $r->thumbnail_is_svg ? 'bg-white' : 'bg-gradient-to-br from-coral-300 to-sun-400' }}">
                     @if ($r->thumbnail)
-                        <img loading="lazy" decoding="async" src="{{ asset('storage/'.$r->thumbnail) }}" alt="{{ $r->title }}" class="absolute inset-0 w-full h-full object-cover">
+                        <img loading="lazy" decoding="async" src="{{ asset('storage/'.$r->thumbnail) }}" alt="{{ $r->title }}" class="absolute inset-0 w-full h-full {{ $r->thumbnail_fit_class }}">
                     @endif
                 </div>
                 <div class="p-4 flex-1 flex flex-col">
