@@ -68,10 +68,10 @@
                 </div>
             @endif
 
-            {{-- Columna 2 (Empresa) --}}
+            {{-- Columna 2 (Soporte) --}}
             @if (count($footerColumnTwo ?? []))
                 <div class="lg:col-span-2">
-                    <h4 class="font-display font-bold text-sm uppercase tracking-wider text-ink-400">Empresa</h4>
+                    <h4 class="font-display font-bold text-sm uppercase tracking-wider text-ink-400">Soporte</h4>
                     <ul class="mt-4 space-y-2.5 text-sm text-ink-700">
                         @foreach ($footerColumnTwo as $l)
                             <li><a href="{{ $l['url'] }}" class="hover:text-brand-700 transition">{{ $l['title'] }}</a></li>
@@ -80,10 +80,10 @@
                 </div>
             @endif
 
-            {{-- Compañía (legales — desde custom_pages) --}}
+            {{-- Legal (desde custom_pages) --}}
             @if (count($legalPages ?? []))
                 <div class="lg:col-span-2">
-                    <h4 class="font-display font-bold text-sm uppercase tracking-wider text-ink-400">Compañía</h4>
+                    <h4 class="font-display font-bold text-sm uppercase tracking-wider text-ink-400">Legal</h4>
                     <ul class="mt-4 space-y-2.5 text-sm text-ink-700">
                         @foreach ($legalPages as $p)
                             <li><a href="{{ $p['url'] }}" class="hover:text-brand-700 transition">{{ $p['title'] }}</a></li>
