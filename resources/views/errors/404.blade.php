@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title','Página no encontrada')
+@section('code','404')
+@section('grad','from-brand-500 to-brand-700')
+@section('heading','Esta página se nos perdió')
+@section('message','La dirección que buscas no existe o fue movida. Volvamos a tierra firme.')

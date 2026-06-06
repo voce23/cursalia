@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title','Demasiados intentos')
+@section('code','429')
+@section('grad','from-coral-400 to-coral-600')
+@section('heading','Más despacio, por favor')
+@section('message','Hiciste demasiadas peticiones en poco tiempo. Espera un minuto y vuelve a intentarlo.')

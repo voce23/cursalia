@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title','Sesión expirada')
+@section('code','419')
+@section('grad','from-sun-400 to-coral-500')
+@section('heading','La página caducó por seguridad')
+@section('message','Por tu protección, el formulario expiró. Recarga la página e inténtalo de nuevo.')

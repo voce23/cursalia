@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title','Algo salió mal')
+@section('code','500')
+@section('grad','from-sun-400 to-coral-500')
+@section('heading','Algo salió mal de nuestro lado')
+@section('message','No te preocupes, ya estamos enterados. Inténtalo de nuevo en un momento.')

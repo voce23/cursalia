@@ -1,0 +1,465 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views';
+
+/* ════════════════════════════════════════════════════════════════════
+   TOKENS DE MARCA — Cursalia
+   Identidad clara/cálida (vs AulaCursos oscuro/morado).
+   ════════════════════════════════════════════════════════════════════ */
+@theme {
+    /* Tipografía */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Poppins', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Esmeralda — color principal (botones, enlaces, énfasis) */
+    --color-brand-50:  #ecfdf5;
+    --color-brand-100: #d1fae5;
+    --color-brand-200: #a7f3d0;
+    --color-brand-300: #6ee7b7;
+    --color-brand-400: #34d399;
+    --color-brand-500: #10b981;
+    --color-brand-600: #059669;
+    --color-brand-700: #047857;
+    --color-brand-800: #065f46;
+    --color-brand-900: #064e3b;
+
+    /* Coral — acento cálido (etiquetas, segundo botón) */
+    --color-coral-50:  #fff1f2;
+    --color-coral-100: #ffe4e6;
+    --color-coral-200: #fecdd3;
+    --color-coral-300: #fda4af;
+    --color-coral-400: #fb7185;
+    --color-coral-500: #f43f5e;
+    --color-coral-600: #e11d48;
+
+    /* Sol — acento amarillo (estrellas, highlights) */
+    --color-sun-100: #fef3c7;
+    --color-sun-200: #fde68a;
+    --color-sun-300: #fcd34d;
+    --color-sun-400: #fbbf24;
+    --color-sun-500: #f59e0b;
+
+    /* Carbón cálido (texto) */
+    --color-ink-50:  #f7f7f8;
+    --color-ink-100: #ececf0;
+    --color-ink-200: #d8d8e0;
+    --color-ink-300: #b4b4c2;
+    --color-ink-400: #82828f;
+    --color-ink-500: #5b5b66;
+    --color-ink-700: #3b3b45;
+    --color-ink-900: #1f2933;
+    --color-ink-950: #111722;
+
+    /* Fondo crema */
+    --color-cream:   #fbfaf7;
+    --color-cream-2: #f5f3ec;
+
+    /* Sombras y radios suaves */
+    --shadow-soft: 0 6px 24px -10px rgb(31 41 51 / 0.08);
+    --shadow-lift: 0 14px 40px -18px rgb(31 41 51 / 0.18);
+
+    --radius-card: 1.5rem;
+    --radius-pill: 9999px;
+}
+
+/* Fondo base global cálido */
+html { background: var(--color-cream); }
+
+/* Utilidades auxiliares */
+@utility shadow-soft { box-shadow: var(--shadow-soft); }
+@utility shadow-lift { box-shadow: var(--shadow-lift); }
+
+/* Blobs orgánicos del fondo (decorativos) */
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(72px);
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Reveal al hacer scroll */
+.sr { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+.sr.in { opacity: 1; transform: none; }
+.sr.s1 { transition-delay: .05s; }
+.sr.s2 { transition-delay: .15s; }
+.sr.s3 { transition-delay: .25s; }
+.sr.s4 { transition-delay: .35s; }
+
+/* Card lift al pasar el mouse */
+.card-lift { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card-lift:hover { transform: translateY(-4px); }
+
+[x-cloak] { display: none !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   BLOG · estilos editoriales tipo revista
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Barra de progreso de lectura (sticky arriba del artículo) */
+.read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-brand-500), var(--color-coral-400));
+    width: 0%;
+    z-index: 60;
+    transition: width .15s ease-out;
+}
+
+/* Contenido del artículo (.article-prose) */
+.article-prose {
+    color: var(--color-ink-700);
+    font-size: 17px;
+    line-height: 1.78;
+}
+.article-prose > * + * { margin-top: 1.4em; }
+.article-prose h2 {
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: var(--color-ink-900);
+    letter-spacing: -0.01em;
+    margin-top: 2.5em;
+    margin-bottom: 0.4em;
+    scroll-margin-top: 100px;
+    line-height: 1.2;
+}
+.article-prose h3 {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-ink-900);
+    margin-top: 1.8em;
+    margin-bottom: 0.3em;
+    scroll-margin-top: 100px;
+}
+.article-prose p { margin: 1.2em 0; }
+.article-prose a {
+    color: var(--color-brand-700);
+    text-decoration: underline;
+    text-decoration-color: var(--color-brand-300);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: color .15s, text-decoration-color .15s;
+}
+.article-prose a:hover { color: var(--color-brand-600); text-decoration-color: var(--color-brand-600); }
+.article-prose strong { color: var(--color-ink-900); font-weight: 700; }
+.article-prose ul, .article-prose ol { padding-left: 1.5em; margin: 1.2em 0; }
+.article-prose ul > li { list-style: none; position: relative; padding-left: 1.5em; }
+.article-prose ul > li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: .65em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--color-brand-500);
+}
+.article-prose ol > li { list-style: decimal; }
+.article-prose ol > li::marker { color: var(--color-brand-600); font-weight: 700; }
+.article-prose li + li { margin-top: .5em; }
+
+.article-prose img {
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-lift);
+    margin: 2em 0;
+    width: 100%;
+    height: auto;
+}
+.article-prose blockquote {
+    margin: 2em 0;
+    padding: 1.2em 1.6em;
+    border-left: 4px solid var(--color-brand-500);
+    background: var(--color-brand-50);
+    border-radius: 0 1.5rem 1.5rem 0;
+    font-style: italic;
+    color: var(--color-ink-900);
+    font-size: 1.1em;
+    line-height: 1.55;
+}
+.article-prose blockquote p { margin: 0; }
+.article-prose code:not(pre code) {
+    background: var(--color-cream-2);
+    color: var(--color-coral-600);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    border: 1px solid var(--color-ink-200);
+}
+.article-prose pre {
+    background: var(--color-ink-950);
+    color: #e7e9f5;
+    border-radius: 1rem;
+    padding: 1.3em 1.5em;
+    overflow-x: auto;
+    margin: 1.6em 0;
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.9em;
+    line-height: 1.7;
+}
+.article-prose pre code {
+    background: none; color: inherit; padding: 0; border: 0; font-size: inherit;
+}
+.article-prose hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-ink-200), transparent);
+    margin: 3em 0;
+}
+.article-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.6em 0;
+    font-size: .95em;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: white;
+    border: 1px solid var(--color-ink-200);
+}
+.article-prose th {
+    background: var(--color-cream-2);
+    text-align: left;
+    padding: .8em 1em;
+    font-weight: 700;
+    color: var(--color-ink-900);
+    font-size: .85em;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--color-ink-200);
+}
+.article-prose td { padding: .8em 1em; border-bottom: 1px solid var(--color-ink-100); }
+.article-prose tr:last-child td { border-bottom: 0; }
+
+/* CALLOUTS — bloques destacados que el contenido puede usar */
+.article-prose .callout {
+    margin: 2em 0;
+    padding: 1.3em 1.5em;
+    border-radius: 1.25rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1em;
+    align-items: start;
+    border-left: 4px solid;
+    line-height: 1.6;
+}
+.article-prose .callout > i { font-size: 1.25em; margin-top: 0.1em; }
+.article-prose .callout p { margin: 0; }
+.article-prose .callout p + p { margin-top: .6em; }
+.article-prose .callout strong { color: inherit; }
+
+.article-prose .callout-info     { background: #eef6ff; border-color: #3E6CF6; color: #1e3a5f; }
+.article-prose .callout-info > i { color: #3E6CF6; }
+.article-prose .callout-tip      { background: var(--color-brand-50); border-color: var(--color-brand-500); color: #064e3b; }
+.article-prose .callout-tip > i  { color: var(--color-brand-600); }
+.article-prose .callout-warning  { background: #fff7ed; border-color: var(--color-sun-500); color: #78350f; }
+.article-prose .callout-warning > i { color: var(--color-sun-500); }
+.article-prose .callout-danger   { background: var(--color-coral-50); border-color: var(--color-coral-500); color: #881337; }
+.article-prose .callout-danger > i { color: var(--color-coral-500); }
+.article-prose .callout-quote    { background: linear-gradient(135deg, var(--color-ink-900), var(--color-ink-950)); border-color: var(--color-sun-400); color: white; padding: 2em; font-size: 1.15em; font-style: italic; }
+.article-prose .callout-quote > i { color: var(--color-sun-300); font-size: 1.5em; }
+.article-prose .callout-quote strong { color: var(--color-sun-300); font-weight: 700; }
+
+/* "Lo que vas a aprender" box */
+.article-prose .learn-box {
+    margin: 2em 0;
+    padding: 1.5em 1.8em;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, var(--color-brand-50), white);
+    border: 2px solid var(--color-brand-200);
+}
+.article-prose .learn-box > p:first-child {
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--color-brand-700);
+    margin: 0 0 .8em;
+    font-size: .8em;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    display: flex;
+    align-items: center;
+    gap: .5em;
+}
+.article-prose .learn-box ul { margin: 0; padding: 0; }
+.article-prose .learn-box ul > li { padding-left: 1.8em; }
+.article-prose .learn-box ul > li::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    width: auto; height: auto;
+    background: none;
+    border-radius: 0;
+    color: var(--color-brand-600);
+    top: .15em;
+    font-size: .85em;
+}
+
+/* Tabla de contenidos (TOC) sticky */
+.toc-link {
+    display: block;
+    padding: .35em .7em;
+    border-radius: .6rem;
+    color: var(--color-ink-500);
+    font-size: .85em;
+    line-height: 1.4;
+    transition: all .15s;
+    border-left: 2px solid transparent;
+}
+.toc-link:hover { color: var(--color-brand-700); background: var(--color-brand-50); }
+.toc-link.toc-h3 { padding-left: 1.4em; font-size: .8em; }
+.toc-link.active {
+    color: var(--color-brand-700);
+    background: var(--color-brand-50);
+    border-left-color: var(--color-brand-500);
+    font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   SYNTAX HIGHLIGHTING · tema claro Cursalia (basado en Prism.js)
+   Fondo verde-crema suave + tokens en colores vivos legibles.
+   Inspirado en GitHub Light pero con la paleta Cursalia.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Contenedor del code block */
+.article-prose .code-block {
+    position: relative;
+    margin: 1.8em 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    background: var(--color-brand-50);
+    border: 1px solid var(--color-brand-200);
+}
+.article-prose .code-block .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6em 1em;
+    background: var(--color-brand-100);
+    border-bottom: 1px solid var(--color-brand-200);
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.75em;
+}
+.article-prose .code-block .code-lang {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--color-brand-700);
+}
+.article-prose .code-block .code-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.3em 0.7em;
+    border-radius: 0.5em;
+    background: white;
+    color: var(--color-brand-700);
+    border: 1px solid var(--color-brand-200);
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.article-prose .code-block .code-copy:hover {
+    background: var(--color-brand-600);
+    color: white;
+    border-color: var(--color-brand-600);
+}
+.article-prose .code-block .code-copy.copied {
+    background: var(--color-brand-600);
+    color: white;
+    border-color: var(--color-brand-600);
+}
+
+.article-prose .code-block pre {
+    margin: 0;
+    padding: 1.3em 1.5em;
+    background: transparent;
+    border-radius: 0;
+    overflow-x: auto;
+    color: var(--color-ink-900);
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.9em;
+    line-height: 1.7;
+    box-shadow: none;
+}
+
+/* Cuando NO hay wrapper code-block (pre directo) */
+.article-prose pre[class*="language-"] {
+    background: var(--color-brand-50);
+    color: var(--color-ink-900);
+    border: 1px solid var(--color-brand-200);
+    border-radius: 1rem;
+    padding: 1.3em 1.5em;
+    overflow-x: auto;
+    margin: 1.8em 0;
+    box-shadow: var(--shadow-soft);
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.9em;
+    line-height: 1.7;
+}
+
+/* ─── Tokens Prism · paleta clara Cursalia ─────────────────────────────
+ * Estrategia: tokens en colores vivos sobre fondo verde suave,
+ * todos legibles con contraste alto (WCAG AA).
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* Comentarios (gris suave itálico) */
+.article-prose .token.comment,
+.article-prose .token.prolog,
+.article-prose .token.doctype,
+.article-prose .token.cdata          { color: #6b7280; font-style: italic; }
+
+/* Puntuación neutra */
+.article-prose .token.punctuation    { color: #475569; }
+
+/* Etiquetas HTML (tag) en coral */
+.article-prose .token.tag,
+.article-prose .token.namespace,
+.article-prose .token.deleted        { color: #be123c; }
+
+/* Keywords y selectores en MORADO bold (function, public, return, if…) */
+.article-prose .token.keyword,
+.article-prose .token.selector,
+.article-prose .token.important,
+.article-prose .token.atrule         { color: #9333ea; font-weight: 700; }
+
+/* Booleans, numbers, constantes en NARANJA-MOSTAZA */
+.article-prose .token.boolean,
+.article-prose .token.number,
+.article-prose .token.constant,
+.article-prose .token.symbol         { color: #c2410c; font-weight: 600; }
+
+/* Strings y URLs en VERDE PROFUNDO Cursalia */
+.article-prose .token.string,
+.article-prose .token.char,
+.article-prose .token.regex,
+.article-prose .token.attr-value,
+.article-prose .token.inserted,
+.article-prose .token.url            { color: var(--color-brand-700); }
+
+/* Operadores y entidades (=, +, →) en gris ink */
+.article-prose .token.operator,
+.article-prose .token.entity         { color: #334155; }
+
+/* Variables ($var) en TEAL oscuro */
+.article-prose .token.variable       { color: #0f766e; font-weight: 600; }
+
+/* Atributos HTML y propiedades CSS en NARANJA */
+.article-prose .token.attr-name,
+.article-prose .token.property       { color: #c2410c; }
+
+/* Funciones y class-names en AZUL VIVO */
+.article-prose .token.function,
+.article-prose .token.function-name,
+.article-prose .token.class-name,
+.article-prose .token.builtin        { color: #2563eb; font-weight: 600; }
+
+/* Helpers de estilo */
+.article-prose .token.bold           { font-weight: 700; }
+.article-prose .token.italic         { font-style: italic; }
+.article-prose .token.script         { color: var(--color-ink-900); }

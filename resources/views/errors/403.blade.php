@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title','Acceso denegado')
+@section('code','403')
+@section('grad','from-coral-400 to-coral-600')
+@section('heading','Esto es solo para ojos autorizados')
+@section('message','No tienes permiso para ver esta página. Si crees que es un error, contacta con el equipo.')

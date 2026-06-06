@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title','En mantenimiento')
+@section('code','503')
+@section('grad','from-brand-400 to-brand-700')
+@section('heading','Estamos puliendo Cursalia')
+@section('message','Volvemos enseguida. Estamos haciendo unos retoques para que todo siga funcionando mejor.')
