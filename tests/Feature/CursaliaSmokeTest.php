@@ -51,17 +51,16 @@ class CursaliaSmokeTest extends TestCase
         $this->assertStringContainsString('<loc>', $response->getContent());
     }
 
-    /** robots.txt presente y permite indexación de raíz.
-     *  Nota: en test phpunit no sirve archivos estáticos de public/, lo
-     *  verificamos directamente en el filesystem. */
+    /** robots.txt dinámico responde con Allow/Disallow y Sitemap absoluto. */
     public function test_robots_txt_allows_indexing(): void
     {
-        $path = public_path('robots.txt');
-        $this->assertFileExists($path);
+        $response = $this->get('/robots.txt');
 
-        $content = file_get_contents($path);
-        $this->assertStringContainsString('Allow: /', $content);
-        $this->assertStringContainsString('Disallow: /admin/', $content);
+        $response->assertOk();
+        $response->assertSee('Allow: /', false);
+        $response->assertSee('Disallow: /admin/', false);
+        // El sitemap debe ser URL absoluta (http...), no relativa.
+        $response->assertSee('Sitemap: http', false);
     }
 
     /** /admin/login es accesible (sin estar logueado). */
