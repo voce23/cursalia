@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    name: PHPUnit + Pint (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['8.3']
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: cursalia_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: gd, mbstring, mysql, intl, bcmath, pdo, pdo_mysql
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Prepare env
+        run: |
+          cp .env.example .env
+          sed -i 's|^DB_DATABASE=.*|DB_DATABASE=cursalia_test|' .env
+          sed -i 's|^DB_USERNAME=.*|DB_USERNAME=root|' .env
+          sed -i 's|^DB_PASSWORD=.*|DB_PASSWORD=root|' .env
+          php artisan key:generate
+          php artisan storage:link
+
+      - name: Migrate + seed minimal data
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --class=InitialConfigurationSeeder --force || true
+          php artisan db:seed --class=CursaliaBrandingSeeder --force || true
+
+      - name: Run smoke tests
+        run: php artisan test --filter=CursaliaSmokeTest --stop-on-failure
+
+      - name: Code style check (Pint)
+        run: vendor/bin/pint --test

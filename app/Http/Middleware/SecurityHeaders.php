@@ -23,11 +23,33 @@ class SecurityHeaders
             $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
             $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
             $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
-            // Anti-clickjacking a nivel CSP (no afecta scripts/estilos inline)
-            $response->headers->set('Content-Security-Policy', "frame-ancestors 'self'");
+            $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin');
+            $response->headers->set('X-DNS-Prefetch-Control', 'on');
+
+            // CSP en 2 niveles:
+            //   - Local/dev: solo anti-clickjacking (no rompe Alpine inline ni CDNs).
+            //   - Producción: CSP estricta que permite los CDNs que usamos
+            //     (cdnjs para FA/Prism, Google Tag Manager si hay GA) y bloquea
+            //     todo lo demás. object-src none = anti Flash/PDF embebido.
+            if (app()->environment('production')) {
+                $response->headers->set('Content-Security-Policy', implode('; ', [
+                    "default-src 'self'",
+                    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
+                    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com",
+                    "img-src 'self' data: blob: https:",
+                    "font-src 'self' https://cdnjs.cloudflare.com data:",
+                    "connect-src 'self' https://www.google-analytics.com",
+                    "frame-ancestors 'self'",
+                    "object-src 'none'",
+                    "base-uri 'self'",
+                    "form-action 'self'",
+                ]));
+            } else {
+                $response->headers->set('Content-Security-Policy', "frame-ancestors 'self'");
+            }
 
             if ($request->secure()) {
-                $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+                $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
             }
         }
 

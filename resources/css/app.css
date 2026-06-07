@@ -19,6 +19,23 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════
+   ACCESIBILIDAD — Marcar visualmente los campos required.
+   Usa CSS :has() para detectar labels seguidos de un input/textarea
+   required y añadirles un asterisco coral. Funciona en navegadores
+   modernos (96%+ en 2026); en navegadores viejos no se muestra el
+   asterisco pero el `required` HTML5 sigue funcionando.
+   ════════════════════════════════════════════════════════════════════ */
+label:has(+ input[required])::after,
+label:has(+ textarea[required])::after,
+label:has(+ select[required])::after,
+label:has(+ div input[required])::after,
+label:has(+ div textarea[required])::after {
+    content: " *";
+    color: var(--color-coral-500);
+    font-weight: 700;
+}
+
+/* ════════════════════════════════════════════════════════════════════
    TOKENS DE MARCA — Cursalia
    Identidad clara/cálida (vs AulaCursos oscuro/morado).
    ════════════════════════════════════════════════════════════════════ */

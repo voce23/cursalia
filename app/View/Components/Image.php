@@ -57,6 +57,15 @@ class Image extends Component
             return;
         }
 
+        // m2 · advertencia en debug si el componente recibe src pero alt vacío:
+        // las imágenes con contenido (no decorativas) DEBEN tener alt descriptivo
+        // para accesibilidad WCAG y para SEO de búsqueda por imágenes.
+        if (config('app.debug') && trim($this->alt) === '') {
+            \Illuminate\Support\Facades\Log::warning('<x-image> sin alt text', [
+                'src' => $this->src,
+            ]);
+        }
+
         // URL absoluta externa → render directo.
         if (preg_match('#^https?://#i', $this->src)) {
             $this->isExternal = true;
