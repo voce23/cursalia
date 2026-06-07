@@ -20,7 +20,7 @@
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-100 text-brand-700 font-bold text-[10px]">
                 <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Nuevo
             </span>
-            <span class="text-ink-700">{{ $hero?->badge_text ?: '+500 cursos certificados' }}</span>
+            <span class="text-ink-700">{{ $hero?->badge_text ?: 'Gratis y de código abierto' }}</span>
         </div>
 
         {{-- Titular --}}
@@ -63,36 +63,34 @@
 
         {{-- Stickers flotantes — solo en pantallas MUY anchas (xl+) y bien lejos del título --}}
         <div class="hidden xl:block">
-            {{-- Sticker certificado (abajo-izquierda, lejos del titular) --}}
+            {{-- Sticker sin código (abajo-izquierda, lejos del titular) --}}
             <div class="sr s3 absolute bottom-10 left-0 transform -rotate-[6deg] bg-white border border-ink-200/70 rounded-2xl shadow-lift px-4 py-3 flex items-center gap-3 max-w-[200px] pointer-events-none">
                 <span class="grid place-items-center w-10 h-10 rounded-2xl bg-brand-100 text-brand-600 shrink-0">
-                    <i class="fa-solid fa-medal"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
                 </span>
                 <div class="text-left">
-                    <p class="text-xs font-bold text-ink-900 leading-tight">Certificado<br>verificable</p>
+                    <p class="text-xs font-bold text-ink-900 leading-tight">Sin saber<br>programar</p>
                 </div>
             </div>
-            {{-- Sticker rating (abajo-derecha, lejos del titular) --}}
-            <div class="sr s4 absolute bottom-10 right-0 transform rotate-[5deg] bg-white border border-ink-200/70 rounded-2xl shadow-lift px-4 py-3 flex items-center gap-2 max-w-[210px] pointer-events-none">
-                <div class="flex -space-x-2">
-                    <span class="grid place-items-center w-7 h-7 rounded-full ring-2 ring-white bg-coral-400 text-white text-[10px] font-bold">MR</span>
-                    <span class="grid place-items-center w-7 h-7 rounded-full ring-2 ring-white bg-brand-500 text-white text-[10px] font-bold">JC</span>
-                    <span class="grid place-items-center w-7 h-7 rounded-full ring-2 ring-white bg-sun-500 text-white text-[10px] font-bold">AL</span>
-                </div>
+            {{-- Sticker panel editable (abajo-derecha, lejos del titular) --}}
+            <div class="sr s4 absolute bottom-10 right-0 transform rotate-[5deg] bg-white border border-ink-200/70 rounded-2xl shadow-lift px-4 py-3 flex items-center gap-3 max-w-[210px] pointer-events-none">
+                <span class="grid place-items-center w-10 h-10 rounded-2xl bg-coral-100 text-coral-500 shrink-0">
+                    <i class="fa-solid fa-sliders"></i>
+                </span>
                 <div class="text-left">
-                    <p class="text-[11px] font-bold text-ink-900 leading-tight">12,000+ alumnos</p>
-                    <p class="text-[10px] text-sun-500">★★★★★</p>
+                    <p class="text-[11px] font-bold text-ink-900 leading-tight">Panel editable</p>
+                    <p class="text-[10px] text-ink-500">colores, logo, textos</p>
                 </div>
             </div>
         </div>
 
-        {{-- 3 estadísticas --}}
+        {{-- 3 propuestas de valor reales (sin métricas inventadas) --}}
         <div class="sr s4 grid grid-cols-3 gap-4 sm:gap-8 mt-14 max-w-md mx-auto">
             @php
                 $stats = [
-                    ['500+', 'Cursos'],
-                    ['120+', 'Instructores'],
-                    ['98%',  'Satisfacción'],
+                    ['Gratis',   'Sin mensualidades'],
+                    ['Tuyo',     'Tu marca, tu dominio'],
+                    ['Español',  'Soporte y docs'],
                 ];
             @endphp
             @foreach ($stats as [$n, $lbl])
@@ -262,34 +260,32 @@
                     @endif
                 </div>
 
-                {{-- Sticker porcentaje (esquina inferior izquierda) --}}
+                {{-- Sticker gratis (esquina inferior izquierda) --}}
                 <div class="absolute -left-1 sm:-left-3 bottom-2 sm:-bottom-3 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform -rotate-3">
-                    <p class="font-display font-extrabold text-2xl sm:text-3xl text-brand-600 leading-none">98%</p>
-                    <p class="text-xs text-ink-500 leading-tight mt-1">satisfacción</p>
+                    <p class="font-display font-extrabold text-2xl sm:text-3xl text-brand-600 leading-none">0€</p>
+                    <p class="text-xs text-ink-500 leading-tight mt-1">mensualidades</p>
                 </div>
 
-                {{-- Sticker rating (esquina superior derecha) --}}
+                {{-- Sticker open source (esquina superior derecha) --}}
                 <div class="absolute -right-1 sm:-right-3 top-2 sm:-top-3 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform rotate-6">
-                    <p class="text-sun-500 text-sm leading-none">★★★★★</p>
-                    <p class="font-display font-extrabold text-base sm:text-lg text-ink-900 leading-none mt-1">4.9<span class="text-sm text-ink-400">/5</span></p>
+                    <span class="text-brand-500 text-sm leading-none"><i class="fa-brands fa-osi"></i></span>
+                    <p class="font-display font-extrabold text-base sm:text-lg text-ink-900 leading-none mt-1">Open<span class="text-sm text-ink-400"> source</span></p>
                 </div>
 
-                {{-- Sticker comunidad (esquina superior izquierda) --}}
+                {{-- Sticker tu marca (esquina superior izquierda) --}}
                 <div class="hidden sm:flex absolute -left-3 top-6 bg-white rounded-2xl shadow-lift px-3 py-2.5 border border-ink-200/70 items-center gap-2 transform rotate-3">
-                    <div class="flex -space-x-2">
-                        <span class="w-6 h-6 rounded-full ring-2 ring-white bg-brand-400"></span>
-                        <span class="w-6 h-6 rounded-full ring-2 ring-white bg-coral-400"></span>
-                        <span class="w-6 h-6 rounded-full ring-2 ring-white bg-sun-400"></span>
-                    </div>
-                    <p class="text-xs font-bold text-ink-900 leading-tight">+12K<br><span class="text-[10px] text-ink-500 font-normal">alumnos</span></p>
+                    <span class="grid place-items-center w-8 h-8 rounded-xl bg-brand-100 text-brand-600">
+                        <i class="fa-solid fa-palette text-sm"></i>
+                    </span>
+                    <p class="text-xs font-bold text-ink-900 leading-tight">Tu marca<br><span class="text-[10px] text-ink-500 font-normal">tu dominio</span></p>
                 </div>
 
-                {{-- Sticker certificado (esquina inferior derecha) --}}
+                {{-- Sticker español (esquina inferior derecha) --}}
                 <div class="hidden sm:flex absolute -right-3 bottom-6 bg-white rounded-2xl shadow-lift px-3 py-2.5 border border-ink-200/70 items-center gap-2 transform -rotate-3">
                     <span class="grid place-items-center w-8 h-8 rounded-xl bg-coral-100 text-coral-500">
-                        <i class="fa-solid fa-medal text-sm"></i>
+                        <i class="fa-solid fa-language text-sm"></i>
                     </span>
-                    <p class="text-xs font-bold text-ink-900 leading-tight">Certificado<br><span class="text-[10px] text-ink-500 font-normal">al finalizar</span></p>
+                    <p class="text-xs font-bold text-ink-900 leading-tight">En español<br><span class="text-[10px] text-ink-500 font-normal">de verdad</span></p>
                 </div>
             </div>
         </div>

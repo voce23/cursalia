@@ -25,55 +25,30 @@ use Illuminate\Support\Facades\Route;
 // ── Home Cursalia (frontal real con CMS) ─────────────────────────────────────
 Route::get('/', [\App\Http\Controllers\Frontend\CoursePageController::class, 'home'])->name('home');
 
-// ── SEO: sitemap.xml dinámico (cacheado 1h para no pegar a BD en cada hit) ──
-Route::get('/sitemap.xml', function () {
-    // Cache 1h. Si publicas/editas un post o curso y necesitas invalidar antes,
-    // ejecuta: php artisan cache:forget cursalia.sitemap
-    $xml = \Illuminate\Support\Facades\Cache::remember('cursalia.sitemap', 3600, function () {
-        $urls = collect([
-        ['loc' => url('/'),                  'priority' => '1.0', 'freq' => 'daily'],
-        ['loc' => url('/courses'),           'priority' => '0.9', 'freq' => 'daily'],
-        ['loc' => url('/about'),             'priority' => '0.7', 'freq' => 'monthly'],
-        ['loc' => url('/sobre-el-autor'),    'priority' => '0.8', 'freq' => 'monthly'],
-        ['loc' => url('/contact'),           'priority' => '0.5', 'freq' => 'monthly'],
-        ['loc' => url('/blog'),              'priority' => '0.8', 'freq' => 'weekly'],
-        // Hub del curso — entrada SEO importante.
-        ['loc' => url('/blog?category=curso-cursalia'), 'priority' => '0.9', 'freq' => 'weekly'],
-        ['loc' => url('/register'),          'priority' => '0.6', 'freq' => 'yearly'],
-        ['loc' => url('/login'),             'priority' => '0.4', 'freq' => 'yearly'],
-    ]);
+// ── SEO: sitemap.xml dinámico (cacheado 1h, controller dedicado) ────────────
+Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
 
-    // Cursos publicados
-    \App\Models\Course::query()
-        ->where('is_approved', 'approved')
-        ->where('status', 'active')
-        ->select('slug', 'updated_at')
-        ->get()
-        ->each(fn ($c) => $urls->push([
-            'loc'      => url('/courses/'.$c->slug),
-            'priority' => '0.8',
-            'freq'     => 'weekly',
-            'lastmod'  => $c->updated_at?->toAtomString(),
-        ]));
+// ── SEO: robots.txt dinámico con URL de sitemap ABSOLUTA ────────────────────
+//    (servido por Laravel para que el dominio se resuelva automáticamente
+//     en cualquier entorno; el estándar pide URL absoluta en la directiva).
+Route::get('/robots.txt', function () {
+    $lines = [
+        'User-agent: *',
+        'Disallow: /admin/',
+        'Disallow: /student/',
+        'Disallow: /instructor/',
+        'Disallow: /login',
+        'Disallow: /register',
+        'Disallow: /forgot-password',
+        'Disallow: /reset-password',
+        'Allow: /',
+        '',
+        'Sitemap: '.url('/sitemap.xml'),
+    ];
 
-    // Posts del blog
-    \App\Models\Blog::query()
-        ->where('status', 'published')
-        ->whereNotNull('published_at')
-        ->select('slug', 'updated_at')
-        ->get()
-        ->each(fn ($b) => $urls->push([
-            'loc'      => url('/blog/'.$b->slug),
-            'priority' => '0.7',
-            'freq'     => 'monthly',
-            'lastmod'  => $b->updated_at?->toAtomString(),
-        ]));
-
-        return view('sitemap', ['urls' => $urls])->render();
-    });
-
-    return response($xml, 200)->header('Content-Type', 'application/xml');
-})->name('sitemap');
+    return response(implode("\n", $lines)."\n", 200)
+        ->header('Content-Type', 'text/plain');
+})->name('robots');
 
 // ── Catálogo de cursos (Sprint 4) ────────────────────────────────────────────
 Route::get('/courses', [\App\Http\Controllers\Frontend\CoursePageController::class, 'index'])->name('courses.index');
