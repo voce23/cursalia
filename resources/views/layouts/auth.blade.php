@@ -21,8 +21,8 @@
     {{-- MISMO header que el resto del sitio (consistencia total del menú) --}}
     @include('partials.header')
 
-    {{-- Contenido (pt-24 para no quedar bajo el header fixed) --}}
-    <main class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-10 lg:pb-16">
+    {{-- Contenido. pt generoso para separar del header flotante (fixed top-3). --}}
+    <main class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-10 lg:pb-16">
         @yield('content')
     </main>
 
