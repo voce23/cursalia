@@ -297,6 +297,7 @@
      CURSOS DESTACADOS — layout asimétrico (1 grande + lista)
      ═══════════════════════════════════════════════════════════════════════ --}}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+    @if ($featuredCourses->isNotEmpty())
     <div class="sr flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sun-100 text-sun-500 text-xs font-semibold uppercase tracking-wider">
@@ -314,7 +315,6 @@
         </a>
     </div>
 
-    @if ($featuredCourses->isNotEmpty())
         @php $main = $featuredCourses->first(); $rest = $featuredCourses->skip(1)->take(3); @endphp
         <div class="grid lg:grid-cols-2 gap-5">
 
@@ -417,8 +417,26 @@
             </div>
         </div>
     @else
-        <div class="rounded-3xl bg-white border-2 border-dashed border-ink-200 p-12 text-center">
-            <p class="text-ink-500">Aún no hay cursos publicados.</p>
+        {{-- Sin cursos en catálogo: en vez de un hueco triste, invitamos al
+             curso GRATIS del blog (que es contenido real y nuestro foco actual). --}}
+        <div class="sr relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-500 to-brand-700 px-6 sm:px-12 py-14 sm:py-16 shadow-lift text-center">
+            <div class="blob bg-sun-300/40 w-72 h-72 -top-20 -right-20"></div>
+            <div class="blob bg-coral-300/30 w-72 h-72 -bottom-20 -left-20"></div>
+            <div class="relative max-w-2xl mx-auto">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-white text-xs font-semibold">
+                    <i class="fa-solid fa-graduation-cap"></i> Curso gratis · 14 lecciones
+                </span>
+                <h3 class="font-display font-extrabold text-3xl sm:text-4xl text-white tracking-tight leading-tight mt-5">
+                    Aprende a crear tu academia online, paso a paso
+                </h3>
+                <p class="text-brand-50 text-lg mt-4 leading-relaxed">
+                    Estamos preparando el catálogo de cursos. Mientras tanto, empieza por nuestro curso gratuito: monta tu propia plataforma desde cero, sin programar.
+                </p>
+                <a href="{{ route('blog.index', ['category' => \App\Models\Blog::COURSE_CATEGORY_SLUG]) }}"
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-brand-700 font-bold mt-7 hover:bg-brand-50 transition">
+                    <i class="fa-solid fa-arrow-right"></i> Empezar el curso gratis
+                </a>
+            </div>
         </div>
     @endif
 </section>

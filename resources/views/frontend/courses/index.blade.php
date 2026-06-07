@@ -251,17 +251,45 @@
                     {{ $courses->onEachSide(1)->links() }}
                 </div>
             @else
-                {{-- Estado vacío --}}
-                <div class="bg-white rounded-3xl border-2 border-dashed border-ink-200 p-12 text-center">
-                    <span class="grid place-items-center w-16 h-16 rounded-2xl bg-cream-2 text-ink-400 mx-auto">
-                        <i class="fa-regular fa-face-frown-open text-2xl"></i>
-                    </span>
-                    <p class="font-display font-bold text-ink-900 mt-5">No encontramos cursos con esos criterios</p>
-                    <p class="text-sm text-ink-500 mt-1">Prueba quitando algún filtro o búsqueda.</p>
-                    <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-2 mt-6 px-4 py-2.5 rounded-full bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition">
-                        Ver todos los cursos
-                    </a>
-                </div>
+                @php
+                    // ¿Hay filtros/búsqueda activos? Distingue "no hay resultados"
+                    // de "el catálogo todavía está vacío".
+                    $hasFilters = request()->hasany(['search', 'category', 'subcategory', 'level', 'language', 'price', 'sort']);
+                @endphp
+                @if ($hasFilters)
+                    {{-- Búsqueda sin resultados --}}
+                    <div class="bg-white rounded-3xl border-2 border-dashed border-ink-200 p-12 text-center">
+                        <span class="grid place-items-center w-16 h-16 rounded-2xl bg-cream-2 text-ink-400 mx-auto">
+                            <i class="fa-regular fa-face-frown-open text-2xl"></i>
+                        </span>
+                        <p class="font-display font-bold text-ink-900 mt-5">No encontramos cursos con esos criterios</p>
+                        <p class="text-sm text-ink-500 mt-1">Prueba quitando algún filtro o búsqueda.</p>
+                        <a href="{{ route('courses.index') }}" class="inline-flex items-center gap-2 mt-6 px-4 py-2.5 rounded-full bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition">
+                            Ver todos los cursos
+                        </a>
+                    </div>
+                @else
+                    {{-- Catálogo todavía vacío: invitar al curso gratis del blog --}}
+                    <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-500 to-brand-700 px-6 sm:px-12 py-16 shadow-lift text-center">
+                        <div class="blob bg-sun-300/40 w-72 h-72 -top-20 -right-20"></div>
+                        <div class="blob bg-coral-300/30 w-72 h-72 -bottom-20 -left-20"></div>
+                        <div class="relative max-w-2xl mx-auto">
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-white text-xs font-semibold">
+                                <i class="fa-solid fa-seedling"></i> Estamos empezando
+                            </span>
+                            <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-white tracking-tight leading-tight mt-5">
+                                El catálogo de cursos llega pronto
+                            </h2>
+                            <p class="text-brand-50 text-lg mt-4 leading-relaxed">
+                                Mientras preparamos los primeros cursos, te invitamos a nuestro curso gratuito del blog: aprende a montar tu propia academia online paso a paso, sin programar.
+                            </p>
+                            <a href="{{ route('blog.index', ['category' => \App\Models\Blog::COURSE_CATEGORY_SLUG]) }}"
+                               class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-brand-700 font-bold mt-7 hover:bg-brand-50 transition">
+                                <i class="fa-solid fa-graduation-cap"></i> Ver el curso gratis
+                            </a>
+                        </div>
+                    </div>
+                @endif
             @endif
         </div>
     </div>

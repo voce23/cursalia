@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Brand;
+use App\Models\Course;
 use App\Models\FeaturedInstructor;
 use App\Models\HeroSection;
 use App\Models\Testimonial;
@@ -57,6 +58,13 @@ class CursaliaLaunchCleanupSeeder extends Seeder
             $hero->save();
             $this->command->info('  ✓ Hero actualizado con mensaje real de Cursalia.');
         }
+
+        // Cursos demo: tienen contenido de relleno (lorem) y precios que no
+        // se pueden cobrar (pagos = Fase 2). Los pasamos a borrador para que
+        // NO aparezcan en /courses ni en el home. Reversible: edita status a
+        // 'active' desde el admin cuando tengas un curso real.
+        $c = Course::query()->update(['status' => 'draft']);
+        $this->command->info("  ✓ Cursos demo pasados a borrador: {$c}");
 
         $this->command->warn('  → Las secciones del home se ocultarán automáticamente.');
         $this->command->warn('  → Reactiva cada una cuando tengas contenido REAL.');
