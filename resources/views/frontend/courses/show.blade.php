@@ -129,8 +129,8 @@
                         {{-- CTA principal --}}
                         <div class="mt-5">
                             @if ($isEnrolled)
-                                <a href="{{ route('student.dashboard') }}" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-soft transition">
-                                    <i class="fa-solid fa-circle-play"></i> Continuar curso
+                                <a href="{{ route('student.player.show', $course) }}" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-soft transition">
+                                    <i class="fa-solid fa-circle-play"></i> Ir al curso
                                 </a>
                                 <p class="text-center text-xs text-brand-600 mt-2"><i class="fa-solid fa-check"></i> Ya estás inscrito</p>
                             @elseif ($isFree)

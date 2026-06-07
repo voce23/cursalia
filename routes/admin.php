@@ -59,6 +59,9 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::delete('/blog-comments/{blogComment}', [\App\Http\Controllers\Admin\BlogCommentController::class, 'destroy'])->name('blog-comments.destroy');
         Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class)->except(['show']);
 
+        // ── Quizzes · autoevaluaciones por lección (Cursalia FREE) ────────────
+        Route::resource('quizzes', \App\Http\Controllers\Admin\QuizController::class)->except(['show']);
+
         // ── Navegación · menú primario ────────────────────────────────────────
         Route::get('/navigation',  [\App\Http\Controllers\Admin\NavigationController::class, 'edit'])->name('navigation.edit');
         Route::post('/navigation', [\App\Http\Controllers\Admin\NavigationController::class, 'store'])->name('navigation.store');

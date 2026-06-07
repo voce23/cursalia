@@ -17,6 +17,10 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
+use App\Http\Controllers\Student\EnrolledCourseController as StudentEnrolledCourseController;
+use App\Http\Controllers\Student\CoursePlayerController as StudentCoursePlayerController;
+use App\Http\Controllers\Student\LessonCompletionController as StudentLessonCompletionController;
+use App\Http\Controllers\Frontend\QuizController as FrontendQuizController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -151,6 +155,18 @@ Route::middleware(['auth', 'is.student'])
         Route::get('/profile', [StudentProfileController::class, 'index'])->name('profile');
         Route::post('/profile/update', [StudentProfileController::class, 'update'])->name('profile.update');
         Route::post('/profile/update-password', [StudentProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+        // ── Mis cursos + reproductor + progreso (Cursalia FREE) ──────────────
+        Route::get('/enrolled-courses', [StudentEnrolledCourseController::class, 'index'])->name('enrolled-courses.index');
+
+        Route::get('/learn/{course:slug}', [StudentCoursePlayerController::class, 'show'])->name('player.show');
+        Route::post('/learn/{course:slug}/lessons/{lesson}/toggle-complete', [StudentLessonCompletionController::class, 'toggle'])
+            ->name('player.lesson.toggle-complete');
+
+        // ── Quiz · autoevaluación mínima FREE (sin certificado) ──────────────
+        Route::post('/quiz/{quiz}/submit', [FrontendQuizController::class, 'submit'])
+            ->middleware('throttle:20,1')
+            ->name('quiz.submit');
     });
 
 // ── Instructor (mínimo: dashboard) ──────────────────────────────────────────

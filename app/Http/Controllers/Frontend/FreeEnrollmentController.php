@@ -41,7 +41,7 @@ class FreeEnrollmentController extends Controller
         );
 
         return redirect()
-            ->route('student.dashboard')
+            ->route('student.player.show', $course)
             ->with('status', '¡Listo! Ya estás inscrito en "'.$course->title.'". Empieza cuando quieras.');
     }
 }

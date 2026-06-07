@@ -42,6 +42,7 @@
                             ['admin.course-categories.index', 'fa-folder-tree', 'Categorías', false],
                             ['#', 'fa-book-open', 'Cursos',      true],
                             ['#', 'fa-list',     'Lecciones',    true],
+                            ['admin.quizzes.index', 'fa-circle-question', 'Autoevaluaciones', false],
                         ],
                         'Contenido' => [
                             ['admin.blogs.index',            'fa-newspaper',  'Artículos blog',    false],

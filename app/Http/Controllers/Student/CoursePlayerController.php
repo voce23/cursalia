@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\LessonCompletion;
 use App\Models\LessonQuestion;
+use App\Models\Quiz;
 use App\Models\WatchHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -97,6 +98,28 @@ class CoursePlayerController extends Controller
                 ->get();
         }
 
+        // -- Quiz (autoevaluación) de la lección actual · FREE mínimo ----------
+        //    Solo si la lección tiene un quiz activo. Cargamos preguntas+opciones
+        //    y el último intento del alumno para decidir si mostrar el formulario
+        //    o el resultado.
+        $quiz       = null;
+        $lastAttempt = null;
+        if ($currentLesson) {
+            $quiz = Quiz::with(['questions' => fn ($q) => $q->orderBy('order'), 'questions.options' => fn ($q) => $q->orderBy('order')])
+                ->where('lesson_id', $currentLesson->id)
+                ->where('status', true)
+                ->first();
+
+            if ($quiz) {
+                $lastAttempt = $quiz->attempts()
+                    ->where('user_id', $user->id)
+                    ->whereNotNull('completed_at')
+                    ->with('answers')
+                    ->latest('completed_at')
+                    ->first();
+            }
+        }
+
         return view('student.player.show', compact(
             'course',
             'chapters',
@@ -108,6 +131,8 @@ class CoursePlayerController extends Controller
             'progress',
             'totalLessons',
             'questions',
+            'quiz',
+            'lastAttempt',
         ));
     }
 }

@@ -37,8 +37,9 @@
             {{-- Nav --}}
             @php
                 $nav = [
-                    ['student.dashboard', 'fa-grid-2', 'Mi panel'],
-                    ['student.profile',   'fa-user',   'Mi perfil'],
+                    ['student.dashboard',             'fa-grid-2',          'Mi panel'],
+                    ['student.enrolled-courses.index', 'fa-graduation-cap', 'Mis cursos'],
+                    ['student.profile',               'fa-user',            'Mi perfil'],
                 ];
             @endphp
             <nav class="mt-6 space-y-1 flex-1">
