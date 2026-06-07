@@ -128,7 +128,10 @@
         <div class="mt-12 pt-6 border-t border-ink-200/70 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-ink-400">
             <p>{{ $copyright }}</p>
             @if ($footerInfo->bottom_text)
-                <p class="text-ink-400">{!! $footerInfo->bottom_text !!}</p>
+                {{-- SEGURIDAD: bottom_text se imprime como texto escapado (NO {!! !!})
+                     para evitar XSS persistente si un admin malicioso o una sesión
+                     comprometida intentara inyectar JS en el footer global. --}}
+                <p class="text-ink-400">{{ $footerInfo->bottom_text }}</p>
             @endif
         </div>
     </div>

@@ -41,7 +41,9 @@
         {{-- Contenido --}}
         <article class="bg-white border border-ink-200/70 rounded-3xl shadow-soft p-6 sm:p-10">
             <div class="prose prose-sm sm:prose-base max-w-none text-ink-700 prose-headings:font-display prose-headings:text-ink-900 prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-3 prose-a:text-brand-700 prose-strong:text-ink-900">
-                {!! $body !!}
+                {{-- SEGURIDAD: $body puede venir editado desde admin. Sanitizamos
+                     con HTMLPurifier (perfil 'richtext') para prevenir XSS. --}}
+                {!! \Mews\Purifier\Facades\Purifier::clean($body, 'richtext') !!}
             </div>
 
             <hr class="my-8 border-ink-200/70">

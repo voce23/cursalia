@@ -11,6 +11,19 @@ use Illuminate\View\View;
 
 class DatabaseClearController extends Controller
 {
+    public function __construct()
+    {
+        // SEGURIDAD CRÍTICA: este controller borra TODA la BD.
+        // Solo se puede ejecutar en entornos de desarrollo. En producción
+        // devuelve 403 incluso aunque el middleware admin se haya colado.
+        // Si necesitas usarlo en staging, añade STAGING a la lista whitelist.
+        abort_unless(
+            in_array(app()->environment(), ['local', 'development', 'testing']),
+            403,
+            'Database clear está deshabilitado en este entorno por seguridad.'
+        );
+    }
+
     public function index(): View
     {
         return view('admin.database-clear.index');
