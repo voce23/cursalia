@@ -123,14 +123,9 @@ Route::get('/legal/{slug}', [\App\Http\Controllers\Frontend\LegalPageController:
     ->where('slug', 'privacy|terms|data-deletion|refunds')
     ->name('legal');
 
-Route::post('/newsletter/subscribe', function (\Illuminate\Http\Request $r) {
-    $r->validate(['email' => 'required|email']);
-    \App\Models\NewsletterSubscriber::firstOrCreate(
-        ['email' => strtolower($r->email)],
-        ['is_active' => true]
-    );
-    return back()->with('status', '¡Gracias por suscribirte! 💚');
-})->middleware('throttle:6,1')->name('newsletter.subscribe');
+Route::post('/newsletter/subscribe', [\App\Http\Controllers\Frontend\NewsletterSubscribeController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('newsletter.subscribe');
 
 // ── Rutas de invitado (login / register / reset) ─────────────────────────────
 Route::middleware('guest')->group(function () {

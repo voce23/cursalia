@@ -89,6 +89,10 @@ class ImageOptimizer
                 ->save(Storage::disk('public')->path($avifPath));
         } catch (\Throwable $e) {
             // Si AVIF falla por cualquier razón en este entorno, seguimos sin él.
+            \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF encode failed, falling back', [
+                'file'  => $file->getClientOriginalName(),
+                'error' => $e->getMessage(),
+            ]);
         }
 
         // 3) JPG fallback para navegadores muy antiguos.
@@ -98,6 +102,10 @@ class ImageOptimizer
                 ->save(Storage::disk('public')->path($jpgPath));
         } catch (\Throwable $e) {
             // Si la imagen original tenía alpha (PNG transparente), JPG puede no salir bien.
+            \Illuminate\Support\Facades\Log::info('ImageOptimizer: JPG fallback skipped (PNG transparent?)', [
+                'file'  => $file->getClientOriginalName(),
+                'error' => $e->getMessage(),
+            ]);
         }
 
         // 4) Variantes responsive si se piden.
@@ -108,7 +116,12 @@ class ImageOptimizer
             try {
                 $variant->encode(new AvifEncoder(quality: self::QUALITY_AVIF))
                         ->save(Storage::disk('public')->path($base.'-'.$w.'.avif'));
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF responsive variant skipped', [
+                    'path'  => $base.'-'.$w.'.avif',
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return $mainPath;
@@ -157,7 +170,12 @@ class ImageOptimizer
                 $img->encode(new AvifEncoder(quality: self::QUALITY_AVIF))
                     ->save(Storage::disk('public')->path($base.'.avif'));
                 $generated[] = 'avif';
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF reprocess skipped', [
+                    'path'  => $base.'.avif',
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         // Responsive
@@ -169,7 +187,12 @@ class ImageOptimizer
                 try {
                     $variant->encode(new AvifEncoder(quality: self::QUALITY_AVIF))
                             ->save(Storage::disk('public')->path($base.'-'.$w.'.avif'));
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF responsive reprocess skipped', [
+                        'path'  => $base.'-'.$w.'.avif',
+                        'error' => $e->getMessage(),
+                    ]);
+                }
                 $generated[] = "responsive-{$w}";
             }
         }

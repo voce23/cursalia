@@ -135,12 +135,13 @@ class BlogController extends Controller
             'blog_category_id' => ['required', 'exists:blog_categories,id'],
             'summary'          => ['nullable', 'string', 'max:500'],
             'content'          => ['required', 'string'],
-            'thumbnail'        => ['nullable', 'file', 'mimes:jpeg,png,webp,svg', 'max:4096'],
+            // mimes + mimetypes: la primera valida la extensión, la segunda el tipo MIME REAL del archivo (defensa en profundidad contra `archivo.php.jpg`).
+            'thumbnail'        => ['nullable', 'file', 'mimes:jpeg,png,webp,svg', 'mimetypes:image/jpeg,image/png,image/webp,image/svg+xml', 'max:4096'],
             'status'           => ['required', 'in:draft,published'],
             // ─── SEO ────────────────────────────────────────────────────
             'meta_title'       => ['nullable', 'string', 'max:70'],
             'meta_description' => ['nullable', 'string', 'max:180'],
-            'og_image_custom'  => ['nullable', 'file', 'mimes:jpeg,png,webp', 'max:4096'],
+            'og_image_custom'  => ['nullable', 'file', 'mimes:jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:4096'],
             'faq'              => ['nullable', 'array'],
             'faq.*.q'          => ['nullable', 'string', 'max:255'],
             'faq.*.a'          => ['nullable', 'string', 'max:1500'],

@@ -34,6 +34,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'is.admin'      => \App\Http\Middleware\IsAdmin::class,
             'is.instructor' => \App\Http\Middleware\IsInstructor::class,
             'is.student'    => \App\Http\Middleware\IsStudent::class,
+            // Feature flags Cursalia (Fase 2: pagos, marketplace, certificados).
+            'feature'       => \App\Http\Middleware\FeatureFlag::class,
         ]);
 
         $middleware->redirectGuestsTo(function ($request) {

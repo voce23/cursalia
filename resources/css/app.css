@@ -5,6 +5,20 @@
 @source '../views';
 
 /* ════════════════════════════════════════════════════════════════════
+   ACCESIBILIDAD — Respetar la preferencia del usuario para reducir
+   movimiento (configuración del sistema operativo). WCAG 2.2 AA.
+   Útil para personas con vértigo, migrañas o trastornos vestibulares.
+   ════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ════════════════════════════════════════════════════════════════════
    TOKENS DE MARCA — Cursalia
    Identidad clara/cálida (vs AulaCursos oscuro/morado).
    ════════════════════════════════════════════════════════════════════ */

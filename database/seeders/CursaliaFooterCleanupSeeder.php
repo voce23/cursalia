@@ -20,10 +20,19 @@ class CursaliaFooterCleanupSeeder extends Seeder
 {
     public function run(): void
     {
-        // Borrar absolutamente todo lo de footer_column_twos para empezar limpio.
-        FooterColumnTwo::query()->delete();
+        // Idempotente: borrar SOLO los items rotos/duplicados conocidos del seed
+        // anterior. NO toca items que el admin haya creado/editado manualmente.
+        $deprecatedTitles = [
+            'Centro de Ayuda',         // URL era "#" (rota)
+            'Términos y Condiciones',  // duplicada con columna Legal
+            'Política de Privacidad',  // duplicada con columna Legal
+            'Sobre nosotros',          // duplicada con columna Explorar
+            'Ser instructor',          // duplicada con columna Explorar
+        ];
+        FooterColumnTwo::whereIn('title', $deprecatedTitles)->delete();
 
-        // Repoblar con los 3 items útiles, todos con URL real.
+        // Items útiles. Usamos updateOrCreate para que sea idempotente:
+        // si ya existen (por correr el seeder dos veces), solo actualizan.
         $items = [
             ['title' => 'Centro de ayuda',      'url' => '/contact',  'sort_order' => 1, 'is_active' => true],
             ['title' => 'Contacto',             'url' => '/contact',  'sort_order' => 2, 'is_active' => true],
@@ -31,7 +40,10 @@ class CursaliaFooterCleanupSeeder extends Seeder
         ];
 
         foreach ($items as $item) {
-            FooterColumnTwo::create($item);
+            FooterColumnTwo::updateOrCreate(
+                ['title' => $item['title']],   // identidad por título
+                $item
+            );
         }
 
         // Invalidar cache del composer para que el footer se regenere.
