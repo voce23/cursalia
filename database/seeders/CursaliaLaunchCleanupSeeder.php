@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\AboutSection;
 use App\Models\Brand;
+use App\Models\Counter;
 use App\Models\Course;
 use App\Models\FeaturedInstructor;
 use App\Models\HeroSection;
@@ -65,6 +67,27 @@ class CursaliaLaunchCleanupSeeder extends Seeder
         // 'active' desde el admin cuando tengas un curso real.
         $c = Course::query()->update(['status' => 'draft']);
         $this->command->info("  ✓ Cursos demo pasados a borrador: {$c}");
+
+        // Counter del /about: tenía números inventados (500 cursos, 85
+        // instructores, 12000 alumnos, 2000 horas). Como Cursalia recién
+        // arranca y NO tiene métricas reales que presumir, eliminamos el
+        // registro → la sección de contadores se oculta sola (@if($counter)).
+        // Reversible: crea un Counter con números reales cuando los tengas.
+        $deleted = Counter::query()->delete();
+        if ($deleted) {
+            $this->command->info('  ✓ Counter con números falsos eliminado (sección se oculta).');
+        }
+
+        // AboutSection: texto genérico demo → mensaje real de Cursalia.
+        $about = AboutSection::query()->first();
+        if ($about) {
+            $about->title    = 'Sobre Cursalia';
+            $about->subtitle = 'Tu academia online, sin pagar mensualidades';
+            $about->content  = '<p>Cursalia es un sistema de gestión de aprendizaje (LMS) gratuito y de código abierto, pensado para que cualquier persona —sin saber programar— pueda montar su propia academia online en su propio dominio, con su marca y en español de verdad.</p>'
+                .'<p>Nació de una idea simple: las plataformas como Hotmart o Thinkific te cobran comisión o mensualidad por algo que debería ser tuyo. Con Cursalia, tu academia es 100% tuya.</p>';
+            $about->save();
+            $this->command->info('  ✓ AboutSection actualizada con mensaje real.');
+        }
 
         $this->command->warn('  → Las secciones del home se ocultarán automáticamente.');
         $this->command->warn('  → Reactiva cada una cuando tengas contenido REAL.');
