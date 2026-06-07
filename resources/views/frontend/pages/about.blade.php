@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $about?->title ?: 'Sobre Cursalia')
+@section('description', $about?->summary ?: 'Conoce el equipo y la misión detrás de Cursalia: democratizar el acceso a herramientas profesionales para crear academias online en español sin depender de plataformas que cobran comisión.')
 
 @section('content')
 

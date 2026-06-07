@@ -11,6 +11,15 @@
     @section('description', $courseDesc)
 @endif
 
+{{-- A4 · canonical para evitar duplicate content en filtros con query string.
+     Si el visitante está en /blog?search=foo o /blog?page=3, le decimos a Google
+     que la URL canónica es /blog (o /blog?category=X si está en hub del curso). --}}
+@if ($isCourseHub)
+    @section('canonical', url('/blog?category='.\App\Models\Blog::COURSE_CATEGORY_SLUG))
+@elseif (request()->has('search') || request()->has('page'))
+    @section('canonical', url('/blog'))
+@endif
+
 {{-- ════════════════════ Schema.org Course (solo en hub del curso) ════════════════════ --}}
 @if ($isCourseHub)
 @push('head')

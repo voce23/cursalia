@@ -25,9 +25,12 @@ use Illuminate\Support\Facades\Route;
 // ── Home Cursalia (frontal real con CMS) ─────────────────────────────────────
 Route::get('/', [\App\Http\Controllers\Frontend\CoursePageController::class, 'home'])->name('home');
 
-// ── SEO: sitemap.xml dinámico ────────────────────────────────────────────────
+// ── SEO: sitemap.xml dinámico (cacheado 1h para no pegar a BD en cada hit) ──
 Route::get('/sitemap.xml', function () {
-    $urls = collect([
+    // Cache 1h. Si publicas/editas un post o curso y necesitas invalidar antes,
+    // ejecuta: php artisan cache:forget cursalia.sitemap
+    $xml = \Illuminate\Support\Facades\Cache::remember('cursalia.sitemap', 3600, function () {
+        $urls = collect([
         ['loc' => url('/'),                  'priority' => '1.0', 'freq' => 'daily'],
         ['loc' => url('/courses'),           'priority' => '0.9', 'freq' => 'daily'],
         ['loc' => url('/about'),             'priority' => '0.7', 'freq' => 'monthly'],
@@ -66,9 +69,10 @@ Route::get('/sitemap.xml', function () {
             'lastmod'  => $b->updated_at?->toAtomString(),
         ]));
 
-    return response()
-        ->view('sitemap', ['urls' => $urls])
-        ->header('Content-Type', 'application/xml');
+        return view('sitemap', ['urls' => $urls])->render();
+    });
+
+    return response($xml, 200)->header('Content-Type', 'application/xml');
 })->name('sitemap');
 
 // ── Catálogo de cursos (Sprint 4) ────────────────────────────────────────────

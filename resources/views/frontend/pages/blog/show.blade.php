@@ -2,6 +2,7 @@
 
 @section('title', $blog->seo_title)
 @section('description', $blog->seo_description)
+@section('og-type', 'article')
 @if ($blog->og_image_url)
     @section('og-image', $blog->og_image_url)
 @endif
@@ -592,17 +593,25 @@
 
 </article>
 
+@php
+    // A7 · Prism.js solo se carga si el post tiene bloques de código.
+    // Posts sin código (Hotmart, LMS comparativa, Thinkific) ahorran ~250KB JS.
+    $hasCodeBlocks = str_contains($blog->content, '<pre><code') || str_contains($blog->content, '<code class="language-');
+@endphp
+
+@if ($hasCodeBlocks)
 {{-- ═══════════════════════════════════════════════════════════════════
-     Prism.js (syntax highlighting) cargado solo en blog show
+     Prism.js (syntax highlighting) · cargado solo cuando hay <pre><code>
      ═══════════════════════════════════════════════════════════════════ --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-/mZ1FHPkg6EKcxo0fKXF51ak6Cr2ocgDi5ytaTBjsQZIH/RNs6GF6+oId/vPe3eJB836T36nXwVh/WBl/cWT4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-/mZ1FHPkg6EKcxo0fKXF51ak6Cr2ocgDi5ytaTBjsQZIH/RNs6GF6+oId/vPe3eJB836T36nXwVh/WBl/cWT4w==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js" referrerpolicy="no-referrer" defer></script>
+@endif
 
 {{-- ═══════════════════════════════════════════════════════════════════
      JS — barra de progreso + scroll spy TOC + wrap code blocks

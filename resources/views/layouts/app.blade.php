@@ -10,14 +10,20 @@
         $title    = trim(View::yieldContent('title')) ?: ($generalSetting->site_slogan ?? 'Aprende algo nuevo, a tu manera');
         $description = trim(View::yieldContent('description')) ?: ($generalSetting->seo_default_description ?? 'Cursalia · Plataforma de cursos online.');
         $ogImage  = trim(View::yieldContent('og-image')) ?: ($generalSetting->og_image ? asset('storage/'.$generalSetting->og_image) : asset('storage/og-default.png'));
+        // og:type dinámico: cada página puede declarar 'article' (posts blog),
+        // 'profile' (perfiles), 'product' (cursos), etc. Fallback "website".
+        $ogType   = trim(View::yieldContent('og-type')) ?: 'website';
         $currentUrl = url()->current();
+        // canonical: por defecto la URL actual; las páginas pueden overridear
+        // (útil en filtros con query string para evitar duplicate content).
+        $canonicalUrl = trim(View::yieldContent('canonical')) ?: $currentUrl;
         $favicon  = $generalSetting->favicon ? asset('storage/'.$generalSetting->favicon) : null;
         $themeColor = $generalSetting->brand_color ?? '#10B981';
     @endphp
 
     <title>{{ $title }} · {{ $siteName }}</title>
     <meta name="description" content="{{ $description }}">
-    <link rel="canonical" href="{{ $currentUrl }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="{{ $themeColor }}">
 
@@ -30,7 +36,7 @@
     @endif
 
     {{-- Open Graph --}}
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="{{ $ogType }}">
     <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="og:title" content="{{ $title }} · {{ $siteName }}">
     <meta property="og:description" content="{{ $description }}">
@@ -48,7 +54,12 @@
     @include('partials.theme-vars')
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
+    {{-- Font Awesome cargado de forma asíncrona (no bloquea LCP).
+         preconnect: TCP handshake hecho antes; CSS asíncrono: hace "print" hasta que carga. --}}
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          media="print" onload="this.media='all'" referrerpolicy="no-referrer">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
 
     @if ($favicon)
         <link rel="icon" type="image/x-icon" href="{{ $favicon }}">
@@ -84,6 +95,9 @@
     </main>
 
     @include('partials.footer')
+
+    {{-- A8 · Cookie banner RGPD (UE) / LSSI (España) --}}
+    <x-cookie-banner />
 
     {{-- Google Analytics 4 (solo en producción y si está configurado) --}}
     @if (app()->environment('production') && !empty($generalSetting->google_analytics_id))

@@ -2,6 +2,7 @@
 
 @section('title', 'Sobre el autor · '.$author->name)
 @section('description', $author->headline ?: 'Conoce al autor del blog y curso Cursalia: experiencia, redes oficiales y todos los artículos publicados.')
+@section('og-type', 'profile')
 
 {{-- ════════════════════ Schema.org Person + ProfilePage + AboutPage ════════════════════ --}}
 @push('head')

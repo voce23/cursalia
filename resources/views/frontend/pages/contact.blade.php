@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $contactSetting?->title ?: 'Contacto')
+@section('description', 'Escríbenos para dudas, sugerencias o colaboraciones. Respondemos en menos de 48 horas hábiles. También tienes nuestro email y redes oficiales aquí.')
 
 @section('content')
 
