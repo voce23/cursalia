@@ -1,58 +1,111 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<h1 align="center">Cursalia LMS</h1>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <strong>El LMS gratuito y de código abierto para crear tu academia online en tu propio dominio.</strong><br>
+  Sin mensualidades · Sin comisiones · 100&nbsp;% tuyo.
 </p>
 
-## About Laravel
+<p align="center">
+  <a href="https://cursalia.org">cursalia.org</a> ·
+  <a href="https://github.com/voce23/cursalia">GitHub</a>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ¿Qué es Cursalia?
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Cursalia es un **sistema de gestión de aprendizaje (LMS)** hecho con **Laravel 13**. Te permite crear, organizar y publicar cursos online en tu propio servidor y con tu propia marca. Está pensado para profesores, academias y empresas que quieren su plataforma de formación **sin pagar mensualidades ni ceder comisiones** a plataformas de terceros.
 
-## Learning Laravel
+### Funciones principales
+- 🎓 **Cursos con capítulos y lecciones** (vídeo, texto y recursos).
+- 👩‍🎓 **Panel de estudiante**: cursos inscritos, reproductor con progreso y autoevaluaciones.
+- 👨‍🏫 **Panel de instructor** y panel de **administración**.
+- 📝 **Blog** integrado con SEO (Schema.org, sitemap, Open Graph).
+- 🌐 **Páginas de marketing**: inicio, cursos, servicios, plantillas, contacto, legales.
+- 🔒 **Seguridad**: captcha, rate-limiting, CSRF, cabeceras de seguridad, cookies RGPD.
+- 🎨 **Personalizable**: marca, colores, navegación y textos editables.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+> La versión **gratuita (FREE)** entrega cursos sin coste. Las funciones de negocio (pagos, certificados, gamificación, marketplace…) llegan con **Cursalia PRO** — próximamente.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Requisitos
 
-## Agentic Development
+- **PHP 8.3+** (extensiones: `gd`, `mbstring`, `pdo_mysql`, `intl`, `bcmath`, `fileinfo`, `openssl`, `tokenizer`, `xml`, `curl`, `zip`)
+- **Composer 2**
+- **MySQL 8** (o MariaDB) — o SQLite para pruebas
+- **Node.js 18+** y **npm** (para compilar los assets)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
+
+## Instalación rápida (local)
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clonar el proyecto
+git clone https://github.com/voce23/cursalia.git
+cd cursalia
 
-php artisan boost:install
+# 2. Dependencias
+composer install
+npm install
+
+# 3. Configuración
+cp .env.example .env
+php artisan key:generate
+
+# 4. Edita el .env con tus datos de base de datos:
+#    DB_DATABASE=cursalia   DB_USERNAME=root   DB_PASSWORD=
+
+# 5. Crea las tablas + datos de ejemplo (admin, cursos demo, blog)
+php artisan migrate --seed
+
+# 6. Compila los assets y enlaza el almacenamiento
+npm run build
+php artisan storage:link
+
+# 7. Arranca
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Abre **http://127.0.0.1:8000** (o configura el host en Laragon/Valet).
 
-## Contributing
+> ¿Eres principiante? Tienes tutoriales paso a paso en el blog de **[cursalia.org](https://cursalia.org/blog)**: instalación en local con Laragon e instalación en hosting (cPanel).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Acceso al administrador
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Tras `migrate --seed` se crea un usuario administrador de ejemplo.
 
-## Security Vulnerabilities
+⚠️ **Cambia la contraseña inmediatamente** con:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan admin:password
+```
 
-## License
+El panel está en **/admin** (o inicia sesión en **/login** con el usuario admin).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Puesta en producción (resumen)
+
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force --seed
+php artisan admin:password          # contraseña FUERTE
+npm run build
+php artisan storage:link
+php artisan optimize                # cachea config, rutas y vistas
+```
+
+En el `.env` de producción: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://tu-dominio`, HTTPS activo, SMTP real y permisos de escritura en `storage/`, `bootstrap/cache/` y `public/uploads/`.
+
+---
+
+## Licencia y responsabilidad
+
+Software **de código abierto bajo licencia MIT**. Se entrega **"tal cual" (as-is), sin garantías**. El autor no se hace responsable del mal uso, pérdida de datos, caídas ni daños derivados de su uso. Lo usas **bajo tu propia responsabilidad**.
+
+---
+
+<p align="center">Hecho con ❤️ y Laravel · <a href="https://cursalia.org">cursalia.org</a></p>

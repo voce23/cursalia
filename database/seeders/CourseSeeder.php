@@ -444,8 +444,9 @@ class CourseSeeder extends Seeder
                     'seo_description' => $courseData['seo_description'],
                     'thumbnail' => $courseData['thumbnail'],
                     'description' => $courseData['description'],
-                    'price' => $courseData['price'],
-                    'discount' => $courseData['discount'],
+                    // LMS GRATIS: todos los cursos demo se siembran sin coste (no hay pasarela de pago en FREE).
+                    'price' => 0,
+                    'discount' => 0,
                     'duration' => $courseData['duration'],
                     'certificate' => true,
                     'qna' => true,
