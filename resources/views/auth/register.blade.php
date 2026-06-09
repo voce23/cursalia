@@ -36,27 +36,9 @@
             <form method="POST" action="{{ route('register') }}" class="mt-7 space-y-5" x-data="{ role: '{{ old('role','student') }}' }">
                 @csrf
 
-                {{-- Selector de rol --}}
-                <div>
-                    <span class="block text-sm font-medium text-ink-700 mb-2">¿Cómo te registras?</span>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="role" value="student" x-model="role" class="sr-only peer">
-                            <div class="px-3 py-3 rounded-2xl border-2 text-center transition" :class="role==='student' ? 'border-brand-500 bg-brand-50' : 'border-ink-200 bg-cream-2 hover:border-ink-300'">
-                                <i class="fa-solid fa-user-graduate text-brand-600"></i>
-                                <p class="text-sm font-semibold text-ink-900 mt-1">Estudiante</p>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="role" value="instructor" x-model="role" class="sr-only peer">
-                            <div class="px-3 py-3 rounded-2xl border-2 text-center transition" :class="role==='instructor' ? 'border-coral-400 bg-coral-50' : 'border-ink-200 bg-cream-2 hover:border-ink-300'">
-                                <i class="fa-solid fa-chalkboard-user text-coral-500"></i>
-                                <p class="text-sm font-semibold text-ink-900 mt-1">Instructor</p>
-                            </div>
-                        </label>
-                    </div>
-                    @error('role')<p class="text-xs text-coral-500 mt-1.5">{{ $message }}</p>@enderror
-                </div>
+                {{-- En la versión gratuita todas las cuentas son de estudiante.
+                     El alta de instructores forma parte del plan profesional. --}}
+                <input type="hidden" name="role" value="student">
 
                 <div>
                     <label class="block text-sm font-medium text-ink-700 mb-1.5" for="name">Nombre</label>

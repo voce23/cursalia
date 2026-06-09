@@ -13,7 +13,7 @@ class FooterController extends Controller
 {
     public function index(): View
     {
-        $setting = Footer::query()->firstOrCreate(['id' => 1], [
+        $setting = Footer::query()->firstOrCreate([], [
             'contact_title' => 'Contacto',
             'is_active' => true,
         ]);
@@ -23,7 +23,7 @@ class FooterController extends Controller
 
     public function update(FooterUpdateRequest $request): RedirectResponse
     {
-        $setting = Footer::query()->firstOrCreate(['id' => 1], [
+        $setting = Footer::query()->firstOrCreate([], [
             'contact_title' => 'Contacto',
             'is_active' => true,
         ]);

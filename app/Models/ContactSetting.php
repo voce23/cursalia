@@ -13,5 +13,6 @@ class ContactSetting extends Model
         'form_subtitle',
         'receiver_email',
         'map_embed_url',
+        'schedule',
     ];
 }

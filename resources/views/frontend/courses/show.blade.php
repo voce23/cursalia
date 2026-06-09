@@ -147,11 +147,12 @@
                                     </a>
                                 @endauth
                             @else
-                                {{-- Cursos de pago — FASE 2 --}}
+                                {{-- Cursos de pago: la pasarela de pagos es parte del plan profesional.
+                                     En la versión gratuita estos cursos no se pueden adquirir. --}}
                                 <button disabled class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold bg-ink-100 text-ink-400 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock"></i> Próximamente con pagos
+                                    <i class="fa-solid fa-lock"></i> Inscripción no disponible
                                 </button>
-                                <p class="text-center text-xs text-ink-400 mt-2">Los cursos de pago llegan en la siguiente fase.</p>
+                                <p class="text-center text-xs text-ink-400 mt-2">Este curso no está disponible por el momento.</p>
                             @endif
                         </div>
 
@@ -191,7 +192,7 @@
                 </div>
 
                 <p class="text-center text-xs text-white/60 mt-4">
-                    <i class="fa-solid fa-shield-halved text-brand-300"></i> Compra segura y datos protegidos
+                    <i class="fa-solid fa-shield-halved text-brand-300"></i> Tus datos están protegidos
                 </p>
             </aside>
         </div>

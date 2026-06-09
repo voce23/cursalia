@@ -11,16 +11,41 @@
 |
 */
 
+use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuthController;
+use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\BlogCommentController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\ContactCardController;
+use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\ContactSettingController;
+use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\CourseCategoryController;
+use App\Http\Controllers\Admin\CourseContentController;
+use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\CustomPageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\FooterColumnOneController;
+use App\Http\Controllers\Admin\FooterColumnTwoController;
+use App\Http\Controllers\Admin\FooterController;
+use App\Http\Controllers\Admin\HeaderSettingController;
+use App\Http\Controllers\Admin\HomeMiscSectionController;
+use App\Http\Controllers\Admin\HomeSectionController;
+use App\Http\Controllers\Admin\NavigationController;
+use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\QuizController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\SocialLinkController;
+use App\Http\Controllers\Admin\TemplateController;
+use App\Http\Controllers\Admin\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->as('admin.')->group(function () {
 
     // ── Login admin (guest) ──────────────────────────────────────────────
-    Route::get('/login',  [AdminAuthController::class, 'create'])->name('login');
+    Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'store'])->middleware('throttle:6,1');
 
     // ── Zona protegida (guard admin) ─────────────────────────────────────
@@ -39,62 +64,99 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::resource('course-categories', CourseCategoryController::class)->except(['show']);
 
         // ── Cursos (constructor del admin) ────────────────────────────────────
-        Route::get('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('courses.index');
-        Route::get('/courses/create', [\App\Http\Controllers\Admin\CourseController::class, 'create'])->name('courses.create');
-        Route::post('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('courses.store');
-        Route::get('/courses/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'show'])->name('courses.show');
-        Route::get('/courses/{course}/edit', [\App\Http\Controllers\Admin\CourseController::class, 'edit'])->name('courses.edit');
-        Route::put('/courses/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('courses.update');
-        Route::patch('/courses/{course}/approval', [\App\Http\Controllers\Admin\CourseController::class, 'updateApproval'])->name('courses.approval');
-        Route::delete('/courses/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('courses.destroy');
+        Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+        Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+        Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+        Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+        Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+        Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
+        Route::patch('/courses/{course}/approval', [CourseController::class, 'updateApproval'])->name('courses.approval');
+        Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
 
         // ── Constructor de contenido (capítulos + lecciones) ──────────────────
-        Route::get('/courses/{course}/content', [\App\Http\Controllers\Admin\CourseContentController::class, 'index'])->name('courses.content');
-        Route::post('/courses/{course}/chapters', [\App\Http\Controllers\Admin\CourseContentController::class, 'storeChapter'])->name('chapters.store');
-        Route::put('/chapters/{chapter}', [\App\Http\Controllers\Admin\CourseContentController::class, 'updateChapter'])->name('chapters.update');
-        Route::delete('/chapters/{chapter}', [\App\Http\Controllers\Admin\CourseContentController::class, 'destroyChapter'])->name('chapters.destroy');
-        Route::post('/chapters/{chapter}/move/{direction}', [\App\Http\Controllers\Admin\CourseContentController::class, 'moveChapter'])->name('chapters.move');
-        Route::post('/chapters/{chapter}/lessons', [\App\Http\Controllers\Admin\CourseContentController::class, 'storeLesson'])->name('lessons.store');
-        Route::put('/lessons/{lesson}', [\App\Http\Controllers\Admin\CourseContentController::class, 'updateLesson'])->name('lessons.update');
-        Route::delete('/lessons/{lesson}', [\App\Http\Controllers\Admin\CourseContentController::class, 'destroyLesson'])->name('lessons.destroy');
-        Route::post('/lessons/{lesson}/move/{direction}', [\App\Http\Controllers\Admin\CourseContentController::class, 'moveLesson'])->name('lessons.move');
+        Route::get('/courses/{course}/content', [CourseContentController::class, 'index'])->name('courses.content');
+        Route::post('/courses/{course}/chapters', [CourseContentController::class, 'storeChapter'])->name('chapters.store');
+        Route::put('/chapters/{chapter}', [CourseContentController::class, 'updateChapter'])->name('chapters.update');
+        Route::delete('/chapters/{chapter}', [CourseContentController::class, 'destroyChapter'])->name('chapters.destroy');
+        Route::post('/chapters/{chapter}/move/{direction}', [CourseContentController::class, 'moveChapter'])->name('chapters.move');
+        Route::post('/chapters/{chapter}/lessons', [CourseContentController::class, 'storeLesson'])->name('lessons.store');
+        Route::put('/lessons/{lesson}', [CourseContentController::class, 'updateLesson'])->name('lessons.update');
+        Route::delete('/lessons/{lesson}', [CourseContentController::class, 'destroyLesson'])->name('lessons.destroy');
+        Route::post('/lessons/{lesson}/move/{direction}', [CourseContentController::class, 'moveLesson'])->name('lessons.move');
 
         // ── Mensajes de contacto ──────────────────────────────────────────────
-        Route::get('/messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('messages.index');
-        Route::get('/messages/{message}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])->name('messages.show');
-        Route::post('/messages/{message}/toggle-read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'toggleRead'])->name('messages.toggle');
-        Route::delete('/messages/{message}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('messages.destroy');
+        Route::get('/messages', [ContactMessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/{message}', [ContactMessageController::class, 'show'])->name('messages.show');
+        Route::post('/messages/{message}/toggle-read', [ContactMessageController::class, 'toggleRead'])->name('messages.toggle');
+        Route::delete('/messages/{message}', [ContactMessageController::class, 'destroy'])->name('messages.destroy');
 
         // ── Apariencia (white-label) ──────────────────────────────────────────
-        Route::get('/appearance', [\App\Http\Controllers\Admin\AppearanceController::class, 'edit'])->name('appearance.edit');
-        Route::post('/appearance', [\App\Http\Controllers\Admin\AppearanceController::class, 'update'])->name('appearance.update');
-        Route::post('/appearance/preset', [\App\Http\Controllers\Admin\AppearanceController::class, 'applyPreset'])->name('appearance.preset');
+        Route::get('/appearance', [AppearanceController::class, 'edit'])->name('appearance.edit');
+        Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
+        Route::post('/appearance/preset', [AppearanceController::class, 'applyPreset'])->name('appearance.preset');
 
         // ── Plantillas (marketplace) ──────────────────────────────────────────
-        Route::get('/templates/waitlist', [\App\Http\Controllers\Admin\TemplateController::class, 'waitlist'])->name('templates.waitlist');
-        Route::resource('templates', \App\Http\Controllers\Admin\TemplateController::class)->except(['show']);
+        Route::get('/templates/waitlist', [TemplateController::class, 'waitlist'])->name('templates.waitlist');
+        Route::resource('templates', TemplateController::class)->except(['show']);
 
         // ── Servicios (planes + bandeja de pedidos) ───────────────────────────
-        Route::get('/services/requests', [\App\Http\Controllers\Admin\ServiceController::class, 'requests'])->name('services.requests');
-        Route::patch('/services/requests/{serviceRequest}', [\App\Http\Controllers\Admin\ServiceController::class, 'updateRequestStatus'])->name('services.requests.update');
-        Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class)->except(['show']);
+        Route::get('/services/requests', [ServiceController::class, 'requests'])->name('services.requests');
+        Route::patch('/services/requests/{serviceRequest}', [ServiceController::class, 'updateRequestStatus'])->name('services.requests.update');
+        Route::resource('services', ServiceController::class)->except(['show']);
 
         // ── Blog (artículos + categorías + comentarios) ───────────────────────
-        Route::resource('blog-categories', \App\Http\Controllers\Admin\BlogCategoryController::class)->except(['show']);
-        Route::get('/blog-comments', [\App\Http\Controllers\Admin\BlogCommentController::class, 'index'])->name('blog-comments.index');
-        Route::post('/blog-comments/{blogComment}/approve', [\App\Http\Controllers\Admin\BlogCommentController::class, 'approve'])->name('blog-comments.approve');
-        Route::delete('/blog-comments/{blogComment}', [\App\Http\Controllers\Admin\BlogCommentController::class, 'destroy'])->name('blog-comments.destroy');
-        Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class)->except(['show']);
+        Route::resource('blog-categories', BlogCategoryController::class)->except(['show']);
+        Route::get('/blog-comments', [BlogCommentController::class, 'index'])->name('blog-comments.index');
+        Route::post('/blog-comments/{blogComment}/approve', [BlogCommentController::class, 'approve'])->name('blog-comments.approve');
+        Route::delete('/blog-comments/{blogComment}', [BlogCommentController::class, 'destroy'])->name('blog-comments.destroy');
+        Route::resource('blogs', BlogController::class)->except(['show']);
 
         // ── Quizzes · autoevaluaciones por lección (Cursalia FREE) ────────────
-        Route::resource('quizzes', \App\Http\Controllers\Admin\QuizController::class)->except(['show']);
+        Route::resource('quizzes', QuizController::class)->except(['show']);
 
         // ── Navegación · menú primario ────────────────────────────────────────
-        Route::get('/navigation',  [\App\Http\Controllers\Admin\NavigationController::class, 'edit'])->name('navigation.edit');
-        Route::post('/navigation', [\App\Http\Controllers\Admin\NavigationController::class, 'store'])->name('navigation.store');
-        Route::patch('/navigation/{link}', [\App\Http\Controllers\Admin\NavigationController::class, 'update'])->name('navigation.update');
-        Route::delete('/navigation/{link}', [\App\Http\Controllers\Admin\NavigationController::class, 'destroy'])->name('navigation.destroy');
-        Route::post('/navigation/reorder', [\App\Http\Controllers\Admin\NavigationController::class, 'reorder'])->name('navigation.reorder');
-        Route::post('/navigation/{link}/toggle', [\App\Http\Controllers\Admin\NavigationController::class, 'toggle'])->name('navigation.toggle');
+        Route::get('/navigation', [NavigationController::class, 'edit'])->name('navigation.edit');
+        Route::post('/navigation', [NavigationController::class, 'store'])->name('navigation.store');
+        Route::patch('/navigation/{link}', [NavigationController::class, 'update'])->name('navigation.update');
+        Route::delete('/navigation/{link}', [NavigationController::class, 'destroy'])->name('navigation.destroy');
+        Route::post('/navigation/reorder', [NavigationController::class, 'reorder'])->name('navigation.reorder');
+        Route::post('/navigation/{link}/toggle', [NavigationController::class, 'toggle'])->name('navigation.toggle');
+
+        // ── Pie de página (white-label) ───────────────────────────────────────
+        Route::get('/footer', [FooterController::class, 'index'])->name('footer.index');
+        Route::post('/footer', [FooterController::class, 'update'])->name('footer.update');
+        Route::resource('footer-column-one', FooterColumnOneController::class)->except(['show']);
+        Route::resource('footer-column-two', FooterColumnTwoController::class)->except(['show']);
+        Route::resource('social-links', SocialLinkController::class)->except(['show']);
+
+        // ── Página de contacto (ajustes + tarjetas) ───────────────────────────
+        Route::get('/contact-settings', [ContactSettingController::class, 'index'])->name('contact-settings.index');
+        Route::post('/contact-settings', [ContactSettingController::class, 'update'])->name('contact-settings.update');
+        Route::resource('contact-cards', ContactCardController::class)->except(['show']);
+
+        // ── Testimonios + Cifras (home / nosotros) ────────────────────────────
+        Route::resource('testimonials', TestimonialController::class)->except(['show']);
+        Route::get('/counter', [CounterController::class, 'index'])->name('counter.index');
+        Route::post('/counter', [CounterController::class, 'update'])->name('counter.update');
+
+        // ── Secciones del inicio (hero, razones, categorías, cursos, about) ───
+        Route::get('/home-sections', [HomeSectionController::class, 'index'])->name('home-sections.index');
+        Route::post('/home-sections/hero', [HomeSectionController::class, 'updateHero'])->name('home-sections.hero');
+        Route::post('/home-sections/features', [HomeSectionController::class, 'updateFeatures'])->name('home-sections.features');
+        Route::post('/home-sections/featured-categories', [HomeSectionController::class, 'updateFeaturedCategories'])->name('home-sections.featured-categories');
+        Route::post('/home-sections/latest-courses', [HomeSectionController::class, 'updateLatestCourses'])->name('home-sections.latest-courses');
+        Route::post('/home-sections/about', [HomeSectionController::class, 'updateAbout'])->name('home-sections.about');
+        Route::post('/home-misc', [HomeMiscSectionController::class, 'update'])->name('home-misc.update');
+
+        // ── Marcas + Páginas personalizadas + Cabecera ────────────────────────
+        Route::resource('brands', BrandController::class)->except(['show']);
+        Route::resource('custom-pages', CustomPageController::class)->except(['show']);
+        Route::get('/header-settings', [HeaderSettingController::class, 'index'])->name('header-settings.index');
+        Route::post('/header-settings', [HeaderSettingController::class, 'update'])->name('header-settings.update');
+
+        // ── Newsletter (suscriptores + envío) ─────────────────────────────────
+        Route::get('/newsletter', [NewsletterController::class, 'index'])->name('newsletter.index');
+        Route::post('/newsletter/send', [NewsletterController::class, 'send'])->name('newsletter.send');
+        Route::delete('/newsletter/{subscriber}', [NewsletterController::class, 'destroy'])->name('newsletter.destroy');
     });
 });

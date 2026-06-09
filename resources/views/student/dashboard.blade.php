@@ -97,9 +97,5 @@
             </div>
         @endif
     </section>
-
-    <p class="text-center text-xs text-ink-400 mt-12">
-        <i class="fa-solid fa-flask text-brand-500"></i> Sprint 2 — Auth + estudiante listo · Próximo: rediseñar el frontend público
-    </p>
 </div>
 @endsection

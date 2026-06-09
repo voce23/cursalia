@@ -13,7 +13,7 @@ class HeaderSettingController extends Controller
 {
     public function index(): View
     {
-        $setting = HeaderSetting::query()->firstOrCreate(['id' => 1], [
+        $setting = HeaderSetting::query()->firstOrCreate([], [
             'category_button_text' => 'Categorías',
             'category_limit' => 6,
             'show_search' => true,
@@ -25,7 +25,7 @@ class HeaderSettingController extends Controller
 
     public function update(HeaderSettingUpdateRequest $request): RedirectResponse
     {
-        $setting = HeaderSetting::query()->firstOrCreate(['id' => 1], [
+        $setting = HeaderSetting::query()->firstOrCreate([], [
             'category_button_text' => 'Categorías',
             'category_limit' => 6,
             'show_search' => true,

@@ -22,24 +22,23 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'     => ['required', 'in:student,instructor'],
         ]);
 
-        $approveStatus = $request->role === 'student' ? 'approved' : 'pending';
-
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Campos de privilegio: asignación explícita (fuera de $fillable)
+        // En la versión gratuita todas las cuentas son estudiantes aprobados.
+        // El alta de instructores (multi-instructor) pertenece al plan profesional,
+        // y forzarlo aquí evita que un POST manipulado quede atrapado en "pending".
         $user->forceFill([
-            'role'           => $request->role,
-            'approve_status' => $approveStatus,
+            'role' => 'student',
+            'approve_status' => 'approved',
         ])->save();
 
         event(new Registered($user));
@@ -52,11 +51,6 @@ class RegisteredUserController extends Controller
             return redirect()->route('verification.notice');
         }
 
-        if ($user->role === 'student') {
-            return redirect()->intended('/student/dashboard');
-        }
-
-        // instructor recién registrado — pasa a esperar aprobación
-        return redirect()->intended('/instructor/pending');
+        return redirect()->intended('/student/dashboard');
     }
 }

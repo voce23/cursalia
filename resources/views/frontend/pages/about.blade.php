@@ -47,17 +47,14 @@
                 @endif
             </div>
 
-            {{-- Stickers flotantes --}}
-            <div class="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform rotate-6 hidden sm:block">
-                <p class="font-display font-extrabold text-2xl text-brand-600">12K+</p>
-                <p class="text-xs text-ink-500 leading-tight">estudiantes activos</p>
+            {{-- Stickers flotantes (temáticos, sin cifras inventadas) --}}
+            <div class="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform rotate-6 hidden sm:flex items-center gap-2.5">
+                <span class="grid place-items-center w-9 h-9 rounded-xl bg-brand-100 text-brand-600"><i class="fa-solid fa-graduation-cap"></i></span>
+                <p class="text-sm font-semibold text-ink-900 leading-tight">Aprende<br>a tu ritmo</p>
             </div>
-            <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform -rotate-6 hidden sm:flex items-center gap-2">
-                <p class="text-sun-500 text-lg">★★★★★</p>
-                <div class="leading-none">
-                    <p class="font-display font-extrabold text-lg text-ink-900">4.9</p>
-                    <p class="text-[10px] text-ink-500">satisfacción</p>
-                </div>
+            <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform -rotate-6 hidden sm:flex items-center gap-2.5">
+                <span class="grid place-items-center w-9 h-9 rounded-xl bg-sun-100 text-sun-500"><i class="fa-solid fa-certificate"></i></span>
+                <p class="text-sm font-semibold text-ink-900 leading-tight">Certificado<br>al terminar</p>
             </div>
         </div>
 
@@ -73,14 +70,19 @@
                 {!! Purifier::clean($about->content, 'richtext') !!}
             </div>
 
-            {{-- Lista de valores --}}
+            {{-- Lista de valores (editable desde el admin; si está vacía, usa estos por defecto) --}}
+            @php
+                $valueItems = collect(preg_split('/\r\n|\r|\n/', (string) ($about->about_values ?? '')))
+                    ->map(fn ($l) => trim($l))->filter()->values();
+                if ($valueItems->isEmpty()) {
+                    $valueItems = collect(['Aprender en comunidad', 'Práctica antes que teoría', 'Acceso para todos', 'Crecimiento sostenible']);
+                }
+                $valueIcons  = ['fa-people-arrows', 'fa-bullseye', 'fa-handshake', 'fa-leaf', 'fa-star', 'fa-rocket'];
+                $valueColors = ['brand', 'coral', 'sun', 'brand'];
+            @endphp
             <ul class="mt-7 grid sm:grid-cols-2 gap-3">
-                @foreach ([
-                    ['fa-people-arrows', 'brand', 'Aprender en comunidad'],
-                    ['fa-bullseye',      'coral', 'Práctica antes que teoría'],
-                    ['fa-handshake',     'sun',   'Acceso para todos'],
-                    ['fa-leaf',          'brand', 'Crecimiento sostenible'],
-                ] as [$ic, $c, $txt])
+                @foreach ($valueItems as $vi => $txt)
+                    @php $ic = $valueIcons[$vi % count($valueIcons)]; $c = $valueColors[$vi % count($valueColors)]; @endphp
                     <li class="flex items-center gap-3 bg-white border border-ink-200/70 rounded-2xl px-4 py-3 shadow-soft">
                         <span class="grid place-items-center w-9 h-9 rounded-xl
                             @if($c === 'brand') bg-brand-100 text-brand-600
@@ -155,7 +157,7 @@
     <div class="grid md:grid-cols-3 gap-5">
         @foreach ($testimonials->take(3) as $i => $t)
             <figure class="card-lift sr s{{ ($i % 3) + 1 }} {{ $cardBgs[$i % 3] }} rounded-3xl border border-ink-200/70 shadow-soft p-6 flex flex-col">
-                <p class="text-sun-500 text-lg mb-3">{{ str_repeat('★', max(1, (int) $t->rating)) }}</p>
+                <p class="text-lg mb-3"><span class="text-sun-500">{{ str_repeat('★', max(1, min(5, (int) $t->rating))) }}</span><span class="text-ink-200">{{ str_repeat('★', 5 - max(1, min(5, (int) $t->rating))) }}</span></p>
                 <blockquote class="text-ink-700 leading-relaxed flex-1 text-sm">"{{ $t->message }}"</blockquote>
                 <figcaption class="flex items-center gap-3 mt-5 pt-5 border-t border-ink-200/70">
                     @if ($t->avatar)

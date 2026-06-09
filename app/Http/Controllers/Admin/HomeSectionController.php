@@ -21,26 +21,26 @@ class HomeSectionController extends Controller
 {
     public function index(): View
     {
-        $hero = HeroSection::firstOrCreate(['id' => 1], [
+        $hero = HeroSection::firstOrCreate([], [
             'title' => 'Aprende las habilidades del',
             'highlight_text' => 'futuro',
         ]);
 
         $features = FeatureSection::query()->orderBy('sort_order')->get();
 
-        $featuredCategorySection = FeaturedCategorySection::firstOrCreate(['id' => 1], [
+        $featuredCategorySection = FeaturedCategorySection::firstOrCreate([], [
             'title' => 'Explora por Categoría',
             'subtitle' => 'Encuentra el curso perfecto para ti entre nuestras áreas de conocimiento',
             'limit_items' => 10,
         ]);
 
-        $latestCourseSection = LatestCourseSection::firstOrCreate(['id' => 1], [
+        $latestCourseSection = LatestCourseSection::firstOrCreate([], [
             'title' => 'Cursos Destacados',
             'subtitle' => 'Los más populares entre nuestros estudiantes',
             'limit_items' => 4,
         ]);
 
-        $aboutSection = AboutSection::firstOrCreate(['id' => 1], [
+        $aboutSection = AboutSection::firstOrCreate([], [
             'title' => 'Sobre Nuestra Plataforma',
             'subtitle' => 'Aprendizaje práctico con resultados reales',
             'content' => '<p>Somos una plataforma enfocada en cursos de alta calidad, con instructores expertos y contenido actualizado para tu crecimiento profesional.</p>',
@@ -59,7 +59,7 @@ class HomeSectionController extends Controller
 
     public function updateHero(HeroSectionUpdateRequest $request): RedirectResponse
     {
-        $hero = HeroSection::firstOrCreate(['id' => 1]);
+        $hero = HeroSection::firstOrCreate([]);
 
         $data = $request->only([
             'badge_text',
@@ -108,7 +108,7 @@ class HomeSectionController extends Controller
 
     public function updateFeaturedCategories(FeaturedCategorySectionUpdateRequest $request): RedirectResponse
     {
-        $section = FeaturedCategorySection::firstOrCreate(['id' => 1]);
+        $section = FeaturedCategorySection::firstOrCreate([]);
         $section->update($request->validated());
 
         flash()->success('Sección de categorías destacadas actualizada correctamente.');
@@ -118,7 +118,7 @@ class HomeSectionController extends Controller
 
     public function updateLatestCourses(LatestCourseSectionUpdateRequest $request): RedirectResponse
     {
-        $section = LatestCourseSection::firstOrCreate(['id' => 1]);
+        $section = LatestCourseSection::firstOrCreate([]);
         $section->update($request->validated());
 
         flash()->success('Sección de últimos cursos actualizada correctamente.');
@@ -128,12 +128,13 @@ class HomeSectionController extends Controller
 
     public function updateAbout(AboutSectionUpdateRequest $request): RedirectResponse
     {
-        $section = AboutSection::firstOrCreate(['id' => 1]);
+        $section = AboutSection::firstOrCreate([]);
 
         $data = $request->only([
             'title',
             'subtitle',
             'content',
+            'about_values',
             'button_text',
             'button_url',
         ]);

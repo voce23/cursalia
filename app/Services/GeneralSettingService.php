@@ -2,19 +2,20 @@
 
 namespace App\Services;
 
+use App\Models\CustomPage;
 use App\Models\Footer;
 use App\Models\FooterColumnOne;
 use App\Models\FooterColumnTwo;
 use App\Models\GeneralSetting;
-use App\Models\HeaderSetting;
 use App\Models\HeaderNavigationLink;
-use App\Models\CustomPage;
+use App\Models\HeaderSetting;
 use App\Models\SocialLink;
 use App\Models\TopBar;
+use App\View\Composers\BrandingComposer;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Collection;
 
 class GeneralSettingService
 {
@@ -67,6 +68,11 @@ class GeneralSettingService
         Cache::forget('site_footer_col_one');
         Cache::forget('site_footer_col_two');
         Cache::forget('site_custom_pages');
+
+        // El frontend Cursalia lee el branding desde BrandingComposer (clave
+        // 'branding.bundle', TTL 1h). Sin esto, los cambios de footer/redes/
+        // columnas tardarían hasta una hora en verse. Lo limpiamos también.
+        BrandingComposer::flushCache();
     }
 
     /**

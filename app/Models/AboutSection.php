@@ -10,6 +10,7 @@ class AboutSection extends Model
         'title',
         'subtitle',
         'content',
+        'about_values',
         'image',
         'button_text',
         'button_url',

@@ -90,6 +90,21 @@
 
     @include('partials.header')
 
+    {{-- Toast global para flashes 'status' (ej. suscripción al newsletter).
+         El layout público no renderiza toasts de php-flasher; 'status' no es
+         interceptado por flasher, así que lo mostramos aquí para todo el sitio. --}}
+    @if (session('status'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+             x-transition.opacity.duration.300ms
+             class="fixed top-24 right-4 z-[70] max-w-sm px-5 py-4 rounded-2xl bg-brand-50 border-2 border-brand-300 text-brand-800 shadow-lift flex items-start gap-3">
+            <i class="fa-solid fa-circle-check text-brand-500 text-xl mt-0.5"></i>
+            <p class="text-sm font-semibold flex-1">{{ session('status') }}</p>
+            <button @click="show = false" class="text-brand-400 hover:text-brand-600" aria-label="Cerrar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    @endif
+
     <main id="main" class="flex-1 pt-20">
         @yield('content')
     </main>

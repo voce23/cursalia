@@ -78,7 +78,10 @@
                         </ul>
                     </div>
                 @empty
-                    <div class="p-4 text-center text-xs text-ink-400 italic">Este curso aún no tiene contenido.</div>
+                    <div class="p-6 text-center">
+                        <i class="fa-regular fa-folder-open text-2xl text-ink-300"></i>
+                        <p class="text-xs text-ink-400 mt-2 italic">Este curso aún no tiene contenido.</p>
+                    </div>
                 @endforelse
             </div>
         </div>

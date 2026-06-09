@@ -64,7 +64,10 @@
                                             <i class="fa-solid fa-arrow-right text-[10px] text-ink-300"></i>
                                         </a>
                                     @empty
-                                        <p class="text-sm text-ink-500 px-3 py-2">Aún no hay categorías.</p>
+                                        <div class="px-3 py-6 text-center">
+                                            <i class="fa-regular fa-folder-open text-2xl text-ink-300"></i>
+                                            <p class="text-xs text-ink-400 mt-2">Aún no hay categorías.</p>
+                                        </div>
                                     @endforelse
                                 </div>
                                 <a href="{{ route('courses.index') }}" class="mt-2 inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-full bg-brand-600 text-white text-xs font-bold hover:bg-brand-700 transition">

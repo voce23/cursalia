@@ -12,14 +12,14 @@ class ContactSettingController extends Controller
 {
     public function index(): View
     {
-        $setting = ContactSetting::firstOrCreate(['id' => 1]);
+        $setting = ContactSetting::query()->firstOrCreate([]);
 
         return view('admin.contact-settings.index', compact('setting'));
     }
 
     public function update(ContactSettingUpdateRequest $request): RedirectResponse
     {
-        $setting = ContactSetting::firstOrCreate(['id' => 1]);
+        $setting = ContactSetting::query()->firstOrCreate([]);
         $setting->update($request->validated());
 
         flash()->success('Configuración de contacto actualizada correctamente.');

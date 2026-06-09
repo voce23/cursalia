@@ -582,7 +582,7 @@
     <div class="grid md:grid-cols-3 gap-5">
         @foreach ($testimonials->take(3) as $i => $t)
             <figure class="card-lift sr s{{ ($i % 3) + 1 }} {{ $cardBgs[$i % 3] }} rounded-3xl border border-ink-200/70 shadow-soft p-6 flex flex-col">
-                <p class="text-sun-500 text-lg mb-3">{{ str_repeat('★', max(1, (int) $t->rating)) }}</p>
+                <p class="text-lg mb-3"><span class="text-sun-500">{{ str_repeat('★', max(1, min(5, (int) $t->rating))) }}</span><span class="text-ink-200">{{ str_repeat('★', 5 - max(1, min(5, (int) $t->rating))) }}</span></p>
                 <blockquote class="text-ink-700 leading-relaxed flex-1 text-sm">"{{ $t->message }}"</blockquote>
                 <figcaption class="flex items-center gap-3 mt-5 pt-5 border-t border-ink-200/70">
                     @if ($t->avatar)

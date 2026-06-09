@@ -15,22 +15,32 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
-use App\Http\Controllers\Student\ProfileController as StudentProfileController;
-use App\Http\Controllers\Student\EnrolledCourseController as StudentEnrolledCourseController;
-use App\Http\Controllers\Student\CoursePlayerController as StudentCoursePlayerController;
-use App\Http\Controllers\Student\LessonCompletionController as StudentLessonCompletionController;
+use App\Http\Controllers\Frontend\BlogCommentController;
+use App\Http\Controllers\Frontend\BlogController;
+use App\Http\Controllers\Frontend\CoursePageController;
+use App\Http\Controllers\Frontend\FreeEnrollmentController;
+use App\Http\Controllers\Frontend\LegalPageController;
+use App\Http\Controllers\Frontend\NewsletterSubscribeController;
 use App\Http\Controllers\Frontend\QuizController as FrontendQuizController;
+use App\Http\Controllers\Frontend\ServiceController;
+use App\Http\Controllers\Frontend\SitePageController;
+use App\Http\Controllers\Frontend\TemplateMarketplaceController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Student\CoursePlayerController as StudentCoursePlayerController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\EnrolledCourseController as StudentEnrolledCourseController;
+use App\Http\Controllers\Student\LessonCompletionController as StudentLessonCompletionController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // ── Home Cursalia (frontal real con CMS) ─────────────────────────────────────
-Route::get('/', [\App\Http\Controllers\Frontend\CoursePageController::class, 'home'])->name('home');
+Route::get('/', [CoursePageController::class, 'home'])->name('home');
 
 // ── SEO: sitemap.xml dinámico (cacheado 1h, controller dedicado) ────────────
-Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // ── SEO: robots.txt dinámico con URL de sitemap ABSOLUTA ────────────────────
 //    (servido por Laravel para que el dominio se resuelva automáticamente
@@ -55,27 +65,27 @@ Route::get('/robots.txt', function () {
 })->name('robots');
 
 // ── Catálogo de cursos (Sprint 4) ────────────────────────────────────────────
-Route::get('/courses', [\App\Http\Controllers\Frontend\CoursePageController::class, 'index'])->name('courses.index');
-Route::get('/courses/{slug}', [\App\Http\Controllers\Frontend\CoursePageController::class, 'show'])->name('courses.show');
+Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
+Route::get('/courses/{slug}', [CoursePageController::class, 'show'])->name('courses.show');
 
 // Inscripción GRATUITA (solo cursos con price=0). Pagos = FASE 2.
-Route::post('/courses/{course:slug}/enroll-free', [\App\Http\Controllers\Frontend\FreeEnrollmentController::class, 'store'])
+Route::post('/courses/{course:slug}/enroll-free', [FreeEnrollmentController::class, 'store'])
     ->middleware(['auth', 'throttle:10,1'])
     ->name('courses.enroll-free');
 
 // ── Nosotros / Contacto (Sprint 5) ───────────────────────────────────────────
-Route::get('/about',   [\App\Http\Controllers\Frontend\SitePageController::class, 'about'])->name('about');
-Route::get('/contact', [\App\Http\Controllers\Frontend\SitePageController::class, 'contact'])->name('contact');
+Route::get('/about', [SitePageController::class, 'about'])->name('about');
+Route::get('/contact', [SitePageController::class, 'contact'])->name('contact');
 // E-E-A-T: página pública del autor del blog (clave para SEO).
-Route::get('/sobre-el-autor', [\App\Http\Controllers\Frontend\SitePageController::class, 'author'])->name('author');
-Route::post('/contact', [\App\Http\Controllers\Frontend\SitePageController::class, 'sendContact'])
+Route::get('/sobre-el-autor', [SitePageController::class, 'author'])->name('author');
+Route::post('/contact', [SitePageController::class, 'sendContact'])
     ->middleware('throttle:5,1')
     ->name('contact.send');
 
 // ── Blog (Sprint 5) ──────────────────────────────────────────────────────────
-Route::get('/blog', [\App\Http\Controllers\Frontend\BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{slug}', [\App\Http\Controllers\Frontend\BlogController::class, 'show'])->name('blog.show');
-Route::post('/blog/{blog}/comments', [\App\Http\Controllers\Frontend\BlogCommentController::class, 'store'])
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('blog.comments.store');
 
@@ -85,24 +95,24 @@ Route::get('/instructors/{username}', fn ($u) => view('soon', [
 ]))->name('instructors.show');
 
 // ── Servicios y Asesoría (Sprint 7.10) ──────────────────────────────────────
-Route::get('/services',  [\App\Http\Controllers\Frontend\ServiceController::class, 'index'])->name('services.index');
-Route::post('/services/request', [\App\Http\Controllers\Frontend\ServiceController::class, 'storeRequest'])
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+Route::post('/services/request', [ServiceController::class, 'storeRequest'])
     ->middleware('throttle:5,1')->name('services.request');
 
 // ── Marketplace de plantillas (Sprint 7.9) ──────────────────────────────────
-Route::get('/templates',  [\App\Http\Controllers\Frontend\TemplateMarketplaceController::class, 'index'])->name('templates.index');
-Route::get('/templates/{slug}', [\App\Http\Controllers\Frontend\TemplateMarketplaceController::class, 'show'])->name('templates.show');
-Route::post('/templates/{slug}/waitlist', [\App\Http\Controllers\Frontend\TemplateMarketplaceController::class, 'joinWaitlist'])
+Route::get('/templates', [TemplateMarketplaceController::class, 'index'])->name('templates.index');
+Route::get('/templates/{slug}', [TemplateMarketplaceController::class, 'show'])->name('templates.show');
+Route::post('/templates/{slug}/waitlist', [TemplateMarketplaceController::class, 'joinWaitlist'])
     ->middleware('throttle:6,1')->name('templates.waitlist');
-Route::post('/templates/{slug}/download', [\App\Http\Controllers\Frontend\TemplateMarketplaceController::class, 'download'])
+Route::post('/templates/{slug}/download', [TemplateMarketplaceController::class, 'download'])
     ->middleware('throttle:10,1')->name('templates.download');
 
 // ── Páginas legales (Cursalia) ───────────────────────────────────────────────
-Route::get('/legal/{slug}', [\App\Http\Controllers\Frontend\LegalPageController::class, 'show'])
+Route::get('/legal/{slug}', [LegalPageController::class, 'show'])
     ->where('slug', 'privacy|terms|data-deletion|refunds')
     ->name('legal');
 
-Route::post('/newsletter/subscribe', [\App\Http\Controllers\Frontend\NewsletterSubscribeController::class, 'store'])
+Route::post('/newsletter/subscribe', [NewsletterSubscribeController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('newsletter.subscribe');
 
@@ -135,11 +145,13 @@ Route::middleware('auth')->group(function () {
                 ? redirect()->intended('/instructor/dashboard')
                 : redirect('/instructor/pending');
         }
+
         return redirect()->intended('/student/dashboard');
     })->middleware('signed')->name('verification.verify');
 
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
+
         return back()->with('status', 'verification-link-sent');
     })->middleware('throttle:6,1')->name('verification.send');
 
@@ -155,10 +167,6 @@ Route::middleware(['auth', 'is.student'])
         Route::get('/profile', [StudentProfileController::class, 'index'])->name('profile');
         Route::post('/profile/update', [StudentProfileController::class, 'update'])->name('profile.update');
         Route::post('/profile/update-password', [StudentProfileController::class, 'updatePassword'])->name('profile.update-password');
-
-        // ── Hazte instructor (solicitud con documento) ───────────────────────
-        Route::get('/become-instructor', [StudentDashboardController::class, 'becomeInstructor'])->name('become-instructor');
-        Route::post('/become-instructor', [StudentDashboardController::class, 'becomeInstructorStore'])->name('become-instructor.store');
 
         // ── Mis cursos + reproductor + progreso (Cursalia FREE) ──────────────
         Route::get('/enrolled-courses', [StudentEnrolledCourseController::class, 'index'])->name('enrolled-courses.index');

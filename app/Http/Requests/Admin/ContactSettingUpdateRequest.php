@@ -20,6 +20,7 @@ class ContactSettingUpdateRequest extends FormRequest
             'form_subtitle' => ['nullable', 'string', 'max:255'],
             'receiver_email' => ['nullable', 'email', 'max:255'],
             'map_embed_url' => ['nullable', 'string', 'max:2000'],
+            'schedule' => ['nullable', 'string', 'max:2000'],
         ];
     }
 }

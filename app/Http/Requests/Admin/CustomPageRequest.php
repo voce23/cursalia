@@ -23,7 +23,7 @@ class CustomPageRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                'regex:/^[a-z0-9]+(?:[-\/][a-z0-9]+)*$/',
                 Rule::unique(CustomPage::class, 'slug')->ignore($customPage),
             ],
             'description' => ['required', 'string'],
@@ -37,7 +37,7 @@ class CustomPageRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'slug.regex' => 'La URL solo puede contener letras minúsculas, números y guiones.',
+            'slug.regex' => 'La URL solo puede contener minúsculas, números, guiones y barras (ej. legal/privacidad).',
         ];
     }
 }

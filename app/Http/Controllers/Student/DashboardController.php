@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
+use App\Models\Course;
 use App\Models\CourseReview;
 use App\Models\Enrollment;
 use App\Models\LessonCompletion;
 use App\Models\Order;
-use App\Notifications\NewInstructorRequestNotification;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -22,14 +18,11 @@ class DashboardController extends Controller
     {
         $uid = Auth::id();
 
-        $enrolledCourses = Cache::remember("student.{$uid}.enrolled_count", 300, fn () =>
-            Enrollment::query()->where('user_id', $uid)->where('have_access', true)->count()
+        $enrolledCourses = Cache::remember("student.{$uid}.enrolled_count", 300, fn () => Enrollment::query()->where('user_id', $uid)->where('have_access', true)->count()
         );
-        $totalReviews = Cache::remember("student.{$uid}.reviews_count", 300, fn () =>
-            CourseReview::query()->where('user_id', $uid)->count()
+        $totalReviews = Cache::remember("student.{$uid}.reviews_count", 300, fn () => CourseReview::query()->where('user_id', $uid)->count()
         );
-        $totalOrders = Cache::remember("student.{$uid}.orders_count", 300, fn () =>
-            Order::query()->where('buyer_id', $uid)->count()
+        $totalOrders = Cache::remember("student.{$uid}.orders_count", 300, fn () => Order::query()->where('buyer_id', $uid)->count()
         );
         $recentOrders = Order::query()
             ->where('buyer_id', $uid)
@@ -68,7 +61,7 @@ class DashboardController extends Controller
 
         $totalLessons = $allEnrolledCourseIds->isEmpty()
             ? 0
-            : \App\Models\Course::query()->whereIn('id', $allEnrolledCourseIds)->withCount('lessons')->get()->sum('lessons_count');
+            : Course::query()->whereIn('id', $allEnrolledCourseIds)->withCount('lessons')->get()->sum('lessons_count');
 
         $completedLessons = $allEnrolledCourseIds->isEmpty()
             ? 0
@@ -90,43 +83,5 @@ class DashboardController extends Controller
             'completedByCourse',
             'averageProgress',
         ));
-    }
-
-    public function becomeInstructor(): View
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        if ($user->instructor_request) {
-            abort(403);
-        }
-
-        return view('student.become-instructor');
-    }
-
-    public function becomeInstructorStore(Request $request): RedirectResponse
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        $request->validate([
-            'document' => ['required', 'file', 'mimes:pdf,doc,docx,jpg,png', 'max:12288'],
-        ]);
-
-        $path = $request->file('document')->store('documents', 'public');
-
-        // Campos de privilegio: asignación explícita (fuera de $fillable)
-        $user->forceFill([
-            'instructor_request' => true,
-            'approve_status'     => 'pending',
-            'document'           => $path,
-            'role'               => 'instructor',
-        ])->save();
-
-        // Notificar a todos los admins
-        Admin::all()->each(fn ($admin) => $admin->notify(new NewInstructorRequestNotification($user)));
-
-        return redirect()->route('student.dashboard')
-            ->with('success', 'Tu solicitud fue enviada correctamente. Te notificaremos por email.');
     }
 }

@@ -48,6 +48,14 @@
                             ['admin.blog-categories.index',  'fa-tags',       'Categorías blog',   false],
                             ['admin.blog-comments.index',    'fa-comments',   'Comentarios',       false],
                             ['admin.messages.index',         'fa-envelope',   'Mensajes',          false],
+                            ['admin.contact-settings.index', 'fa-address-book', 'Página de contacto', false],
+                            ['admin.newsletter.index',       'fa-paper-plane', 'Newsletter',         false],
+                        ],
+                        'Páginas del sitio' => [
+                            ['admin.home-sections.index', 'fa-house-chimney', 'Inicio',      false],
+                            ['admin.testimonials.index', 'fa-quote-left',  'Testimonios', false],
+                            ['admin.counter.index',      'fa-chart-simple', 'Cifras',      false],
+                            ['admin.brands.index',       'fa-building',     'Marcas',      false],
                         ],
                         'Marketplace' => [
                             ['admin.templates.index',    'fa-boxes-stacked',    'Plantillas',          false],
@@ -59,6 +67,9 @@
                             ['admin.profile',         'fa-user-gear',    'Mi perfil',     false],
                             ['admin.appearance.edit', 'fa-paint-roller', 'Apariencia',    false],
                             ['admin.navigation.edit', 'fa-bars',         'Navegación',    false],
+                            ['admin.header-settings.index', 'fa-window-maximize', 'Cabecera', false],
+                            ['admin.footer.index',    'fa-grip-lines',   'Pie de página', false],
+                            ['admin.custom-pages.index', 'fa-file-lines', 'Páginas',      false],
                         ],
                     ];
                 @endphp

@@ -23,12 +23,12 @@ class NewsletterController extends Controller
     {
         $request->validate([
             'subject' => ['required', 'string', 'max:255'],
-            'body'    => ['required', 'string', 'min:10'],
+            'body' => ['required', 'string', 'min:10'],
         ]);
 
         SendNewsletterJob::dispatch($request->subject, $request->body);
 
-        notyf()->success('El newsletter se está enviando en segundo plano.');
+        flash()->success('El newsletter se está enviando en segundo plano.');
 
         return back();
     }
@@ -37,7 +37,7 @@ class NewsletterController extends Controller
     {
         $subscriber->delete();
 
-        notyf()->success('Suscriptor eliminado.');
+        flash()->success('Suscriptor eliminado.');
 
         return back();
     }

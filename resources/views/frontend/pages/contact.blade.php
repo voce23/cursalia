@@ -180,10 +180,25 @@
                     </div>
                 </div>
                 <hr class="my-4 border-ink-200/70">
+                @php
+                    $scheduleRows = collect(preg_split('/\r\n|\r|\n/', (string) ($contactSetting?->schedule ?? '')))
+                        ->map(fn ($l) => trim($l))->filter()
+                        ->map(function ($l) {
+                            $p = explode('|', $l, 2);
+                            return ['label' => trim($p[0]), 'value' => trim($p[1] ?? '')];
+                        });
+                    if ($scheduleRows->isEmpty()) {
+                        $scheduleRows = collect([
+                            ['label' => 'Lun – Vie', 'value' => '9:00 – 18:00'],
+                            ['label' => 'Sábado',    'value' => '10:00 – 14:00'],
+                            ['label' => 'Domingo',   'value' => 'cerrado'],
+                        ]);
+                    }
+                @endphp
                 <ul class="text-sm space-y-2">
-                    <li class="flex items-center justify-between text-ink-700"><span>Lun – Vie</span><span class="font-semibold">9:00 – 18:00</span></li>
-                    <li class="flex items-center justify-between text-ink-700"><span>Sábado</span><span class="font-semibold">10:00 – 14:00</span></li>
-                    <li class="flex items-center justify-between text-ink-400"><span>Domingo</span><span class="font-semibold">cerrado</span></li>
+                    @foreach ($scheduleRows as $row)
+                        <li class="flex items-center justify-between text-ink-700"><span>{{ $row['label'] }}</span><span class="font-semibold">{{ $row['value'] }}</span></li>
+                    @endforeach
                 </ul>
             </div>
         </aside>
