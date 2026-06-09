@@ -156,6 +156,10 @@ Route::middleware(['auth', 'is.student'])
         Route::post('/profile/update', [StudentProfileController::class, 'update'])->name('profile.update');
         Route::post('/profile/update-password', [StudentProfileController::class, 'updatePassword'])->name('profile.update-password');
 
+        // ── Hazte instructor (solicitud con documento) ───────────────────────
+        Route::get('/become-instructor', [StudentDashboardController::class, 'becomeInstructor'])->name('become-instructor');
+        Route::post('/become-instructor', [StudentDashboardController::class, 'becomeInstructorStore'])->name('become-instructor.store');
+
         // ── Mis cursos + reproductor + progreso (Cursalia FREE) ──────────────
         Route::get('/enrolled-courses', [StudentEnrolledCourseController::class, 'index'])->name('enrolled-courses.index');
 

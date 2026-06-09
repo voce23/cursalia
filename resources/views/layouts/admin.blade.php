@@ -40,7 +40,7 @@
                         ],
                         'Aprendizaje' => [
                             ['admin.course-categories.index', 'fa-folder-tree', 'Categorías', false],
-                            ['#', 'fa-book-open', 'Cursos',      true],
+                            ['admin.courses.index', 'fa-book-open', 'Cursos',      false],
                             ['#', 'fa-list',     'Lecciones',    true],
                             ['admin.quizzes.index', 'fa-circle-question', 'Autoevaluaciones', false],
                         ],

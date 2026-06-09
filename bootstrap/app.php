@@ -67,7 +67,18 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->view('errors.404', [], 404);
         });
 
-        $exceptions->render(function (AuthorizationException|AuthenticationException $e, $request) {
+        // Invitado (no autenticado): enviarlo a iniciar sesión, no a un 403.
+        $exceptions->render(function (AuthenticationException $e, $request) {
+            if ($request->expectsJson()) {
+                return null;
+            }
+
+            return redirect()->guest(route('login'))
+                ->with('error', 'Inicia sesión para continuar.');
+        });
+
+        // Autenticado sin permiso: 403.
+        $exceptions->render(function (AuthorizationException $e, $request) {
             if ($request->expectsJson()) {
                 return null;
             }

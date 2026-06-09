@@ -3,145 +3,169 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Instructor\ChapterStoreRequest;
-use App\Http\Requests\Instructor\LessonStoreRequest;
 use App\Models\Course;
 use App\Models\CourseChapter;
 use App\Models\CourseChapterLesson;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CourseContentController extends Controller
 {
+    /** Constructor de contenido: capítulos + lecciones del curso. */
     public function index(Course $course): View
     {
-        $course->load('chapters.lessons');
+        $course->load([
+            'chapters' => fn ($q) => $q->orderBy('order')->orderBy('id'),
+            'chapters.lessons' => fn ($q) => $q->orderBy('order')->orderBy('id'),
+        ]);
 
         return view('admin.course.content', compact('course'));
     }
 
-    public function storeChapter(ChapterStoreRequest $request, Course $course): JsonResponse
-    {
-        $order = $course->chapters()->count() + 1;
+    // ── Capítulos ──────────────────────────────────────────────────────────
 
-        $chapter = CourseChapter::create([
-            'course_id'     => $course->id,
+    public function storeChapter(Request $request, Course $course): RedirectResponse
+    {
+        $data = $request->validate(['title' => ['required', 'string', 'max:255']]);
+
+        $course->chapters()->create([
             'instructor_id' => $course->instructor_id,
-            'title'         => $request->title,
-            'order'         => $order,
+            'title'         => $data['title'],
+            'order'         => ($course->chapters()->max('order') ?? 0) + 1,
+            'status'        => true,
         ]);
 
-        return response()->json([
-            'message' => 'Capítulo creado correctamente.',
-            'chapter' => $chapter,
-        ]);
+        return back()->with('success', 'Capítulo añadido.');
     }
 
-    public function updateChapter(ChapterStoreRequest $request, CourseChapter $chapter): JsonResponse
+    public function updateChapter(Request $request, CourseChapter $chapter): RedirectResponse
     {
-        $chapter->update(['title' => $request->title]);
+        $data = $request->validate(['title' => ['required', 'string', 'max:255']]);
+        $chapter->update($data);
 
-        return response()->json([
-            'message' => 'Capítulo actualizado correctamente.',
-            'chapter' => $chapter,
-        ]);
+        return back()->with('success', 'Capítulo actualizado.');
     }
 
-    public function destroyChapter(CourseChapter $chapter): JsonResponse
+    public function destroyChapter(CourseChapter $chapter): RedirectResponse
     {
+        $chapter->lessons()->each(function ($lesson) {
+            if ($lesson->storage === 'upload' && $lesson->file_path) {
+                Storage::disk('public')->delete($lesson->file_path);
+            }
+            $lesson->delete();
+        });
         $chapter->delete();
 
-        return response()->json(['message' => 'Capítulo eliminado correctamente.']);
+        return back()->with('success', 'Capítulo eliminado.');
     }
 
-    /* ─── Lecciones ─── */
-
-    public function storeLesson(LessonStoreRequest $request, CourseChapter $chapter): JsonResponse
+    public function moveChapter(CourseChapter $chapter, string $direction): RedirectResponse
     {
-        $order = $chapter->lessons()->count() + 1;
+        $this->swapOrder(CourseChapter::where('course_id', $chapter->course_id), $chapter, $direction);
 
-        $lesson = CourseChapterLesson::create([
-            'title'         => $request->title,
-            'slug'          => Str::slug($request->title) . '-' . Str::random(5),
-            'description'   => $request->description,
-            'instructor_id' => $chapter->instructor_id,
+        return back();
+    }
+
+    // ── Lecciones ──────────────────────────────────────────────────────────
+
+    public function storeLesson(Request $request, CourseChapter $chapter): RedirectResponse
+    {
+        $data = $this->validatedLesson($request);
+        $data['file_path'] = $this->resolveFilePath($request, $data);
+
+        $chapter->lessons()->create($data + [
             'course_id'     => $chapter->course_id,
-            'chapter_id'    => $chapter->id,
-            'file_path'     => $request->file_path,
-            'storage'       => $request->storage,
-            'duration'      => $request->duration,
-            'file_type'     => $request->file_type,
-            'downloadable'  => $request->boolean('downloadable'),
-            'is_preview'    => $request->boolean('is_preview'),
-            'order'         => $order,
+            'instructor_id' => $chapter->instructor_id,
+            'slug'          => Str::slug($data['title']).'-'.Str::random(5),
+            'order'         => ($chapter->lessons()->max('order') ?? 0) + 1,
+            'status'        => true,
         ]);
 
-        return response()->json([
-            'message' => 'Lección creada correctamente.',
-            'lesson'  => $lesson,
-        ]);
+        return back()->with('success', 'Lección añadida.');
     }
 
-    public function updateLesson(LessonStoreRequest $request, CourseChapterLesson $lesson): JsonResponse
+    public function updateLesson(Request $request, CourseChapterLesson $lesson): RedirectResponse
     {
-        $lesson->update([
-            'title'        => $request->title,
-            'slug'         => Str::slug($request->title) . '-' . Str::random(5),
-            'description'  => $request->description,
-            'file_path'    => $request->file_path,
-            'storage'      => $request->storage,
-            'duration'     => $request->duration,
-            'file_type'    => $request->file_type,
-            'downloadable' => $request->boolean('downloadable'),
-            'is_preview'   => $request->boolean('is_preview'),
-        ]);
+        $data = $this->validatedLesson($request);
 
-        return response()->json([
-            'message' => 'Lección actualizada correctamente.',
-            'lesson'  => $lesson,
-        ]);
+        $newPath = $this->resolveFilePath($request, $data);
+        if ($newPath !== null) {
+            if ($lesson->storage === 'upload' && $lesson->file_path && $lesson->file_path !== $newPath) {
+                Storage::disk('public')->delete($lesson->file_path);
+            }
+            $data['file_path'] = $newPath;
+        } else {
+            unset($data['file_path']);
+        }
+
+        $lesson->update($data);
+
+        return back()->with('success', 'Lección actualizada.');
     }
 
-    public function destroyLesson(CourseChapterLesson $lesson): JsonResponse
+    public function destroyLesson(CourseChapterLesson $lesson): RedirectResponse
     {
+        if ($lesson->storage === 'upload' && $lesson->file_path) {
+            Storage::disk('public')->delete($lesson->file_path);
+        }
         $lesson->delete();
 
-        return response()->json(['message' => 'Lección eliminada correctamente.']);
+        return back()->with('success', 'Lección eliminada.');
     }
 
-    /* ─── Ordenamiento ─── */
-
-    public function sortLessons(Request $request, CourseChapter $chapter): JsonResponse
+    public function moveLesson(CourseChapterLesson $lesson, string $direction): RedirectResponse
     {
-        $request->validate([
-            'ids'   => ['required', 'array'],
-            'ids.*' => ['integer'],
-        ]);
+        $this->swapOrder(CourseChapterLesson::where('chapter_id', $lesson->chapter_id), $lesson, $direction);
 
-        foreach ($request->ids as $index => $id) {
-            CourseChapterLesson::where('id', $id)
-                ->where('chapter_id', $chapter->id)
-                ->update(['order' => $index + 1]);
-        }
-
-        return response()->json(['message' => 'Orden actualizado.']);
+        return back();
     }
 
-    public function sortChapters(Request $request, Course $course): JsonResponse
+    // ──────────────────────────────────────────────────────────────────────
+
+    private function validatedLesson(Request $request): array
     {
-        $request->validate([
-            'ids'   => ['required', 'array'],
-            'ids.*' => ['integer'],
+        $data = $request->validate([
+            'title'        => ['required', 'string', 'max:255'],
+            'storage'      => ['required', 'in:upload,youtube,vimeo,external_link'],
+            'file_type'    => ['required', 'in:video,audio,doc,pdf,file'],
+            'file_path'    => ['nullable', 'string', 'max:2000'],
+            'file'         => ['nullable', 'file', 'max:204800'],   // 200 MB
+            'duration'     => ['nullable', 'string', 'max:20'],
+            'description'  => ['nullable', 'string'],
         ]);
 
-        foreach ($request->ids as $index => $id) {
-            CourseChapter::where('id', $id)
-                ->where('course_id', $course->id)
-                ->update(['order' => $index + 1]);
+        $data['is_preview']   = $request->boolean('is_preview');
+        $data['downloadable'] = $request->boolean('downloadable');
+        unset($data['file']);
+
+        return $data;
+    }
+
+    /** file_path: sube el archivo si storage=upload (y hay archivo), o usa la URL. */
+    private function resolveFilePath(Request $request, array $data): ?string
+    {
+        if ($data['storage'] === 'upload') {
+            return $request->hasFile('file')
+                ? $request->file('file')->store('lessons', 'public')
+                : null;
         }
 
-        return response()->json(['message' => 'Orden de capítulos actualizado.']);
+        return $request->input('file_path');
+    }
+
+    private function swapOrder($query, $model, string $direction): void
+    {
+        $neighbor = $direction === 'up'
+            ? (clone $query)->where('order', '<', $model->order)->orderByDesc('order')->first()
+            : (clone $query)->where('order', '>', $model->order)->orderBy('order')->first();
+
+        if ($neighbor) {
+            $tmp = $model->order;
+            $model->update(['order' => $neighbor->order]);
+            $neighbor->update(['order' => $tmp]);
+        }
     }
 }

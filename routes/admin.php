@@ -38,6 +38,27 @@ Route::prefix('admin')->as('admin.')->group(function () {
         // CRUD demo: Categorías de curso (patrón para los otros CRUDs)
         Route::resource('course-categories', CourseCategoryController::class)->except(['show']);
 
+        // ── Cursos (constructor del admin) ────────────────────────────────────
+        Route::get('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('courses.index');
+        Route::get('/courses/create', [\App\Http\Controllers\Admin\CourseController::class, 'create'])->name('courses.create');
+        Route::post('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('courses.store');
+        Route::get('/courses/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'show'])->name('courses.show');
+        Route::get('/courses/{course}/edit', [\App\Http\Controllers\Admin\CourseController::class, 'edit'])->name('courses.edit');
+        Route::put('/courses/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('courses.update');
+        Route::patch('/courses/{course}/approval', [\App\Http\Controllers\Admin\CourseController::class, 'updateApproval'])->name('courses.approval');
+        Route::delete('/courses/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('courses.destroy');
+
+        // ── Constructor de contenido (capítulos + lecciones) ──────────────────
+        Route::get('/courses/{course}/content', [\App\Http\Controllers\Admin\CourseContentController::class, 'index'])->name('courses.content');
+        Route::post('/courses/{course}/chapters', [\App\Http\Controllers\Admin\CourseContentController::class, 'storeChapter'])->name('chapters.store');
+        Route::put('/chapters/{chapter}', [\App\Http\Controllers\Admin\CourseContentController::class, 'updateChapter'])->name('chapters.update');
+        Route::delete('/chapters/{chapter}', [\App\Http\Controllers\Admin\CourseContentController::class, 'destroyChapter'])->name('chapters.destroy');
+        Route::post('/chapters/{chapter}/move/{direction}', [\App\Http\Controllers\Admin\CourseContentController::class, 'moveChapter'])->name('chapters.move');
+        Route::post('/chapters/{chapter}/lessons', [\App\Http\Controllers\Admin\CourseContentController::class, 'storeLesson'])->name('lessons.store');
+        Route::put('/lessons/{lesson}', [\App\Http\Controllers\Admin\CourseContentController::class, 'updateLesson'])->name('lessons.update');
+        Route::delete('/lessons/{lesson}', [\App\Http\Controllers\Admin\CourseContentController::class, 'destroyLesson'])->name('lessons.destroy');
+        Route::post('/lessons/{lesson}/move/{direction}', [\App\Http\Controllers\Admin\CourseContentController::class, 'moveLesson'])->name('lessons.move');
+
         // ── Apariencia (white-label) ──────────────────────────────────────────
         Route::get('/appearance', [\App\Http\Controllers\Admin\AppearanceController::class, 'edit'])->name('appearance.edit');
         Route::post('/appearance', [\App\Http\Controllers\Admin\AppearanceController::class, 'update'])->name('appearance.update');

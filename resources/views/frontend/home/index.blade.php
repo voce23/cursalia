@@ -20,7 +20,7 @@
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-100 text-brand-700 font-bold text-[10px]">
                 <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Nuevo
             </span>
-            <span class="text-ink-700">{{ $hero?->badge_text ?: 'Gratis y de código abierto' }}</span>
+            <span class="text-ink-700">{{ $hero?->badge_text ?: 'Aprende a tu ritmo' }}</span>
         </div>
 
         {{-- Titular --}}
@@ -69,17 +69,17 @@
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                 </span>
                 <div class="text-left">
-                    <p class="text-xs font-bold text-ink-900 leading-tight">Sin saber<br>programar</p>
+                    <p class="text-xs font-bold text-ink-900 leading-tight">A tu ritmo<br>cuando quieras</p>
                 </div>
             </div>
-            {{-- Sticker panel editable (abajo-derecha, lejos del titular) --}}
+            {{-- Sticker certificado (abajo-derecha, lejos del titular) --}}
             <div class="sr s4 absolute bottom-10 right-0 transform rotate-[5deg] bg-white border border-ink-200/70 rounded-2xl shadow-lift px-4 py-3 flex items-center gap-3 max-w-[210px] pointer-events-none">
                 <span class="grid place-items-center w-10 h-10 rounded-2xl bg-coral-100 text-coral-500 shrink-0">
-                    <i class="fa-solid fa-sliders"></i>
+                    <i class="fa-solid fa-award"></i>
                 </span>
                 <div class="text-left">
-                    <p class="text-[11px] font-bold text-ink-900 leading-tight">Panel editable</p>
-                    <p class="text-[10px] text-ink-500">colores, logo, textos</p>
+                    <p class="text-[11px] font-bold text-ink-900 leading-tight">Certificado</p>
+                    <p class="text-[10px] text-ink-500">al completar el curso</p>
                 </div>
             </div>
         </div>
@@ -88,9 +88,9 @@
         <div class="sr s4 grid grid-cols-3 gap-4 sm:gap-8 mt-14 max-w-md mx-auto">
             @php
                 $stats = [
-                    ['Gratis',   'Sin mensualidades'],
-                    ['Tuyo',     'Tu marca, tu dominio'],
-                    ['Español',  'Soporte y docs'],
+                    ['A tu ritmo',  'Sin horarios'],
+                    ['Mentores',    'Con experiencia'],
+                    ['Certificado', 'Al terminar'],
                 ];
             @endphp
             @foreach ($stats as [$n, $lbl])
@@ -260,32 +260,32 @@
                     @endif
                 </div>
 
-                {{-- Sticker gratis (esquina inferior izquierda) --}}
+                {{-- Sticker proyectos (esquina inferior izquierda) --}}
                 <div class="absolute -left-1 sm:-left-3 bottom-2 sm:-bottom-3 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform -rotate-3">
-                    <p class="font-display font-extrabold text-2xl sm:text-3xl text-brand-600 leading-none">0€</p>
-                    <p class="text-xs text-ink-500 leading-tight mt-1">mensualidades</p>
+                    <p class="font-display font-extrabold text-2xl sm:text-3xl text-brand-600 leading-none"><i class="fa-solid fa-laptop-code"></i></p>
+                    <p class="text-xs text-ink-500 leading-tight mt-1">Proyectos reales</p>
                 </div>
 
-                {{-- Sticker open source (esquina superior derecha) --}}
+                {{-- Sticker mentores (esquina superior derecha) --}}
                 <div class="absolute -right-1 sm:-right-3 top-2 sm:-top-3 bg-white rounded-2xl shadow-lift px-4 py-3 border border-ink-200/70 transform rotate-6">
-                    <span class="text-brand-500 text-sm leading-none"><i class="fa-brands fa-osi"></i></span>
-                    <p class="font-display font-extrabold text-base sm:text-lg text-ink-900 leading-none mt-1">Open<span class="text-sm text-ink-400"> source</span></p>
+                    <span class="text-brand-500 text-sm leading-none"><i class="fa-solid fa-chalkboard-user"></i></span>
+                    <p class="font-display font-extrabold text-base sm:text-lg text-ink-900 leading-none mt-1">Mentores<span class="text-sm text-ink-400"> reales</span></p>
                 </div>
 
-                {{-- Sticker tu marca (esquina superior izquierda) --}}
+                {{-- Sticker a tu ritmo (esquina superior izquierda) --}}
                 <div class="hidden sm:flex absolute -left-3 top-6 bg-white rounded-2xl shadow-lift px-3 py-2.5 border border-ink-200/70 items-center gap-2 transform rotate-3">
                     <span class="grid place-items-center w-8 h-8 rounded-xl bg-brand-100 text-brand-600">
-                        <i class="fa-solid fa-palette text-sm"></i>
+                        <i class="fa-solid fa-clock text-sm"></i>
                     </span>
-                    <p class="text-xs font-bold text-ink-900 leading-tight">Tu marca<br><span class="text-[10px] text-ink-500 font-normal">tu dominio</span></p>
+                    <p class="text-xs font-bold text-ink-900 leading-tight">A tu ritmo<br><span class="text-[10px] text-ink-500 font-normal">sin horarios</span></p>
                 </div>
 
-                {{-- Sticker español (esquina inferior derecha) --}}
+                {{-- Sticker comunidad (esquina inferior derecha) --}}
                 <div class="hidden sm:flex absolute -right-3 bottom-6 bg-white rounded-2xl shadow-lift px-3 py-2.5 border border-ink-200/70 items-center gap-2 transform -rotate-3">
                     <span class="grid place-items-center w-8 h-8 rounded-xl bg-coral-100 text-coral-500">
-                        <i class="fa-solid fa-language text-sm"></i>
+                        <i class="fa-solid fa-users text-sm"></i>
                     </span>
-                    <p class="text-xs font-bold text-ink-900 leading-tight">En español<br><span class="text-[10px] text-ink-500 font-normal">de verdad</span></p>
+                    <p class="text-xs font-bold text-ink-900 leading-tight">Comunidad<br><span class="text-[10px] text-ink-500 font-normal">de estudiantes</span></p>
                 </div>
             </div>
         </div>
@@ -486,7 +486,7 @@
         Conocenos en 2 minutos
     </span>
     <h2 class="sr s1 font-display font-extrabold text-3xl sm:text-4xl tracking-tight mt-5 text-ink-900">
-        Así se aprende en Cursalia
+        Así se aprende con nosotros
     </h2>
     <p class="sr s2 text-ink-500 mt-4 max-w-xl mx-auto">
         Una mirada rápida a cómo nuestros estudiantes avanzan, desde la primera lección hasta el proyecto final.

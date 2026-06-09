@@ -113,7 +113,7 @@ class CourseController extends Controller
 
         $slug = $this->uniqueSlug($request->title);
 
-        Course::create([
+        $course = Course::create([
             'instructor_id'      => $request->instructor_id,
             'category_id'        => $request->category_id,
             'course_level_id'    => $request->course_level_id,
@@ -133,9 +133,9 @@ class CourseController extends Controller
             'is_approved'        => 'approved',
         ]);
 
-        flash()->success('Curso creado correctamente.');
+        flash()->success('Curso creado. Ahora añade sus capítulos y lecciones.');
 
-        return to_route('admin.courses.index');
+        return to_route('admin.courses.content', $course);
     }
 
     public function edit(Course $course): View
@@ -191,6 +191,19 @@ class CourseController extends Controller
         $course->update($data);
 
         flash()->success('Curso actualizado correctamente.');
+
+        return to_route('admin.courses.index');
+    }
+
+    public function destroy(Course $course): RedirectResponse
+    {
+        if ($course->thumbnail) {
+            Storage::disk('public')->delete($course->thumbnail);
+        }
+
+        $course->delete();
+
+        flash()->success('Curso eliminado correctamente.');
 
         return to_route('admin.courses.index');
     }
