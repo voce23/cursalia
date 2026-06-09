@@ -603,32 +603,6 @@
 </section>
 @endif
 
-{{-- ═══════════════════════════════════════════════════════════════════════
-     CTA INSTRUCTOR — banner oscuro final
-     ═══════════════════════════════════════════════════════════════════════ --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-8">
-    <div class="sr relative overflow-hidden rounded-[2.5rem] bg-ink-950 text-white px-6 sm:px-12 py-12 shadow-lift">
-        <div class="blob bg-coral-500/30 w-72 h-72 -top-20 -right-10"></div>
-        <div class="blob bg-brand-600/30 w-72 h-72 -bottom-20 -left-10"></div>
-
-        <div class="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div>
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold text-coral-300">
-                    <i class="fa-solid fa-chalkboard-user"></i> Comparte lo que sabes
-                </span>
-                <h2 class="font-display font-extrabold text-2xl sm:text-3xl tracking-tight mt-4">
-                    {{ $homeMiscSection?->instructor_banner_title ?: '¿Quieres ser instructor?' }}
-                </h2>
-                <p class="text-white/70 mt-3 max-w-lg">
-                    {{ $homeMiscSection?->instructor_banner_subtitle ?: 'Crea tu curso, llega a miles de estudiantes y genera ingresos haciendo lo que te apasiona. Te acompañamos en cada paso.' }}
-                </p>
-            </div>
-            <a href="{{ $homeMiscSection?->instructor_banner_button_url ?: route('register') }}" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold bg-brand-500 text-white hover:bg-brand-400 shadow-soft transition whitespace-nowrap">
-                {{ $homeMiscSection?->instructor_banner_button_text ?: 'Empieza a enseñar' }}
-                <i class="fa-solid fa-arrow-right text-xs"></i>
-            </a>
-        </div>
-    </div>
-</section>
+{{-- (Sección "¿Quieres ser instructor?" retirada en FREE: el multi-instructor es parte PRO.) --}}
 
 @endsection

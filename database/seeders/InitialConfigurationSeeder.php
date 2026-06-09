@@ -71,7 +71,6 @@ class InitialConfigurationSeeder extends Seeder
             ['title' => 'Blog', 'url' => '/blog', 'sort_order' => 3],
             ['title' => 'Nosotros', 'url' => '/about', 'sort_order' => 4],
             ['title' => 'Contacto', 'url' => '/contact', 'sort_order' => 5],
-            ['title' => 'Ser Instructor', 'url' => '/student/become-instructor', 'sort_order' => 6],
         ] as $item) {
             HeaderNavigationLink::updateOrCreate(
                 ['title' => $item['title']],
@@ -82,7 +81,6 @@ class InitialConfigurationSeeder extends Seeder
         foreach ([
             ['title' => 'Sobre Nosotros', 'url' => '/about', 'sort_order' => 1],
             ['title' => 'Todos los Cursos', 'url' => '/courses', 'sort_order' => 2],
-            ['title' => 'Ser Instructor', 'url' => '/student/become-instructor', 'sort_order' => 3],
             ['title' => 'Blog', 'url' => '/blog', 'sort_order' => 4],
         ] as $item) {
             FooterColumnOne::updateOrCreate(

@@ -73,18 +73,33 @@
                 <p class="text-sm text-ink-500 mt-1">Te responderemos a tu correo en menos de un día hábil.</p>
             @endif
 
-            {{-- Mensajes (php-flasher renderiza solo desde su layout, así que usamos session estándar) --}}
-            @if (session('success'))
-                <div class="mt-5 px-4 py-3 rounded-2xl bg-brand-50 border border-brand-200 text-brand-700 text-sm flex items-start gap-2">
-                    <i class="fa-solid fa-circle-check mt-0.5"></i>
-                    <span>{{ session('success') }}</span>
+            {{-- Mensajes de confirmación / error.
+                 Clave propia 'contact_sent' (no 'success'): php-flasher intercepta
+                 success/error como toasts y este layout no los renderiza. --}}
+            @if (session('contact_sent'))
+                <div id="contact-alert" class="mt-5 px-5 py-4 rounded-2xl bg-brand-50 border-2 border-brand-300 text-brand-800 flex items-start gap-3 shadow-soft">
+                    <i class="fa-solid fa-circle-check text-brand-500 text-xl mt-0.5"></i>
+                    <div>
+                        <p class="font-bold">¡Mensaje enviado correctamente! ✅</p>
+                        <p class="text-sm text-brand-700/90 mt-0.5">¡Gracias! Tu mensaje fue enviado, te responderemos muy pronto.</p>
+                    </div>
                 </div>
             @endif
             @if ($errors->any())
-                <div class="mt-5 px-4 py-3 rounded-2xl bg-coral-50 border border-coral-200 text-coral-700 text-sm">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                    Revisa los campos del formulario.
+                <div id="contact-alert" class="mt-5 px-5 py-4 rounded-2xl bg-coral-50 border-2 border-coral-300 text-coral-800 flex items-start gap-3 shadow-soft">
+                    <i class="fa-solid fa-circle-exclamation text-coral-500 text-xl mt-0.5"></i>
+                    <div>
+                        <p class="font-bold">Revisa el formulario</p>
+                        <p class="text-sm text-coral-700/90 mt-0.5">Faltan datos o hay algún campo incorrecto. Corrígelo e inténtalo de nuevo.</p>
+                    </div>
                 </div>
+            @endif
+            @if (session('contact_sent') || $errors->any())
+                <script>
+                    window.addEventListener('DOMContentLoaded', () => {
+                        document.getElementById('contact-alert')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                </script>
             @endif
 
             <form method="POST" action="{{ route('contact.send') }}" class="mt-6 space-y-5">

@@ -131,6 +131,7 @@ class CourseController extends Controller
             'certificate'        => $request->boolean('certificate'),
             'qna'                => $request->boolean('qna'),
             'is_approved'        => 'approved',
+            'status'             => $request->input('status', 'active'),
         ]);
 
         flash()->success('Curso creado. Ahora añade sus capítulos y lecciones.');
@@ -174,6 +175,7 @@ class CourseController extends Controller
             'duration'           => $request->duration,
             'certificate'        => $request->boolean('certificate'),
             'qna'                => $request->boolean('qna'),
+            'status'             => $request->input('status', $course->status ?? 'active'),
         ];
 
         if ($request->hasFile('thumbnail')) {

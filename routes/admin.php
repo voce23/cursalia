@@ -59,6 +59,12 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::delete('/lessons/{lesson}', [\App\Http\Controllers\Admin\CourseContentController::class, 'destroyLesson'])->name('lessons.destroy');
         Route::post('/lessons/{lesson}/move/{direction}', [\App\Http\Controllers\Admin\CourseContentController::class, 'moveLesson'])->name('lessons.move');
 
+        // ── Mensajes de contacto ──────────────────────────────────────────────
+        Route::get('/messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/{message}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])->name('messages.show');
+        Route::post('/messages/{message}/toggle-read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'toggleRead'])->name('messages.toggle');
+        Route::delete('/messages/{message}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('messages.destroy');
+
         // ── Apariencia (white-label) ──────────────────────────────────────────
         Route::get('/appearance', [\App\Http\Controllers\Admin\AppearanceController::class, 'edit'])->name('appearance.edit');
         Route::post('/appearance', [\App\Http\Controllers\Admin\AppearanceController::class, 'update'])->name('appearance.update');

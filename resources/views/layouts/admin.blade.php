@@ -41,15 +41,13 @@
                         'Aprendizaje' => [
                             ['admin.course-categories.index', 'fa-folder-tree', 'Categorías', false],
                             ['admin.courses.index', 'fa-book-open', 'Cursos',      false],
-                            ['#', 'fa-list',     'Lecciones',    true],
                             ['admin.quizzes.index', 'fa-circle-question', 'Autoevaluaciones', false],
                         ],
                         'Contenido' => [
                             ['admin.blogs.index',            'fa-newspaper',  'Artículos blog',    false],
                             ['admin.blog-categories.index',  'fa-tags',       'Categorías blog',   false],
                             ['admin.blog-comments.index',    'fa-comments',   'Comentarios',       false],
-                            ['#',                            'fa-bullhorn',   'CMS del Home',     true],
-                            ['#',                            'fa-file-lines', 'Páginas',          true],
+                            ['admin.messages.index',         'fa-envelope',   'Mensajes',          false],
                         ],
                         'Marketplace' => [
                             ['admin.templates.index',    'fa-boxes-stacked',    'Plantillas',          false],
@@ -57,16 +55,10 @@
                             ['admin.services.index',     'fa-handshake-angle',  'Servicios',           false],
                             ['admin.services.requests',  'fa-inbox',            'Pedidos de servicios', false],
                         ],
-                        'Personas' => [
-                            ['#', 'fa-users',           'Estudiantes',  true],
-                            ['#', 'fa-chalkboard-user', 'Instructores', true],
-                            ['#', 'fa-envelope-open-text', 'Suscriptores', true],
-                        ],
                         'Sistema' => [
                             ['admin.profile',         'fa-user-gear',    'Mi perfil',     false],
                             ['admin.appearance.edit', 'fa-paint-roller', 'Apariencia',    false],
                             ['admin.navigation.edit', 'fa-bars',         'Navegación',    false],
-                            ['#',                     'fa-gear',         'Configuración', true],
                         ],
                     ];
                 @endphp

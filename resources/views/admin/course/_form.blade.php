@@ -143,6 +143,15 @@
                 <span class="text-sm text-ink-700">Permitir preguntas y respuestas</span>
             </label>
         </div>
+
+        <div class="rounded-2xl bg-white border border-ink-200/70 shadow-soft p-6 space-y-3">
+            <h3 class="font-display font-bold text-ink-900 text-sm"><i class="fa-solid fa-eye text-brand-500"></i> Visibilidad</h3>
+            <select name="status" class="w-full rounded-xl border border-ink-200 px-4 py-2.5 text-sm focus:border-brand-400 outline-none">
+                <option value="active" @selected(old('status', $course?->status ?? 'active') === 'active')>Publicado (visible en la web)</option>
+                <option value="draft" @selected(old('status', $course?->status) === 'draft')>Borrador (oculto)</option>
+            </select>
+            <p class="text-xs text-ink-400">Un curso "Publicado" aparece en el catálogo. Ponlo en "Borrador" mientras lo preparas.</p>
+        </div>
     </div>
 </div>
 

@@ -138,7 +138,6 @@ class CursaliaBrandingSeeder extends Seeder
         $col2 = [
             ['title' => 'Sobre nosotros',  'url' => '/about',    'sort_order' => 1],
             ['title' => 'Contacto',        'url' => '/contact',  'sort_order' => 2],
-            ['title' => 'Ser instructor',  'url' => '/register', 'sort_order' => 3],
         ];
         foreach ($col2 as $l) {
             FooterColumnTwo::updateOrCreate(['title' => $l['title']], $l + ['is_active' => true]);

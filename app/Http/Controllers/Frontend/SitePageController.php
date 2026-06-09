@@ -9,6 +9,7 @@ use App\Models\AboutSection;
 use App\Models\Admin;
 use App\Models\Blog;
 use App\Models\Contact;
+use App\Models\ContactMessage;
 use App\Models\ContactSetting;
 use App\Models\Counter;
 use App\Models\CustomPage;
@@ -38,17 +39,33 @@ class SitePageController extends Controller
 
     public function sendContact(ContactMessageRequest $request): RedirectResponse
     {
-        $contactSetting = ContactSetting::query()->first();
-        $receiver = $contactSetting?->receiver_email ?: config('mail.from.address');
+        // 1) Guardar SIEMPRE en la BD → el admin lo ve en "Mensajes" aunque no haya SMTP.
+        ContactMessage::create([
+            'name'    => $request->string('name')->toString(),
+            'email'   => $request->string('email')->toString(),
+            'subject' => $request->string('subject')->toString(),
+            'message' => $request->string('message')->toString(),
+            'ip'      => $request->ip(),
+        ]);
 
-        Mail::to($receiver)->queue(new ContactMail(
-            name: $request->string('name')->toString(),
-            email: $request->string('email')->toString(),
-            subjectLine: $request->string('subject')->toString(),
-            messageBody: $request->string('message')->toString(),
-        ));
+        // 2) Intentar enviar el email (si hay SMTP); no bloquea si falla.
+        try {
+            $contactSetting = ContactSetting::query()->first();
+            $receiver = $contactSetting?->receiver_email ?: config('mail.from.address');
 
-        return back()->with('success', '¡Gracias! Tu mensaje fue enviado, te responderemos muy pronto.');
+            Mail::to($receiver)->send(new ContactMail(
+                name: $request->string('name')->toString(),
+                email: $request->string('email')->toString(),
+                subjectLine: $request->string('subject')->toString(),
+                messageBody: $request->string('message')->toString(),
+            ));
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        // Clave propia (php-flasher intercepta 'success'/'error' como toasts y el
+        // layout público no los renderiza → usamos una clave que no toca).
+        return back()->with('contact_sent', true);
     }
 
     public function customPage(string $slug): View
