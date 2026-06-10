@@ -9,6 +9,7 @@ use App\Models\CourseLanguage;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Seeder de "arreglos visuales": genera SVGs placeholder reales para los
@@ -78,7 +79,7 @@ class CursaliaVisualFixesSeeder extends Seeder
         // ── Brands: SVG con tipografía bonita ──────────────────────────────────
         Brand::orderBy('id')->get()->each(function (Brand $brand) {
             $svg = $this->buildBrandSvg($brand->name);
-            $path = 'brand/'.\Illuminate\Support\Str::slug($brand->name).'.svg';
+            $path = 'brand/'.Str::slug($brand->name).'.svg';
             Storage::disk('public')->put($path, $svg);
             $brand->logo = $path;
             $brand->save();
@@ -103,7 +104,7 @@ class CursaliaVisualFixesSeeder extends Seeder
         $iconSvg = $this->iconSvg($icon);
 
         // Coordenadas seguras para texto
-        $titleSafe = htmlspecialchars(\Illuminate\Support\Str::limit($title, 32), ENT_QUOTES, 'UTF-8');
+        $titleSafe = htmlspecialchars(Str::limit($title, 32), ENT_QUOTES, 'UTF-8');
         $subtitleSafe = htmlspecialchars($subtitle, ENT_QUOTES, 'UTF-8');
 
         return <<<SVG
@@ -152,6 +153,7 @@ SVG;
     private function buildBrandSvg(string $name): string
     {
         $safe = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+
         return <<<SVG
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64">
@@ -168,7 +170,8 @@ SVG;
         $words = preg_split('/\s+/', trim($text));
         $first = $words[0] ?? '';
         $second = $words[1] ?? '';
-        $letters = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($first, 0, 1) . \Illuminate\Support\Str::substr($second, 0, 1));
+        $letters = Str::upper(Str::substr($first, 0, 1).Str::substr($second, 0, 1));
+
         return $letters ?: 'C';
     }
 
@@ -180,27 +183,27 @@ SVG;
             str_contains($slug, 'programa') => 'code',
             str_contains($slug, 'diseno'),
             str_contains($slug, 'ux'),
-            str_contains($slug, 'ui')        => 'palette',
+            str_contains($slug, 'ui') => 'palette',
             str_contains($slug, 'marketing'),
-            str_contains($slug, 'redes')     => 'megaphone',
+            str_contains($slug, 'redes') => 'megaphone',
             str_contains($slug, 'fotografia'),
-            str_contains($slug, 'foto')      => 'camera',
+            str_contains($slug, 'foto') => 'camera',
             str_contains($slug, 'negocios'),
-            str_contains($slug, 'business')  => 'briefcase',
-            default                          => 'book',
+            str_contains($slug, 'business') => 'briefcase',
+            default => 'book',
         };
     }
 
     private function iconSvg(string $name): string
     {
         return match ($name) {
-            'code'      => '<polyline points="14,4 22,16 14,28"/><polyline points="10,4 2,16 10,28"/>',
-            'palette'   => '<circle cx="16" cy="16" r="14"/><circle cx="11" cy="11" r="1.6" fill="#fff" stroke="none"/><circle cx="20" cy="9" r="1.6" fill="#fff" stroke="none"/><circle cx="24" cy="16" r="1.6" fill="#fff" stroke="none"/>',
+            'code' => '<polyline points="14,4 22,16 14,28"/><polyline points="10,4 2,16 10,28"/>',
+            'palette' => '<circle cx="16" cy="16" r="14"/><circle cx="11" cy="11" r="1.6" fill="#fff" stroke="none"/><circle cx="20" cy="9" r="1.6" fill="#fff" stroke="none"/><circle cx="24" cy="16" r="1.6" fill="#fff" stroke="none"/>',
             'megaphone' => '<polygon points="4,12 22,4 22,28 4,20"/><line x1="22" y1="10" x2="28" y2="10"/><line x1="22" y1="18" x2="28" y2="18"/>',
-            'camera'    => '<rect x="2" y="8" width="28" height="20" rx="3"/><circle cx="16" cy="18" r="6"/><rect x="11" y="4" width="10" height="6" rx="1"/>',
+            'camera' => '<rect x="2" y="8" width="28" height="20" rx="3"/><circle cx="16" cy="18" r="6"/><rect x="11" y="4" width="10" height="6" rx="1"/>',
             'briefcase' => '<rect x="2" y="9" width="28" height="20" rx="2"/><path d="M11 9V5h10v4"/><line x1="2" y1="17" x2="30" y2="17"/>',
-            'pen'       => '<path d="M4 28l6-2 18-18-4-4-18 18-2 6z"/><line x1="18" y1="8" x2="24" y2="14"/>',
-            default     => '<path d="M4 6h18a4 4 0 014 4v20H8a4 4 0 01-4-4V6z"/><path d="M4 6a2 2 0 012-2h16a2 2 0 012 2"/>',
+            'pen' => '<path d="M4 28l6-2 18-18-4-4-18 18-2 6z"/><line x1="18" y1="8" x2="24" y2="14"/>',
+            default => '<path d="M4 6h18a4 4 0 014 4v20H8a4 4 0 01-4-4V6z"/><path d="M4 6a2 2 0 012-2h16a2 2 0 012 2"/>',
         };
     }
 }

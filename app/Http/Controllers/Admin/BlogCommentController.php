@@ -17,14 +17,14 @@ class BlogCommentController extends Controller
 
         $items = BlogComment::query()
             ->with('blog:id,title,slug')
-            ->when($tab === 'pending',  fn ($q) => $q->where('is_approved', false))
+            ->when($tab === 'pending', fn ($q) => $q->where('is_approved', false))
             ->when($tab === 'approved', fn ($q) => $q->where('is_approved', true))
             ->latest()
             ->paginate(20)
             ->withQueryString();
 
         $counts = [
-            'pending'  => BlogComment::where('is_approved', false)->count(),
+            'pending' => BlogComment::where('is_approved', false)->count(),
             'approved' => BlogComment::where('is_approved', true)->count(),
         ];
 
@@ -34,12 +34,14 @@ class BlogCommentController extends Controller
     public function approve(BlogComment $blogComment): RedirectResponse
     {
         $blogComment->update(['is_approved' => true, 'approved_at' => now()]);
+
         return back()->with('success', 'Comentario aprobado.');
     }
 
     public function destroy(BlogComment $blogComment): JsonResponse
     {
         $blogComment->delete();
+
         return response()->json(['message' => 'Comentario eliminado.']);
     }
 }

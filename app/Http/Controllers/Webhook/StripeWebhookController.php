@@ -24,9 +24,11 @@ class StripeWebhookController extends Controller
             $event = Webhook::constructEvent($payload, $sigHeader, $secret);
         } catch (SignatureVerificationException $e) {
             Log::warning('stripe.webhook.invalid_signature', ['error' => $e->getMessage()]);
+
             return response('Invalid signature', 400);
         } catch (\UnexpectedValueException $e) {
             Log::warning('stripe.webhook.invalid_payload', ['error' => $e->getMessage()]);
+
             return response('Invalid payload', 400);
         }
 
@@ -43,22 +45,24 @@ class StripeWebhookController extends Controller
             if (! $userId || ! $transactionId) {
                 Log::error('stripe.webhook.missing_data', [
                     'session_id' => $session->id,
-                    'user_id'    => $userId,
+                    'user_id' => $userId,
                 ]);
+
                 return response('Missing data', 422);
             }
 
             $confirmed = isset($session->amount_total) ? (float) $session->amount_total / 100 : null;
-            $currency  = isset($session->currency) ? strtoupper($session->currency) : null;
+            $currency = isset($session->currency) ? strtoupper($session->currency) : null;
 
             try {
                 OrderService::storeOrder($transactionId, 'stripe', $userId, $confirmed, $currency);
             } catch (\Throwable $e) {
                 Log::error('stripe.webhook.order_failed', [
                     'transaction_id' => $transactionId,
-                    'user_id'        => $userId,
-                    'error'          => $e->getMessage(),
+                    'user_id' => $userId,
+                    'error' => $e->getMessage(),
                 ]);
+
                 return response('Order processing failed', 500);
             }
         }

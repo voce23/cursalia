@@ -25,10 +25,10 @@ class NewEnrollmentNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'type'       => 'new_enrollment',
-            'message'    => "El estudiante \"{$this->student->name}\" se matriculó en \"{$this->course->title}\".",
-            'course_id'  => $this->course->id,
-            'course_slug'=> $this->course->slug,
+            'type' => 'new_enrollment',
+            'message' => "El estudiante \"{$this->student->name}\" se matriculó en \"{$this->course->title}\".",
+            'course_id' => $this->course->id,
+            'course_slug' => $this->course->slug,
             'student_id' => $this->student->id,
         ];
     }

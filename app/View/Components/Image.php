@@ -5,6 +5,7 @@ namespace App\View\Components;
 use App\Services\ImageOptimizer;
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\Component;
 
 /**
@@ -37,9 +38,13 @@ use Illuminate\View\Component;
 class Image extends Component
 {
     public ?array $variants = null;
+
     public ?int $w = null;
+
     public ?int $h = null;
+
     public bool $isSvg = false;
+
     public bool $isExternal = false;
 
     public function __construct(
@@ -61,7 +66,7 @@ class Image extends Component
         // las imágenes con contenido (no decorativas) DEBEN tener alt descriptivo
         // para accesibilidad WCAG y para SEO de búsqueda por imágenes.
         if (config('app.debug') && trim($this->alt) === '') {
-            \Illuminate\Support\Facades\Log::warning('<x-image> sin alt text', [
+            Log::warning('<x-image> sin alt text', [
                 'src' => $this->src,
             ]);
         }
@@ -71,6 +76,7 @@ class Image extends Component
             $this->isExternal = true;
             $this->w = $this->width;
             $this->h = $this->height;
+
             return;
         }
 
@@ -89,7 +95,7 @@ class Image extends Component
             $this->h = $this->height;
         } else {
             [$dw, $dh] = $opt->dimensionsOf($this->src);
-            $this->w = $this->width  ?: $dw;
+            $this->w = $this->width ?: $dw;
             $this->h = $this->height ?: $dh;
         }
     }
@@ -111,6 +117,7 @@ class Image extends Component
         if ($this->isExternal) {
             return $this->src;
         }
+
         return asset('storage/'.$this->src);
     }
 

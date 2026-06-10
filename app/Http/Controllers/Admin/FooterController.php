@@ -30,6 +30,7 @@ class FooterController extends Controller
 
         $setting->update($request->validated() + [
             'is_active' => $request->boolean('is_active'),
+            'dark' => $request->boolean('dark'),
         ]);
 
         GeneralSettingService::clearAppearanceCache();

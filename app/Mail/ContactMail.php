@@ -10,20 +10,20 @@ use Illuminate\Queue\SerializesModels;
 
 class ContactMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public function __construct(
         public string $name,
         public string $email,
         public string $subjectLine,
         public string $messageBody,
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Nuevo mensaje de contacto: ' . $this->subjectLine,
+            subject: 'Nuevo mensaje de contacto: '.$this->subjectLine,
         );
     }
 

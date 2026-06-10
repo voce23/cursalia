@@ -28,8 +28,8 @@ class CourseChapterLesson extends Model
     {
         return [
             'downloadable' => 'boolean',
-            'is_preview'   => 'boolean',
-            'status'       => 'boolean',
+            'is_preview' => 'boolean',
+            'status' => 'boolean',
         ];
     }
 

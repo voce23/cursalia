@@ -4,17 +4,18 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\AboutSection;
+use App\Models\Blog;
+use App\Models\Brand;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\CourseLanguage;
 use App\Models\CourseLevel;
-use App\Models\FeaturedInstructor;
 use App\Models\FeaturedCategorySection;
+use App\Models\FeaturedInstructor;
 use App\Models\FeatureSection;
 use App\Models\HeroSection;
 use App\Models\HomeMiscSection;
 use App\Models\LatestCourseSection;
-use App\Models\Brand;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,11 +31,11 @@ class CoursePageController extends Controller
         // serializar/deserializar modelos Eloquent es frágil en algunos
         // hostings compartidos (provoca "incomplete object" al releer del
         // caché). Las consultas directas son suficientes para esta página.
-        $hero                    = HeroSection::query()->first();
+        $hero = HeroSection::query()->first();
         $featuredCategorySection = FeaturedCategorySection::query()->first();
-        $latestCourseSection     = LatestCourseSection::query()->first();
-        $aboutSection            = AboutSection::query()->first();
-        $homeMiscSection         = HomeMiscSection::query()->first();
+        $latestCourseSection = LatestCourseSection::query()->first();
+        $aboutSection = AboutSection::query()->first();
+        $homeMiscSection = HomeMiscSection::query()->first();
 
         $features = FeatureSection::query()
             ->where('is_active', true)
@@ -74,6 +75,14 @@ class CoursePageController extends Controller
             ->take(12)
             ->get();
 
+        $latestBlogs = Blog::query()
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->with('category')
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+
         $testimonials = Testimonial::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
@@ -91,7 +100,8 @@ class CoursePageController extends Controller
             'categories',
             'brands',
             'featuredInstructors',
-            'testimonials'
+            'testimonials',
+            'latestBlogs'
         ));
     }
 
@@ -116,7 +126,7 @@ class CoursePageController extends Controller
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($q) use ($search) {
                     $q->where('title', 'LIKE', "%{$search}%")
-                      ->orWhere('seo_description', 'LIKE', "%{$search}%");
+                        ->orWhere('seo_description', 'LIKE', "%{$search}%");
                 });
             })
             ->when($categorySlug, function ($q) use ($categorySlug) {
@@ -161,7 +171,7 @@ class CoursePageController extends Controller
             ->when($sort === 'price_low', fn ($q) => $q->orderByRaw('CASE WHEN discount > 0 THEN discount ELSE price END asc'))
             ->when($sort === 'price_high', fn ($q) => $q->orderByRaw('CASE WHEN discount > 0 THEN discount ELSE price END desc'))
             ->when($sort === 'rating', fn ($q) => $q->orderByDesc('reviews_avg_rating'))
-            ->when(!in_array($sort, ['oldest', 'price_low', 'price_high', 'rating'], true), fn ($q) => $q->latest())
+            ->when(! in_array($sort, ['oldest', 'price_low', 'price_high', 'rating'], true), fn ($q) => $q->latest())
             ->paginate(12)
             ->withQueryString();
 
@@ -171,7 +181,7 @@ class CoursePageController extends Controller
             ->with('subcategories:id,parent_id,name,slug')
             ->get(['id', 'name', 'slug']);
 
-        $levels    = CourseLevel::query()->orderBy('name')->get(['id', 'name', 'slug']);
+        $levels = CourseLevel::query()->orderBy('name')->get(['id', 'name', 'slug']);
         $languages = CourseLanguage::query()->orderBy('name')->get(['id', 'name', 'slug']);
 
         return view('frontend.courses.index', compact('courses', 'categories', 'levels', 'languages'));

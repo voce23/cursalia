@@ -22,22 +22,24 @@ class CursaliaQuizDemoSeeder extends Seeder
 
         if (! $lesson) {
             $this->command->warn('  → No hay lecciones; no se creó quiz demo.');
+
             return;
         }
 
         if (Quiz::where('lesson_id', $lesson->id)->exists()) {
             $this->command->info('  ✓ La lección ya tiene quiz; no se duplica.');
+
             return;
         }
 
         $quiz = Quiz::create([
-            'lesson_id'      => $lesson->id,
-            'title'          => 'Autoevaluación rápida',
-            'description'    => 'Comprueba lo que aprendiste en esta lección. No cuenta para ningún certificado.',
-            'passing_score'  => 70,
-            'allow_retakes'  => true,
-            'max_attempts'   => 0, // ilimitado
-            'status'         => true,
+            'lesson_id' => $lesson->id,
+            'title' => 'Autoevaluación rápida',
+            'description' => 'Comprueba lo que aprendiste en esta lección. No cuenta para ningún certificado.',
+            'passing_score' => 70,
+            'allow_retakes' => true,
+            'max_attempts' => 0, // ilimitado
+            'status' => true,
         ]);
 
         $questions = [
@@ -75,19 +77,19 @@ class CursaliaQuizDemoSeeder extends Seeder
 
         foreach ($questions as $qi => $q) {
             $question = $quiz->questions()->create([
-                'question'      => $q['q'],
+                'question' => $q['q'],
                 'question_type' => $q['type'],
-                'order'         => $qi,
-                'required'      => true,
-                'points'        => 1,
-                'explanation'   => $q['explanation'],
+                'order' => $qi,
+                'required' => true,
+                'points' => 1,
+                'explanation' => $q['explanation'],
             ]);
 
             foreach ($q['options'] as $oi => [$text, $correct]) {
                 $question->options()->create([
                     'option_text' => $text,
-                    'is_correct'  => $correct,
-                    'order'       => $oi,
+                    'is_correct' => $correct,
+                    'order' => $oi,
                 ]);
             }
         }

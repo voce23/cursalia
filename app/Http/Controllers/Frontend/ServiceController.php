@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Helpers\MathCaptcha;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\ServiceRequest;
@@ -33,19 +34,19 @@ class ServiceController extends Controller
     public function storeRequest(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'service_id'          => ['nullable', 'exists:services,id'],
-            'name'                => ['required', 'string', 'max:120'],
-            'email'               => ['required', 'email', 'max:255'],
-            'whatsapp'            => ['nullable', 'string', 'max:32'],
-            'contact_preference'  => ['required', 'in:email,whatsapp,both'],
-            'budget'              => ['nullable', 'string', 'max:32'],
-            'subject'             => ['nullable', 'string', 'max:200'],
-            'message'             => ['required', 'string', 'min:10', 'max:4000'],
-            'captcha_token'       => ['required', 'string'],
-            'captcha_answer'      => ['required', 'integer'],
+            'service_id' => ['nullable', 'exists:services,id'],
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:255'],
+            'whatsapp' => ['nullable', 'string', 'max:32'],
+            'contact_preference' => ['required', 'in:email,whatsapp,both'],
+            'budget' => ['nullable', 'string', 'max:32'],
+            'subject' => ['nullable', 'string', 'max:200'],
+            'message' => ['required', 'string', 'min:10', 'max:4000'],
+            'captcha_token' => ['required', 'string'],
+            'captcha_answer' => ['required', 'integer'],
         ]);
 
-        if (! \App\Helpers\MathCaptcha::verify($data['captcha_token'], $data['captcha_answer'])) {
+        if (! MathCaptcha::verify($data['captcha_token'], $data['captcha_answer'])) {
             return back()->withErrors(['captcha_answer' => 'La respuesta no coincide. ¿Eres humano? 😊 Inténtalo de nuevo.'])->withInput();
         }
 

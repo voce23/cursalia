@@ -16,26 +16,22 @@ class DashboardController extends Controller
     {
         $uid = Auth::id();
 
-        $pendingCourses = Cache::remember("instructor.{$uid}.courses.pending", 300, fn () =>
-            Course::query()->where('instructor_id', $uid)->where('is_approved', 'pending')->count()
+        $pendingCourses = Cache::remember("instructor.{$uid}.courses.pending", 300, fn () => Course::query()->where('instructor_id', $uid)->where('is_approved', 'pending')->count()
         );
 
-        $approvedCourses = Cache::remember("instructor.{$uid}.courses.approved", 300, fn () =>
-            Course::query()->where('instructor_id', $uid)->where('is_approved', 'approved')->count()
+        $approvedCourses = Cache::remember("instructor.{$uid}.courses.approved", 300, fn () => Course::query()->where('instructor_id', $uid)->where('is_approved', 'approved')->count()
         );
 
-        $totalEarnings = (float) Cache::remember("instructor.{$uid}.earnings", 300, fn () =>
-            OrderItem::query()
-                ->whereHas('course', fn ($q) => $q->where('instructor_id', $uid))
-                ->sum('instructor_earning')
+        $totalEarnings = (float) Cache::remember("instructor.{$uid}.earnings", 300, fn () => OrderItem::query()
+            ->whereHas('course', fn ($q) => $q->where('instructor_id', $uid))
+            ->sum('instructor_earning')
         );
 
-        $totalStudents = Cache::remember("instructor.{$uid}.students", 300, fn () =>
-            Enrollment::query()
-                ->where('instructor_id', $uid)
-                ->where('have_access', true)
-                ->distinct('user_id')
-                ->count('user_id')
+        $totalStudents = Cache::remember("instructor.{$uid}.students", 300, fn () => Enrollment::query()
+            ->where('instructor_id', $uid)
+            ->where('have_access', true)
+            ->distinct('user_id')
+            ->count('user_id')
         );
 
         $recentSales = OrderItem::query()

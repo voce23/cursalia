@@ -9,6 +9,7 @@ use App\Models\TemplateWaitlist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -33,7 +34,7 @@ class TemplateController extends Controller
     public function create(): View
     {
         return view('admin.templates.form', [
-            'template'   => new Template(['is_free' => false, 'status' => 'draft', 'version' => '1.0.0']),
+            'template' => new Template(['is_free' => false, 'status' => 'draft', 'version' => '1.0.0']),
             'categories' => TemplateCategory::orderBy('sort_order')->get(),
         ]);
     }
@@ -43,7 +44,7 @@ class TemplateController extends Controller
         $data = $this->validateRequest($request);
         $data['slug'] = Str::slug($data['title']);
         $data['tech_stack'] = $this->splitMultiline($request->input('tech_stack_raw'));
-        $data['features']   = $this->splitMultiline($request->input('features_raw'));
+        $data['features'] = $this->splitMultiline($request->input('features_raw'));
 
         if ($request->hasFile('thumbnail')) {
             $data['thumbnail'] = $this->saveImage($request->file('thumbnail'));
@@ -57,7 +58,7 @@ class TemplateController extends Controller
     public function edit(Template $template): View
     {
         return view('admin.templates.form', [
-            'template'   => $template,
+            'template' => $template,
             'categories' => TemplateCategory::orderBy('sort_order')->get(),
         ]);
     }
@@ -69,7 +70,7 @@ class TemplateController extends Controller
             $data['slug'] = Str::slug($data['title']);
         }
         $data['tech_stack'] = $this->splitMultiline($request->input('tech_stack_raw'));
-        $data['features']   = $this->splitMultiline($request->input('features_raw'));
+        $data['features'] = $this->splitMultiline($request->input('features_raw'));
 
         if ($request->hasFile('thumbnail')) {
             if ($template->thumbnail) {
@@ -89,6 +90,7 @@ class TemplateController extends Controller
             Storage::disk('public')->delete($template->thumbnail);
         }
         $template->delete();
+
         return response()->json(['message' => 'Plantilla eliminada.']);
     }
 
@@ -113,28 +115,31 @@ class TemplateController extends Controller
     {
         return $request->validate([
             'template_category_id' => ['nullable', 'exists:template_categories,id'],
-            'title'        => ['required', 'string', 'max:120'],
-            'headline'     => ['nullable', 'string', 'max:200'],
-            'description'  => ['nullable', 'string'],
-            'price'        => ['required', 'numeric', 'min:0'],
-            'discount'     => ['nullable', 'numeric', 'min:0'],
-            'is_free'      => ['nullable', 'boolean'],
-            'demo_url'     => ['nullable', 'url', 'max:255'],
+            'title' => ['required', 'string', 'max:120'],
+            'headline' => ['nullable', 'string', 'max:200'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'discount' => ['nullable', 'numeric', 'min:0'],
+            'is_free' => ['nullable', 'boolean'],
+            'demo_url' => ['nullable', 'url', 'max:255'],
             'download_url' => ['nullable', 'url', 'max:255'],
-            'version'      => ['required', 'string', 'max:20'],
-            'status'       => ['required', 'in:draft,published'],
-            'is_featured'  => ['nullable', 'boolean'],
-            'sort_order'   => ['nullable', 'integer', 'min:0'],
-            'thumbnail'    => ['nullable', 'image', 'max:4096'],
+            'version' => ['required', 'string', 'max:20'],
+            'status' => ['required', 'in:draft,published'],
+            'is_featured' => ['nullable', 'boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'thumbnail' => ['nullable', 'image', 'max:4096'],
         ]) + [
-            'is_free'     => $request->boolean('is_free'),
+            'is_free' => $request->boolean('is_free'),
             'is_featured' => $request->boolean('is_featured'),
         ];
     }
 
     private function splitMultiline(?string $raw): array
     {
-        if (! $raw) return [];
+        if (! $raw) {
+            return [];
+        }
+
         return collect(preg_split("/\r?\n/", trim($raw)))
             ->map(fn ($l) => trim($l))
             ->filter()
@@ -142,11 +147,12 @@ class TemplateController extends Controller
             ->all();
     }
 
-    private function saveImage(\Illuminate\Http\UploadedFile $file): string
+    private function saveImage(UploadedFile $file): string
     {
         Storage::disk('public')->makeDirectory('templates');
         $name = 'templates/'.Str::random(10).'.'.$file->getClientOriginalExtension();
         Storage::disk('public')->put($name, file_get_contents($file->getRealPath()));
+
         return $name;
     }
 }

@@ -34,15 +34,15 @@ class CursaliaAuditFixesSeeder extends Seeder
 
     /** Iconos por slug de categoría (mismo set que VisualFixes) */
     private array $categoryIcons = [
-        'desarrollo-web'    => 'code',
-        'diseno-digital'    => 'palette',
+        'desarrollo-web' => 'code',
+        'diseno-digital' => 'palette',
         'marketing-digital' => 'megaphone',
-        'laravel'           => 'code',
-        'javascript'        => 'code',
-        'ux-ui'             => 'palette',
-        'branding'          => 'palette',
-        'seo'               => 'magnifier',
-        'redes-sociales'    => 'megaphone',
+        'laravel' => 'code',
+        'javascript' => 'code',
+        'ux-ui' => 'palette',
+        'branding' => 'palette',
+        'seo' => 'magnifier',
+        'redes-sociales' => 'megaphone',
     ];
 
     public function run(): void
@@ -147,6 +147,7 @@ SVG;
         $parts = preg_split('/\s+/', trim($name));
         $first = Str::upper(Str::substr($parts[0] ?? 'C', 0, 1));
         $second = Str::upper(Str::substr($parts[1] ?? '', 0, 1));
+
         return $first.$second ?: 'C';
     }
 
@@ -194,11 +195,11 @@ SVG;
     private function iconSvg(string $name): string
     {
         return match ($name) {
-            'code'      => '<polyline points="14,4 22,16 14,28"/><polyline points="10,4 2,16 10,28"/>',
-            'palette'   => '<circle cx="16" cy="16" r="14"/><circle cx="11" cy="11" r="1.6" fill="currentColor" stroke="none"/><circle cx="20" cy="9" r="1.6" fill="currentColor" stroke="none"/><circle cx="24" cy="16" r="1.6" fill="currentColor" stroke="none"/>',
+            'code' => '<polyline points="14,4 22,16 14,28"/><polyline points="10,4 2,16 10,28"/>',
+            'palette' => '<circle cx="16" cy="16" r="14"/><circle cx="11" cy="11" r="1.6" fill="currentColor" stroke="none"/><circle cx="20" cy="9" r="1.6" fill="currentColor" stroke="none"/><circle cx="24" cy="16" r="1.6" fill="currentColor" stroke="none"/>',
             'megaphone' => '<polygon points="4,12 22,4 22,28 4,20"/><line x1="22" y1="10" x2="28" y2="10"/><line x1="22" y1="18" x2="28" y2="18"/>',
             'magnifier' => '<circle cx="14" cy="14" r="10"/><line x1="22" y1="22" x2="30" y2="30"/>',
-            default     => '<rect x="4" y="4" width="24" height="24" rx="3"/><line x1="4" y1="10" x2="28" y2="10"/>',
+            default => '<rect x="4" y="4" width="24" height="24" rx="3"/><line x1="4" y1="10" x2="28" y2="10"/>',
         };
     }
 
@@ -209,11 +210,11 @@ SVG;
     private function enrichInstructorHeadlines(): void
     {
         $headlines = [
-            'Instructor Demo'  => ['headline' => 'Especialista en formación digital', 'name' => 'Mario López'],
-            'Lucía Martín'     => ['headline' => 'Diseñadora de Producto'],
-            'Diego Romero'     => ['headline' => 'Ingeniero de Software'],
-            'Carmen Ortega'    => ['headline' => 'Estratega de Marketing'],
-            'Andrés Vega'      => ['headline' => 'Fotógrafo Profesional'],
+            'Instructor Demo' => ['headline' => 'Especialista en formación digital', 'name' => 'Mario López'],
+            'Lucía Martín' => ['headline' => 'Diseñadora de Producto'],
+            'Diego Romero' => ['headline' => 'Ingeniero de Software'],
+            'Carmen Ortega' => ['headline' => 'Estratega de Marketing'],
+            'Andrés Vega' => ['headline' => 'Fotógrafo Profesional'],
         ];
         foreach ($headlines as $name => $fields) {
             $u = User::where('name', $name)->first();

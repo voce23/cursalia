@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('watch_histories', function (Blueprint $table) {
-              $table->id();
-              $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-              $table->foreignId('course_id')->constrained()->cascadeOnDelete();
-              $table->unsignedBigInteger('lesson_id');
-              $table->foreign('lesson_id')->references('id')->on('course_chapter_lessons')->cascadeOnDelete();
-              $table->timestamps();
-              $table->unique(['user_id', 'course_id']); // una fila por usuario+curso
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('course_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('lesson_id');
+            $table->foreign('lesson_id')->references('id')->on('course_chapter_lessons')->cascadeOnDelete();
+            $table->timestamps();
+            $table->unique(['user_id', 'course_id']); // una fila por usuario+curso
         });
     }
 

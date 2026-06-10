@@ -23,10 +23,10 @@ class WithdrawStatusNotification extends Notification implements ShouldQueue
         $status = $this->withdraw->status === 'approved' ? 'aprobado' : 'rechazado';
 
         $data = [
-            'type'        => 'withdraw_status',
-            'message'     => "Tu retiro de \${$this->withdraw->amount} ha sido {$status}.",
+            'type' => 'withdraw_status',
+            'message' => "Tu retiro de \${$this->withdraw->amount} ha sido {$status}.",
             'withdraw_id' => $this->withdraw->id,
-            'status'      => $this->withdraw->status,
+            'status' => $this->withdraw->status,
         ];
 
         if ($this->withdraw->status === 'rejected' && $this->withdraw->rejection_reason) {

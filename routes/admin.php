@@ -11,6 +11,7 @@
 |
 */
 
+use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuthController;
 use App\Http\Controllers\Admin\BlogCategoryController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\Admin\HeaderSettingController;
 use App\Http\Controllers\Admin\HomeMiscSectionController;
 use App\Http\Controllers\Admin\HomeSectionController;
+use App\Http\Controllers\Admin\InstructorRequestController;
 use App\Http\Controllers\Admin\NavigationController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
@@ -40,6 +42,7 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->as('admin.')->group(function () {
@@ -55,10 +58,37 @@ Route::prefix('admin')->as('admin.')->group(function () {
         // Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+        // Ayuda · guía de uso del panel (sin tocar código)
+        Route::view('/ayuda', 'admin.help')->name('help');
+
         // Perfil
         Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
         Route::post('/profile/update', [AdminProfileController::class, 'update'])->name('profile.update');
         Route::post('/profile/update-password', [AdminProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+        // ── Usuarios ──────────────────────────────────────────────────────
+        // Estudiantes / usuarios (listar, ver, activar/desactivar)
+        Route::get('/usuarios', [UserController::class, 'index'])->name('users.index');
+        Route::get('/usuarios/crear', [UserController::class, 'create'])->name('users.create');
+        Route::post('/usuarios', [UserController::class, 'store'])->name('users.store');
+        Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/usuarios/{user}/editar', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/usuarios/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::patch('/usuarios/{user}/estado', [UserController::class, 'toggleStatus'])->name('users.toggle');
+
+        // Solicitudes de instructor (aprobar / rechazar / descargar documento)
+        Route::get('/instructores', [InstructorRequestController::class, 'index'])->name('instructor-requests.index');
+        Route::put('/instructores/{instructor_request}', [InstructorRequestController::class, 'update'])->name('instructor-requests.update');
+        Route::get('/instructores/{user}/documento', [InstructorRequestController::class, 'download'])->name('instructor-requests.download');
+
+        // Administradores (superadmins de la plataforma)
+        Route::get('/administradores', [AdministratorController::class, 'index'])->name('admins.index');
+        Route::get('/administradores/crear', [AdministratorController::class, 'create'])->name('admins.create');
+        Route::post('/administradores', [AdministratorController::class, 'store'])->name('admins.store');
+        Route::get('/administradores/{admin}/editar', [AdministratorController::class, 'edit'])->name('admins.edit');
+        Route::put('/administradores/{admin}', [AdministratorController::class, 'update'])->name('admins.update');
+        Route::delete('/administradores/{admin}', [AdministratorController::class, 'destroy'])->name('admins.destroy');
 
         // CRUD demo: Categorías de curso (patrón para los otros CRUDs)
         Route::resource('course-categories', CourseCategoryController::class)->except(['show']);

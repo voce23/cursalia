@@ -17,15 +17,15 @@ class NotificationController extends Controller
             ->take(10)
             ->get()
             ->map(fn ($n) => [
-                'id'         => $n->id,
-                'message'    => $n->data['message'] ?? '',
-                'type'       => $n->data['type'] ?? '',
+                'id' => $n->id,
+                'message' => $n->data['message'] ?? '',
+                'type' => $n->data['type'] ?? '',
                 'created_at' => $n->created_at->diffForHumans(),
             ]);
 
         return response()->json([
             'notifications' => $notifications,
-            'unread_count'  => $admin->unreadNotifications()->count(),
+            'unread_count' => $admin->unreadNotifications()->count(),
         ]);
     }
 

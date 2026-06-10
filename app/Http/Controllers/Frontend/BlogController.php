@@ -24,9 +24,9 @@ class BlogController extends Controller
                 $search = $request->string('search')->toString();
 
                 $query->where(function ($query) use ($search) {
-                    $query->where('title', 'like', '%' . $search . '%')
-                        ->orWhere('summary', 'like', '%' . $search . '%')
-                        ->orWhere('content', 'like', '%' . $search . '%');
+                    $query->where('title', 'like', '%'.$search.'%')
+                        ->orWhere('summary', 'like', '%'.$search.'%')
+                        ->orWhere('content', 'like', '%'.$search.'%');
                 });
             })
             ->when($categorySlug, function ($query) use ($categorySlug) {
@@ -39,23 +39,22 @@ class BlogController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        $categories = Cache::remember('blog.categories_with_count', 3600, fn () =>
-            BlogCategory::query()
-                ->where('status', true)
-                ->whereHas('blogs', fn ($query) => $query
-                    ->where('status', 'published')
-                    ->whereNotNull('published_at')
-                )
-                ->orderBy('name')
-                ->withCount(['blogs' => fn ($q) => $q->where('status', 'published')->whereNotNull('published_at')])
-                ->get(['id', 'name', 'slug', 'color'])
-                ->map(fn ($c) => [
-                    'name'        => $c->name,
-                    'slug'        => $c->slug,
-                    'color'       => $c->color,
-                    'blogs_count' => $c->blogs_count,
-                ])
-                ->all()
+        $categories = Cache::remember('blog.categories_with_count', 3600, fn () => BlogCategory::query()
+            ->where('status', true)
+            ->whereHas('blogs', fn ($query) => $query
+                ->where('status', 'published')
+                ->whereNotNull('published_at')
+            )
+            ->orderBy('name')
+            ->withCount(['blogs' => fn ($q) => $q->where('status', 'published')->whereNotNull('published_at')])
+            ->get(['id', 'name', 'slug', 'color'])
+            ->map(fn ($c) => [
+                'name' => $c->name,
+                'slug' => $c->slug,
+                'color' => $c->color,
+                'blogs_count' => $c->blogs_count,
+            ])
+            ->all()
         );
 
         return view('frontend.pages.blog.index', compact('blogs', 'categories'));
@@ -87,23 +86,22 @@ class BlogController extends Controller
             ->take(4)
             ->get();
 
-        $categories = Cache::remember('blog.categories_with_count', 3600, fn () =>
-            BlogCategory::query()
-                ->where('status', true)
-                ->whereHas('blogs', fn ($query) => $query
-                    ->where('status', 'published')
-                    ->whereNotNull('published_at')
-                )
-                ->orderBy('name')
-                ->withCount(['blogs' => fn ($q) => $q->where('status', 'published')->whereNotNull('published_at')])
-                ->get(['id', 'name', 'slug', 'color'])
-                ->map(fn ($c) => [
-                    'name'        => $c->name,
-                    'slug'        => $c->slug,
-                    'color'       => $c->color,
-                    'blogs_count' => $c->blogs_count,
-                ])
-                ->all()
+        $categories = Cache::remember('blog.categories_with_count', 3600, fn () => BlogCategory::query()
+            ->where('status', true)
+            ->whereHas('blogs', fn ($query) => $query
+                ->where('status', 'published')
+                ->whereNotNull('published_at')
+            )
+            ->orderBy('name')
+            ->withCount(['blogs' => fn ($q) => $q->where('status', 'published')->whereNotNull('published_at')])
+            ->get(['id', 'name', 'slug', 'color'])
+            ->map(fn ($c) => [
+                'name' => $c->name,
+                'slug' => $c->slug,
+                'color' => $c->color,
+                'blogs_count' => $c->blogs_count,
+            ])
+            ->all()
         );
 
         return view('frontend.pages.blog.show', compact('blog', 'recentBlogs', 'categories', 'approvedComments'));

@@ -90,6 +90,10 @@
                 <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $setting->is_active)) class="w-4 h-4 rounded text-brand-600 focus:ring-brand-400">
                 <span class="text-ink-700">Mostrar el pie de página</span>
             </label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" name="dark" value="1" @checked(old('dark', $setting->dark)) class="w-4 h-4 rounded text-brand-600 focus:ring-brand-400">
+                <span class="text-ink-700">Fondo oscuro</span>
+            </label>
             <p class="text-xs text-ink-400">El logo, el nombre del sitio y el copyright se editan en <a href="{{ route('admin.appearance.edit') }}" class="text-brand-700 underline">Apariencia</a>.</p>
         </section>
 

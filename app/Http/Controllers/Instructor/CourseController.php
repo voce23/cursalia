@@ -11,7 +11,6 @@ use App\Models\CourseLanguage;
 use App\Models\CourseLevel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -33,7 +32,7 @@ class CourseController extends Controller
         $categories = CourseCategory::whereNull('parent_id')
             ->with('subcategories')
             ->get();
-        $levels    = CourseLevel::all();
+        $levels = CourseLevel::all();
         $languages = CourseLanguage::all();
 
         return view('instructor.course.create', compact('categories', 'levels', 'languages'));
@@ -45,7 +44,7 @@ class CourseController extends Controller
 
         if ($request->hasFile('thumbnail')) {
             Storage::disk('public')->makeDirectory('course');
-            $filename = 'course/' . uniqid('crs_') . '.webp';
+            $filename = 'course/'.uniqid('crs_').'.webp';
             Image::decode($request->file('thumbnail'))
                 ->cover(600, 400)
                 ->save(Storage::disk('public')->path($filename), 90);
@@ -55,22 +54,22 @@ class CourseController extends Controller
         $slug = $this->uniqueSlug($request->title);
 
         Course::create([
-            'instructor_id'      => Auth::id(),
-            'category_id'        => $request->category_id,
-            'course_level_id'    => $request->course_level_id,
+            'instructor_id' => Auth::id(),
+            'category_id' => $request->category_id,
+            'course_level_id' => $request->course_level_id,
             'course_language_id' => $request->course_language_id,
-            'title'              => $request->title,
-            'slug'               => $slug,
-            'seo_description'    => $request->seo_description,
-            'thumbnail'          => $thumbnailPath,
+            'title' => $request->title,
+            'slug' => $slug,
+            'seo_description' => $request->seo_description,
+            'thumbnail' => $thumbnailPath,
             'demo_video_storage' => $request->demo_video_storage,
-            'demo_video_source'  => $request->demo_video_source,
-            'description'        => $request->description,
-            'price'              => $request->price,
-            'discount'           => $request->discount,
-            'duration'           => $request->duration,
-            'certificate'        => $request->boolean('certificate'),
-            'qna'                => $request->boolean('qna'),
+            'demo_video_source' => $request->demo_video_source,
+            'description' => $request->description,
+            'price' => $request->price,
+            'discount' => $request->discount,
+            'duration' => $request->duration,
+            'certificate' => $request->boolean('certificate'),
+            'qna' => $request->boolean('qna'),
         ]);
 
         flash()->success('Curso creado correctamente.');
@@ -85,7 +84,7 @@ class CourseController extends Controller
         $categories = CourseCategory::whereNull('parent_id')
             ->with('subcategories')
             ->get();
-        $levels    = CourseLevel::all();
+        $levels = CourseLevel::all();
         $languages = CourseLanguage::all();
 
         return view('instructor.course.edit', compact('course', 'categories', 'levels', 'languages'));
@@ -96,20 +95,20 @@ class CourseController extends Controller
         $this->authorize('update', $course);
 
         $data = [
-            'category_id'        => $request->category_id,
-            'course_level_id'    => $request->course_level_id,
+            'category_id' => $request->category_id,
+            'course_level_id' => $request->course_level_id,
             'course_language_id' => $request->course_language_id,
-            'title'              => $request->title,
-            'slug'               => $this->uniqueSlug($request->title, $course->id),
-            'seo_description'    => $request->seo_description,
+            'title' => $request->title,
+            'slug' => $this->uniqueSlug($request->title, $course->id),
+            'seo_description' => $request->seo_description,
             'demo_video_storage' => $request->demo_video_storage,
-            'demo_video_source'  => $request->demo_video_source,
-            'description'        => $request->description,
-            'price'              => $request->price,
-            'discount'           => $request->discount,
-            'duration'           => $request->duration,
-            'certificate'        => $request->boolean('certificate'),
-            'qna'                => $request->boolean('qna'),
+            'demo_video_source' => $request->demo_video_source,
+            'description' => $request->description,
+            'price' => $request->price,
+            'discount' => $request->discount,
+            'duration' => $request->duration,
+            'certificate' => $request->boolean('certificate'),
+            'qna' => $request->boolean('qna'),
         ];
 
         if ($request->hasFile('thumbnail')) {
@@ -117,7 +116,7 @@ class CourseController extends Controller
                 Storage::disk('public')->delete($course->thumbnail);
             }
             Storage::disk('public')->makeDirectory('course');
-            $filename = 'course/' . uniqid('crs_') . '.webp';
+            $filename = 'course/'.uniqid('crs_').'.webp';
             Image::decode($request->file('thumbnail'))
                 ->cover(600, 400)
                 ->save(Storage::disk('public')->path($filename), 90);
@@ -142,7 +141,7 @@ class CourseController extends Controller
                 ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
                 ->exists()
         ) {
-            $slug = $original . '-' . $counter++;
+            $slug = $original.'-'.$counter++;
         }
 
         return $slug;

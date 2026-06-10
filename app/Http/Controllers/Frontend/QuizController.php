@@ -28,7 +28,7 @@ class QuizController extends Controller
         $lesson = $quiz->lesson;
         abort_if(! $lesson, 404);
 
-        $course   = $lesson->course;
+        $course = $lesson->course;
         $courseId = $lesson->course_id;
         abort_if(! $course, 404);
 
@@ -56,21 +56,21 @@ class QuizController extends Controller
 
         $attempt = DB::transaction(function () use ($quiz, $user, $answers, $request) {
             $attempt = QuizAttempt::create([
-                'user_id'      => $user->id,
-                'quiz_id'      => $quiz->id,
-                'started_at'   => now(),
+                'user_id' => $user->id,
+                'quiz_id' => $quiz->id,
+                'started_at' => now(),
                 'completed_at' => now(),
-                'ip_address'   => $request->ip(),
-                'user_agent'   => substr((string) $request->userAgent(), 0, 500),
+                'ip_address' => $request->ip(),
+                'user_agent' => substr((string) $request->userAgent(), 0, 500),
             ]);
 
-            $totalPoints  = 0;
+            $totalPoints = 0;
             $earnedPoints = 0;
 
             foreach ($quiz->questions as $question) {
                 $userAnswer = $answers[$question->id] ?? null;
-                $isCorrect  = null;
-                $points     = 0;
+                $isCorrect = null;
+                $points = 0;
 
                 if (in_array($question->question_type, ['multiple_choice', 'true_false'], true)) {
                     $totalPoints += $question->points;
@@ -91,9 +91,9 @@ class QuizController extends Controller
                 // essay / short_answer: is_correct = null (no autocorregible en FREE)
 
                 $attempt->answers()->create([
-                    'question_id'   => $question->id,
-                    'answer'        => is_array($userAnswer) ? json_encode($userAnswer) : (string) $userAnswer,
-                    'is_correct'    => $isCorrect,
+                    'question_id' => $question->id,
+                    'answer' => is_array($userAnswer) ? json_encode($userAnswer) : (string) $userAnswer,
+                    'is_correct' => $isCorrect,
                     'points_earned' => $points,
                 ]);
             }
@@ -101,9 +101,9 @@ class QuizController extends Controller
             $percentage = $totalPoints > 0 ? round($earnedPoints / $totalPoints * 100, 2) : 0;
 
             $attempt->update([
-                'score'      => $earnedPoints,
+                'score' => $earnedPoints,
                 'percentage' => $percentage,
-                'passed'     => $percentage >= $quiz->passing_score,
+                'passed' => $percentage >= $quiz->passing_score,
             ]);
 
             return $attempt;

@@ -2,6 +2,7 @@
 
 namespace App\View\Composers;
 
+use App\Models\CustomPage;
 use App\Models\Footer;
 use App\Models\FooterColumnOne;
 use App\Models\FooterColumnTwo;
@@ -32,25 +33,25 @@ class BrandingComposer
         // Con CACHE_STORE=database eso es 1 SELECT en lugar de 8 en CADA página
         // del sitio (el composer corre en todas). Reduce ~7 queries por página.
         $b = Cache::remember(self::BUNDLE_KEY, self::TTL, fn () => [
-            'generalSetting'  => $this->generalSettingArr(),
-            'headerSetting'   => $this->headerSettingArr(),
-            'headerLinks'     => $this->headerLinks(),
-            'socialLinks'     => $this->socialLinks(),
-            'footerInfo'      => $this->footerInfoArr(),
+            'generalSetting' => $this->generalSettingArr(),
+            'headerSetting' => $this->headerSettingArr(),
+            'headerLinks' => $this->headerLinks(),
+            'socialLinks' => $this->socialLinks(),
+            'footerInfo' => $this->footerInfoArr(),
             'footerColumnOne' => $this->footerColumn('one'),
             'footerColumnTwo' => $this->footerColumn('two'),
-            'legalPages'      => $this->legalPages(),
+            'legalPages' => $this->legalPages(),
         ]);
 
         $view->with([
-            'generalSetting'  => (object) $b['generalSetting'],
-            'headerSetting'   => (object) $b['headerSetting'],
-            'headerLinks'     => $b['headerLinks'],
-            'socialLinks'     => $b['socialLinks'],
-            'footerInfo'      => (object) $b['footerInfo'],
+            'generalSetting' => (object) $b['generalSetting'],
+            'headerSetting' => (object) $b['headerSetting'],
+            'headerLinks' => $b['headerLinks'],
+            'socialLinks' => $b['socialLinks'],
+            'footerInfo' => (object) $b['footerInfo'],
             'footerColumnOne' => $b['footerColumnOne'],
             'footerColumnTwo' => $b['footerColumnTwo'],
-            'legalPages'      => $b['legalPages'],
+            'legalPages' => $b['legalPages'],
         ]);
     }
 
@@ -61,34 +62,38 @@ class BrandingComposer
         if (! $s) {
             return $defaults;
         }
+
         return array_merge($defaults, [
-                'site_name'    => $s->site_name      ?: $defaults['site_name'],
-                'site_slogan'  => $s->site_slogan    ?: $defaults['site_slogan'],
-                'logo'         => $s->logo,
-                'favicon'      => $s->favicon,
-                'copyright'    => $s->copyright      ?: $defaults['copyright'],
-                'brand_color'  => $s->brand_color    ?: $defaults['brand_color'],
-                'accent_color' => $s->accent_color   ?: $defaults['accent_color'],
-                'sun_color'    => $s->sun_color      ?: $defaults['sun_color'],
-                'ink_color'    => $s->ink_color      ?: $defaults['ink_color'],
-                'font_display' => $s->font_display   ?: $defaults['font_display'],
-                'font_body'    => $s->font_body      ?: $defaults['font_body'],
-                'theme_preset' => $s->theme_preset   ?: $defaults['theme_preset'],
-                'default_locale'          => $s->default_locale          ?: $defaults['default_locale'],
-                'seo_default_description' => $s->seo_default_description ?: $defaults['seo_default_description'],
-            'og_image'                => $s->og_image,
-            'enabled_sections'        => is_array($s->enabled_sections) ? $s->enabled_sections : $defaults['enabled_sections'],
+            'site_name' => $s->site_name ?: $defaults['site_name'],
+            'site_slogan' => $s->site_slogan ?: $defaults['site_slogan'],
+            'logo' => $s->logo,
+            'logo_dark' => $s->logo_dark,
+            'favicon' => $s->favicon,
+            'copyright' => $s->copyright ?: $defaults['copyright'],
+            'brand_color' => $s->brand_color ?: $defaults['brand_color'],
+            'accent_color' => $s->accent_color ?: $defaults['accent_color'],
+            'sun_color' => $s->sun_color ?: $defaults['sun_color'],
+            'ink_color' => $s->ink_color ?: $defaults['ink_color'],
+            'font_display' => $s->font_display ?: $defaults['font_display'],
+            'font_body' => $s->font_body ?: $defaults['font_body'],
+            'theme_preset' => $s->theme_preset ?: $defaults['theme_preset'],
+            'default_locale' => $s->default_locale ?: $defaults['default_locale'],
+            'seo_default_description' => $s->seo_default_description ?: $defaults['seo_default_description'],
+            'og_image' => $s->og_image,
+            'hero_image' => $s->hero_image,
+            'enabled_sections' => is_array($s->enabled_sections) ? $s->enabled_sections : $defaults['enabled_sections'],
         ]);
     }
 
     private function headerSettingArr(): array
     {
         $h = HeaderSetting::query()->first();
+
         return [
             'category_button_text' => $h?->category_button_text ?: 'Categorías',
-            'category_limit'       => (int) ($h?->category_limit ?: 8),
-            'show_search'          => (bool) ($h?->show_search ?? true),
-            'search_placeholder'   => $h?->search_placeholder ?: '¿Qué quieres aprender hoy?',
+            'category_limit' => (int) ($h?->category_limit ?: 8),
+            'show_search' => (bool) ($h?->show_search ?? true),
+            'search_placeholder' => $h?->search_placeholder ?: '¿Qué quieres aprender hoy?',
         ];
     }
 
@@ -99,8 +104,8 @@ class BrandingComposer
             ->orderBy('sort_order')
             ->get(['title', 'url', 'open_in_new_tab'])
             ->map(fn ($l) => [
-                'title'        => $l->title,
-                'url'          => $l->url,
+                'title' => $l->title,
+                'url' => $l->url,
                 'open_new_tab' => (bool) $l->open_in_new_tab,
             ])
             ->all();
@@ -115,7 +120,7 @@ class BrandingComposer
             ->map(fn ($s) => [
                 'name' => $s->name,
                 'icon' => $s->icon_class,
-                'url'  => $s->url,
+                'url' => $s->url,
             ])
             ->all();
     }
@@ -123,14 +128,16 @@ class BrandingComposer
     private function footerInfoArr(): array
     {
         $f = Footer::query()->first();
+
         return [
-            'description'   => $f?->description   ?: 'Aprende algo nuevo, a tu manera. Cursos prácticos creados por mentores reales.',
+            'description' => $f?->description ?: 'Aprende algo nuevo, a tu manera. Cursos prácticos creados por mentores reales.',
             'contact_title' => $f?->contact_title ?: 'Contacto',
-            'email'         => $f?->email         ?: 'hola@cursalia.com',
-            'phone'         => $f?->phone,
-            'address'       => $f?->address       ?: 'Madrid, España',
-            'bottom_text'   => $f?->bottom_text   ?: 'Hecho con ❤️ y Laravel 13',
-            'is_active'     => (bool) ($f?->is_active ?? true),
+            'email' => $f?->email ?: 'hola@cursalia.com',
+            'phone' => $f?->phone,
+            'address' => $f?->address ?: 'Madrid, España',
+            'bottom_text' => $f?->bottom_text ?: 'Hecho con ❤️ y Laravel 13',
+            'is_active' => (bool) ($f?->is_active ?? true),
+            'dark' => (bool) ($f?->dark ?? true),
         ];
     }
 
@@ -148,7 +155,7 @@ class BrandingComposer
 
     private function legalPages(): array
     {
-        return \App\Models\CustomPage::query()
+        return CustomPage::query()
             ->where('status', true)
             ->where('slug', 'like', 'legal/%')
             ->orderBy('title')
@@ -160,22 +167,24 @@ class BrandingComposer
     private function defaultsArr(): array
     {
         return [
-            'site_name'    => 'Cursalia',
-            'site_slogan'  => 'Aprende algo nuevo, a tu manera',
-            'logo'         => null,
-            'favicon'      => null,
-            'copyright'    => '© '.date('Y').' Cursalia.',
-            'brand_color'  => '#10B981',
+            'site_name' => 'Cursalia',
+            'site_slogan' => 'Aprende algo nuevo, a tu manera',
+            'logo' => null,
+            'logo_dark' => null,
+            'favicon' => null,
+            'copyright' => '© '.date('Y').' Cursalia.',
+            'brand_color' => '#10B981',
             'accent_color' => '#FB7185',
-            'sun_color'    => '#FBBF24',
-            'ink_color'    => '#1F2933',
+            'sun_color' => '#FBBF24',
+            'ink_color' => '#1F2933',
             'font_display' => 'Poppins',
-            'font_body'    => 'Inter',
+            'font_body' => 'Inter',
             'theme_preset' => 'cursalia-green',
-            'default_locale'          => 'es',
+            'default_locale' => 'es',
             'seo_default_description' => 'Cursalia · Plataforma de cursos online.',
-            'og_image'                => null,
-            'enabled_sections'        => array_keys(GeneralSetting::HOME_SECTIONS),
+            'og_image' => null,
+            'hero_image' => null,
+            'enabled_sections' => array_keys(GeneralSetting::HOME_SECTIONS),
         ];
     }
 

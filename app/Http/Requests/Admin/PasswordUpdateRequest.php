@@ -16,7 +16,7 @@ class PasswordUpdateRequest extends FormRequest
     {
         return [
             'current_password' => ['required', 'current_password:admin'],
-            'password'         => ['required', Password::defaults(), 'confirmed'],
+            'password' => ['required', Password::defaults(), 'confirmed'],
         ];
     }
 }

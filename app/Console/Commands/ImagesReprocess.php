@@ -28,7 +28,7 @@ class ImagesReprocess extends Command
     public function handle(ImageOptimizer $opt): int
     {
         $only = $this->option('only');
-        $dry  = (bool) $this->option('dry');
+        $dry = (bool) $this->option('dry');
 
         if ($dry) {
             $this->warn('Modo DRY-RUN: no se escribirá nada.');
@@ -54,6 +54,7 @@ class ImagesReprocess extends Command
 
         if (empty($tasks)) {
             $this->info('No hay imágenes para procesar.');
+
             return self::SUCCESS;
         }
 
@@ -63,7 +64,7 @@ class ImagesReprocess extends Command
 
         $stats = ['svg_min' => 0, 'webp' => 0, 'avif' => 0, 'responsive' => 0, 'skipped' => 0];
         $totalBefore = 0;
-        $totalAfter  = 0;
+        $totalAfter = 0;
 
         foreach ($tasks as $t) {
             $path = $t['path'];
@@ -71,6 +72,7 @@ class ImagesReprocess extends Command
 
             if ($only === 'svgs' && ! $isSvg) {
                 $stats['skipped']++;
+
                 continue;
             }
 
@@ -81,6 +83,7 @@ class ImagesReprocess extends Command
 
             if ($dry) {
                 $this->line('  • '.$path.' ('.$this->bytes($before).')');
+
                 continue;
             }
 
@@ -109,10 +112,15 @@ class ImagesReprocess extends Command
 
                 $this->line('  <fg=green>✓</> '.$path);
                 foreach ($generated as $g) {
-                    if (str_contains($g, 'svg')) $stats['svg_min']++;
-                    elseif ($g === 'webp') $stats['webp']++;
-                    elseif ($g === 'avif') $stats['avif']++;
-                    elseif (str_starts_with($g, 'responsive')) $stats['responsive']++;
+                    if (str_contains($g, 'svg')) {
+                        $stats['svg_min']++;
+                    } elseif ($g === 'webp') {
+                        $stats['webp']++;
+                    } elseif ($g === 'avif') {
+                        $stats['avif']++;
+                    } elseif (str_starts_with($g, 'responsive')) {
+                        $stats['responsive']++;
+                    }
                     $this->line('     · '.$g);
                 }
             }
@@ -138,8 +146,13 @@ class ImagesReprocess extends Command
 
     private function bytes(int $b): string
     {
-        if ($b > 1048576) return round($b / 1048576, 1).' MB';
-        if ($b > 1024)    return round($b / 1024, 1).' KB';
+        if ($b > 1048576) {
+            return round($b / 1048576, 1).' MB';
+        }
+        if ($b > 1024) {
+            return round($b / 1024, 1).' KB';
+        }
+
         return $b.' B';
     }
 }

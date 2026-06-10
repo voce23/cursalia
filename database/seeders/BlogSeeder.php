@@ -14,8 +14,8 @@ class BlogSeeder extends Seeder
     {
         // Get the first admin or create one
         $admin = Admin::first();
-        
-        if (!$admin) {
+
+        if (! $admin) {
             $admin = Admin::create([
                 'name' => 'Admin',
                 'email' => 'admin@lmsl13.test',
@@ -57,7 +57,7 @@ class BlogSeeder extends Seeder
         // Create blog articles
         $images = ['blog/blog_69e966e77e417.webp', 'blog/blog_69e96ade7c14f.webp'];
         $imageIndex = 0;
-        
+
         $articles = [
             [
                 'title' => 'Cómo empezar con nuestro LMS',
@@ -96,7 +96,7 @@ class BlogSeeder extends Seeder
         foreach ($articles as $articleData) {
             $image = $images[$imageIndex % count($images)];
             $imageIndex++;
-            
+
             Blog::firstOrCreate(
                 ['title' => $articleData['title']],
                 [

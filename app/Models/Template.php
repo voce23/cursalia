@@ -24,16 +24,16 @@ class Template extends Model
     ];
 
     protected $casts = [
-        'gallery'         => 'array',
-        'tech_stack'      => 'array',
-        'features'        => 'array',
-        'price'           => 'decimal:2',
-        'discount'        => 'decimal:2',
-        'is_free'         => 'boolean',
-        'is_featured'     => 'boolean',
-        'sales_count'     => 'integer',
+        'gallery' => 'array',
+        'tech_stack' => 'array',
+        'features' => 'array',
+        'price' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'is_free' => 'boolean',
+        'is_featured' => 'boolean',
+        'sales_count' => 'integer',
         'downloads_count' => 'integer',
-        'sort_order'      => 'integer',
+        'sort_order' => 'integer',
     ];
 
     // ── Relaciones ──────────────────────────────────────────────────────────
@@ -74,6 +74,7 @@ class Template extends Model
         if ($this->is_free) {
             return 0.0;
         }
+
         return (float) ($this->discount ?: $this->price);
     }
 
@@ -90,6 +91,7 @@ class Template extends Model
         if (! $this->has_discount) {
             return 0;
         }
+
         return (int) round((1 - (float) $this->discount / (float) $this->price) * 100);
     }
 }

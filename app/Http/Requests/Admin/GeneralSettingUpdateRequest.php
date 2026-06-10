@@ -14,11 +14,11 @@ class GeneralSettingUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'site_name'   => ['required', 'string', 'max:120'],
+            'site_name' => ['required', 'string', 'max:120'],
             'site_slogan' => ['nullable', 'string', 'max:200'],
-            'copyright'   => ['nullable', 'string', 'max:255'],
-            'logo'        => ['nullable', 'file', 'extensions:png,jpg,jpeg,webp,svg,gif,avif,bmp', 'max:4096'],
-            'favicon'     => ['nullable', 'file', 'extensions:png,jpg,jpeg,webp,svg,ico,gif', 'max:1024'],
+            'copyright' => ['nullable', 'string', 'max:255'],
+            'logo' => ['nullable', 'file', 'extensions:png,jpg,jpeg,webp,svg,gif,avif,bmp', 'max:4096'],
+            'favicon' => ['nullable', 'file', 'extensions:png,jpg,jpeg,webp,svg,ico,gif', 'max:1024'],
             'mail_mailer' => ['nullable', 'in:log,smtp'],
             'mail_scheme' => ['nullable', 'in:tls,ssl'],
             'mail_host' => ['nullable', 'required_if:mail_mailer,smtp', 'string', 'max:255'],
@@ -33,11 +33,11 @@ class GeneralSettingUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'site_name'   => 'nombre del sitio',
+            'site_name' => 'nombre del sitio',
             'site_slogan' => 'slogan',
-            'copyright'   => 'texto de copyright',
-            'logo'        => 'logo',
-            'favicon'     => 'favicon',
+            'copyright' => 'texto de copyright',
+            'logo' => 'logo',
+            'favicon' => 'favicon',
             'mail_mailer' => 'mailer de correo',
             'mail_scheme' => 'esquema SMTP',
             'mail_host' => 'host SMTP',

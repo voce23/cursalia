@@ -45,14 +45,14 @@ class CartController extends Controller
         }
 
         Cart::create([
-            'user_id'   => Auth::id(),
+            'user_id' => Auth::id(),
             'course_id' => $course->id,
         ]);
 
         $cartCount = Cart::where('user_id', Auth::id())->count();
 
         return response()->json([
-            'message'    => '¡Curso agregado al carrito!',
+            'message' => '¡Curso agregado al carrito!',
             'cart_count' => $cartCount,
         ]);
     }

@@ -36,6 +36,7 @@ class ServiceController extends Controller
         $data['slug'] = Str::slug($data['title']);
         $data['features'] = $this->splitMultiline($request->input('features_raw'));
         Service::create($data);
+
         return to_route('admin.services.index')->with('success', 'Servicio creado.');
     }
 
@@ -52,12 +53,14 @@ class ServiceController extends Controller
         }
         $data['features'] = $this->splitMultiline($request->input('features_raw'));
         $service->update($data);
+
         return to_route('admin.services.index')->with('success', 'Servicio actualizado.');
     }
 
     public function destroy(Service $service): JsonResponse
     {
         $service->delete();
+
         return response()->json(['message' => 'Servicio eliminado.']);
     }
 
@@ -84,41 +87,46 @@ class ServiceController extends Controller
     public function updateRequestStatus(Request $request, ServiceRequest $serviceRequest): RedirectResponse
     {
         $request->validate([
-            'status'      => ['required', 'in:'.implode(',', array_keys(ServiceRequest::STATUSES))],
+            'status' => ['required', 'in:'.implode(',', array_keys(ServiceRequest::STATUSES))],
             'admin_notes' => ['nullable', 'string', 'max:2000'],
         ]);
         $serviceRequest->update($request->only(['status', 'admin_notes']));
+
         return back()->with('success', 'Pedido actualizado.');
     }
 
     private function validateRequest(Request $request): array
     {
         $data = $request->validate([
-            'title'       => ['required', 'string', 'max:120'],
-            'headline'    => ['nullable', 'string', 'max:200'],
+            'title' => ['required', 'string', 'max:120'],
+            'headline' => ['nullable', 'string', 'max:200'],
             'description' => ['nullable', 'string'],
-            'icon'        => ['nullable', 'string', 'max:80'],
-            'color'       => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'price'       => ['required', 'numeric', 'min:0'],
-            'currency'    => ['required', 'string', 'max:8'],
-            'price_suffix'=> ['nullable', 'string', 'max:40'],
-            'is_free'     => ['nullable', 'boolean'],
-            'badge_text'  => ['nullable', 'string', 'max:40'],
-            'cta_text'    => ['required', 'string', 'max:60'],
-            'cta_url'     => ['nullable', 'url', 'max:255'],
-            'is_active'   => ['nullable', 'boolean'],
+            'icon' => ['nullable', 'string', 'max:80'],
+            'color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'currency' => ['required', 'string', 'max:8'],
+            'price_suffix' => ['nullable', 'string', 'max:40'],
+            'is_free' => ['nullable', 'boolean'],
+            'badge_text' => ['nullable', 'string', 'max:40'],
+            'cta_text' => ['required', 'string', 'max:60'],
+            'cta_url' => ['nullable', 'url', 'max:255'],
+            'is_active' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
-            'sort_order'  => ['nullable', 'integer', 'min:0'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
-        $data['is_free']     = $request->boolean('is_free');
-        $data['is_active']   = $request->boolean('is_active');
+        $data['is_free'] = $request->boolean('is_free');
+        $data['is_active'] = $request->boolean('is_active');
         $data['is_featured'] = $request->boolean('is_featured');
+
         return $data;
     }
 
     private function splitMultiline(?string $raw): array
     {
-        if (! $raw) return [];
+        if (! $raw) {
+            return [];
+        }
+
         return collect(preg_split("/\r?\n/", trim($raw)))
             ->map(fn ($l) => trim($l))
             ->filter()

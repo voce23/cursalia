@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Middleware\FeatureFlag;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsInstructor;
+use App\Http\Middleware\IsStudent;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -27,21 +32,22 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Cabeceras de seguridad en todas las respuestas web
         $middleware->web(append: [
-            \App\Http\Middleware\SecurityHeaders::class,
+            SecurityHeaders::class,
         ]);
 
         $middleware->alias([
-            'is.admin'      => \App\Http\Middleware\IsAdmin::class,
-            'is.instructor' => \App\Http\Middleware\IsInstructor::class,
-            'is.student'    => \App\Http\Middleware\IsStudent::class,
+            'is.admin' => IsAdmin::class,
+            'is.instructor' => IsInstructor::class,
+            'is.student' => IsStudent::class,
             // Feature flags Cursalia (Fase 2: pagos, marketplace, certificados).
-            'feature'       => \App\Http\Middleware\FeatureFlag::class,
+            'feature' => FeatureFlag::class,
         ]);
 
         $middleware->redirectGuestsTo(function ($request) {
             if ($request->is('admin/*') || $request->is('admin')) {
                 return route('admin.login');
             }
+
             return route('login');
         });
 
@@ -55,6 +61,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     ? '/instructor/dashboard'
                     : '/instructor/pending';
             }
+
             return '/student/dashboard';
         });
     })
@@ -86,7 +93,7 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->view('errors.403', [], 403);
         });
 
-        $exceptions->render(function (\Throwable $e, $request) {
+        $exceptions->render(function (Throwable $e, $request) {
             if ($request->expectsJson() || config('app.debug')) {
                 return null;
             }

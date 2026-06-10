@@ -21,24 +21,24 @@ class LegalPageController extends Controller
     {
         return [
             'privacy' => [
-                'title'   => 'Política de privacidad',
-                'intro'   => 'Cómo recopilamos, usamos y protegemos tus datos personales.',
-                'body'    => $this->privacyBody(),
+                'title' => 'Política de privacidad',
+                'intro' => 'Cómo recopilamos, usamos y protegemos tus datos personales.',
+                'body' => $this->privacyBody(),
             ],
             'terms' => [
-                'title'   => 'Términos y condiciones',
-                'intro'   => 'Las reglas básicas para usar la plataforma como estudiante o instructor.',
-                'body'    => $this->termsBody(),
+                'title' => 'Términos y condiciones',
+                'intro' => 'Las reglas básicas para usar la plataforma como estudiante o instructor.',
+                'body' => $this->termsBody(),
             ],
             'data-deletion' => [
-                'title'   => 'Eliminación de datos',
-                'intro'   => 'Cómo puedes eliminar tu cuenta y todos tus datos personales.',
-                'body'    => $this->dataDeletionBody(),
+                'title' => 'Eliminación de datos',
+                'intro' => 'Cómo puedes eliminar tu cuenta y todos tus datos personales.',
+                'body' => $this->dataDeletionBody(),
             ],
             'refunds' => [
-                'title'   => 'Política de reembolsos',
-                'intro'   => 'Condiciones para solicitar el reembolso de un curso adquirido.',
-                'body'    => $this->refundsBody(),
+                'title' => 'Política de reembolsos',
+                'intro' => 'Condiciones para solicitar el reembolso de un curso adquirido.',
+                'body' => $this->refundsBody(),
             ],
         ];
     }
@@ -55,10 +55,11 @@ class LegalPageController extends Controller
             ->first();
 
         $data = $defaults[$slug];
+
         return view('frontend.pages.legal', [
-            'title'   => $page?->title           ?: $data['title'],
-            'intro'   => $page?->seo_description ?: $data['intro'],
-            'body'    => $page?->description     ?: $data['body'],
+            'title' => $page?->title ?: $data['title'],
+            'intro' => $page?->seo_description ?: $data['intro'],
+            'body' => $page?->description ?: $data['body'],
             'updated' => $page?->updated_at?->translatedFormat('F \d\e Y'),
         ]);
     }

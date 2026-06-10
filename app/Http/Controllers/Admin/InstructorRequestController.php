@@ -41,17 +41,17 @@ class InstructorRequestController extends Controller
         $instructor_request->save();
 
         Log::info('admin.instructor_request_updated', [
-            'admin_id'       => auth('admin')->id(),
-            'instructor_id'  => $instructor_request->id,
+            'admin_id' => auth('admin')->id(),
+            'instructor_id' => $instructor_request->id,
             'instructor_email' => $instructor_request->email,
-            'new_status'     => $request->status,
-            'ip'             => $request->ip(),
+            'new_status' => $request->status,
+            'ip' => $request->ip(),
         ]);
 
         if ($request->status === 'approved') {
-            Mail::to($instructor_request)->queue(new InstructorRequestApprovedMail());
+            Mail::to($instructor_request)->queue(new InstructorRequestApprovedMail);
         } elseif ($request->status === 'rejected') {
-            Mail::to($instructor_request)->queue(new InstructorRequestRejectMail());
+            Mail::to($instructor_request)->queue(new InstructorRequestRejectMail);
         }
 
         flash()->success('Estado actualizado correctamente.');

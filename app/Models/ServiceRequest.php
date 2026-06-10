@@ -13,10 +13,10 @@ class ServiceRequest extends Model
     ];
 
     public const STATUSES = [
-        'new'         => 'Nuevo',
-        'contacted'   => 'Contactado',
+        'new' => 'Nuevo',
+        'contacted' => 'Contactado',
         'in_progress' => 'En proceso',
-        'closed'      => 'Cerrado',
+        'closed' => 'Cerrado',
     ];
 
     public function service(): BelongsTo

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\FooterColumnTwo;
+use App\View\Composers\BrandingComposer;
 use Illuminate\Database\Seeder;
 
 /**
@@ -47,7 +48,7 @@ class CursaliaFooterCleanupSeeder extends Seeder
         }
 
         // Invalidar cache del composer para que el footer se regenere.
-        \App\View\Composers\BrandingComposer::flushCache();
+        BrandingComposer::flushCache();
 
         $this->command->info('  ✓ Footer column 2 limpiada (3 items, sin duplicados ni URLs rotas).');
     }

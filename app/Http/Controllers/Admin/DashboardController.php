@@ -18,32 +18,28 @@ class DashboardController extends Controller
     public function index(): View
     {
         $today = today()->toDateString();
-        $year  = now()->year;
+        $year = now()->year;
         $month = now()->month;
 
         // Ventas: TTL 5 min (datos financieros recientes)
-        $todaySales = (float) Cache::remember("admin.sales.today.{$today}", 300, fn () =>
-            Order::query()->whereDate('created_at', today())->sum('paid_amount')
+        $todaySales = (float) Cache::remember("admin.sales.today.{$today}", 300, fn () => Order::query()->whereDate('created_at', today())->sum('paid_amount')
         );
 
-        $weekSales = (float) Cache::remember('admin.sales.week', 300, fn () =>
-            Order::query()->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->sum('paid_amount')
+        $weekSales = (float) Cache::remember('admin.sales.week', 300, fn () => Order::query()->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->sum('paid_amount')
         );
 
-        $monthSales = (float) Cache::remember("admin.sales.month.{$year}.{$month}", 300, fn () =>
-            Order::query()->whereYear('created_at', $year)->whereMonth('created_at', $month)->sum('paid_amount')
+        $monthSales = (float) Cache::remember("admin.sales.month.{$year}.{$month}", 300, fn () => Order::query()->whereYear('created_at', $year)->whereMonth('created_at', $month)->sum('paid_amount')
         );
 
-        $yearSales = (float) Cache::remember("admin.sales.year.{$year}", 300, fn () =>
-            Order::query()->whereYear('created_at', $year)->sum('paid_amount')
+        $yearSales = (float) Cache::remember("admin.sales.year.{$year}", 300, fn () => Order::query()->whereYear('created_at', $year)->sum('paid_amount')
         );
 
         // Conteos: TTL 5 min
-        $totalOrders      = Cache::remember('admin.count.orders', 300, fn () => Order::query()->count());
-        $pendingCourses   = Cache::remember('admin.count.courses.pending', 300, fn () => Course::query()->where('is_approved', 'pending')->count());
-        $rejectedCourses  = Cache::remember('admin.count.courses.rejected', 300, fn () => Course::query()->where('is_approved', 'rejected')->count());
-        $approvedCourses  = Cache::remember('admin.count.courses.approved', 300, fn () => Course::query()->where('is_approved', 'approved')->count());
-        $totalStudents    = Cache::remember('admin.count.students', 300, fn () => User::query()->where('role', 'student')->count());
+        $totalOrders = Cache::remember('admin.count.orders', 300, fn () => Order::query()->count());
+        $pendingCourses = Cache::remember('admin.count.courses.pending', 300, fn () => Course::query()->where('is_approved', 'pending')->count());
+        $rejectedCourses = Cache::remember('admin.count.courses.rejected', 300, fn () => Course::query()->where('is_approved', 'rejected')->count());
+        $approvedCourses = Cache::remember('admin.count.courses.approved', 300, fn () => Course::query()->where('is_approved', 'approved')->count());
+        $totalStudents = Cache::remember('admin.count.students', 300, fn () => User::query()->where('role', 'student')->count());
         $totalInstructors = Cache::remember('admin.count.instructors', 300, fn () => User::query()->where('role', 'instructor')->count());
 
         // Listas recientes: TTL 2 min

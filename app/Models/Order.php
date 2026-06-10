@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'invoice_id',
         'buyer_id',
@@ -25,7 +26,7 @@ class Order extends Model
     {
         return [
             'total_amount' => 'decimal:2',
-            'paid_amount'  => 'decimal:2',
+            'paid_amount' => 'decimal:2',
         ];
     }
 

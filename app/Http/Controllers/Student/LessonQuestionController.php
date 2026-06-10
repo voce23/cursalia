@@ -21,11 +21,12 @@ class LessonQuestionController extends Controller
         LessonQuestion::create([
             'lesson_id' => $lesson->id,
             'course_id' => $lesson->course_id,
-            'user_id'   => Auth::id(),
-            'body'      => $request->body,
+            'user_id' => Auth::id(),
+            'body' => $request->body,
         ]);
 
         flash()->success('Pregunta publicada.');
+
         return back()->withFragment('qna');
     }
 
@@ -37,11 +38,12 @@ class LessonQuestionController extends Controller
 
         LessonQuestionAnswer::create([
             'question_id' => $question->id,
-            'user_id'     => Auth::id(),
-            'body'        => $request->body,
+            'user_id' => Auth::id(),
+            'body' => $request->body,
         ]);
 
         flash()->success('Respuesta publicada.');
+
         return back()->withFragment('qna');
     }
 
@@ -52,6 +54,7 @@ class LessonQuestionController extends Controller
         $question->delete();
 
         flash()->success('Pregunta eliminada.');
+
         return back()->withFragment('qna');
     }
 
@@ -66,6 +69,7 @@ class LessonQuestionController extends Controller
         $answer->delete();
 
         flash()->success('Respuesta eliminada.');
+
         return back()->withFragment('qna');
     }
 

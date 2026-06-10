@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Frontend;
 
+use App\Helpers\MathCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BlogCommentStoreRequest extends FormRequest
@@ -14,10 +15,10 @@ class BlogCommentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'           => ['required', 'string', 'max:120'],
-            'email'          => ['required', 'email', 'max:255'],
-            'comment'        => ['required', 'string', 'min:5', 'max:1000'],
-            'captcha_token'  => ['required', 'string'],
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:255'],
+            'comment' => ['required', 'string', 'min:5', 'max:1000'],
+            'captcha_token' => ['required', 'string'],
             'captcha_answer' => ['required', 'integer'],
         ];
     }
@@ -26,7 +27,7 @@ class BlogCommentStoreRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($v) {
-            if (! \App\Helpers\MathCaptcha::verify($this->input('captcha_token'), $this->input('captcha_answer'))) {
+            if (! MathCaptcha::verify($this->input('captcha_token'), $this->input('captcha_answer'))) {
                 $v->errors()->add('captcha_answer', 'La respuesta no coincide. ¿Eres humano? 😊 Inténtalo de nuevo.');
             }
         });

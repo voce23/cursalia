@@ -49,7 +49,7 @@ class MathCaptcha
 
         return [
             'question' => "{$a} {$op} {$b}",
-            'token'    => Crypt::encryptString($payload),
+            'token' => Crypt::encryptString($payload),
         ];
     }
 
@@ -68,6 +68,7 @@ class MathCaptcha
             if ($data['t'] < time()) {
                 return false; // token expirado
             }
+
             return (int) $answer === (int) $data['a'];
         } catch (\Throwable) {
             return false;

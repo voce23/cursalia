@@ -21,37 +21,40 @@ class AppearanceController extends Controller
     public function edit(): View
     {
         $setting = GeneralSetting::firstOrCreate(['id' => 1]);
+
         return view('admin.appearance.edit', [
             'setting' => $setting,
             'presets' => GeneralSetting::PRESETS,
-            'fonts'   => GeneralSetting::FONTS,
-            'sections'=> GeneralSetting::HOME_SECTIONS,
+            'fonts' => GeneralSetting::FONTS,
+            'sections' => GeneralSetting::HOME_SECTIONS,
         ]);
     }
 
     public function update(Request $request): RedirectResponse
     {
         $request->validate([
-            'site_name'    => ['required', 'string', 'max:120'],
-            'site_slogan'  => ['nullable', 'string', 'max:255'],
-            'copyright'    => ['nullable', 'string', 'max:255'],
-            'brand_color'  => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'site_name' => ['required', 'string', 'max:120'],
+            'site_slogan' => ['nullable', 'string', 'max:255'],
+            'copyright' => ['nullable', 'string', 'max:255'],
+            'brand_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'accent_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'sun_color'    => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'ink_color'    => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'sun_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'ink_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'theme_preset' => ['nullable', 'string', 'in:'.implode(',', array_keys(GeneralSetting::PRESETS)).',custom'],
             'font_display' => ['required', 'string', 'max:80'],
-            'font_body'    => ['required', 'string', 'max:80'],
-            'default_locale'=> ['nullable', 'string', 'max:8'],
-            'seo_default_description'  => ['nullable', 'string', 'max:320'],
+            'font_body' => ['required', 'string', 'max:80'],
+            'default_locale' => ['nullable', 'string', 'max:8'],
+            'seo_default_description' => ['nullable', 'string', 'max:320'],
             'google_site_verification' => ['nullable', 'string', 'max:255'],
-            'bing_site_verification'   => ['nullable', 'string', 'max:255'],
-            'google_analytics_id'      => ['nullable', 'string', 'max:40', 'regex:/^(G|UA|GTM|AW|DC)-[A-Z0-9]+$/'],
-            'enabled_sections'=> ['nullable', 'array'],
-            'enabled_sections.*'=> ['string', 'in:'.implode(',', array_keys(GeneralSetting::HOME_SECTIONS))],
-            'logo'    => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:2048'],
+            'bing_site_verification' => ['nullable', 'string', 'max:255'],
+            'google_analytics_id' => ['nullable', 'string', 'max:40', 'regex:/^(G|UA|GTM|AW|DC)-[A-Z0-9]+$/'],
+            'enabled_sections' => ['nullable', 'array'],
+            'enabled_sections.*' => ['string', 'in:'.implode(',', array_keys(GeneralSetting::HOME_SECTIONS))],
+            'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:2048'],
+            'logo_dark' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:2048'],
             'favicon' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg,ico', 'max:1024'],
-            'og_image'=> ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:3072'],
+            'og_image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:3072'],
+            'hero_image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
         ]);
 
         $setting = GeneralSetting::firstOrCreate(['id' => 1]);
@@ -68,7 +71,7 @@ class AppearanceController extends Controller
         $setting->enabled_sections = empty($sections) ? array_keys(GeneralSetting::HOME_SECTIONS) : $sections;
 
         // Subidas
-        foreach (['logo', 'favicon', 'og_image'] as $field) {
+        foreach (['logo', 'logo_dark', 'favicon', 'og_image', 'hero_image'] as $field) {
             if ($request->hasFile($field)) {
                 Storage::disk('public')->makeDirectory('branding');
                 if ($setting->{$field} && Storage::disk('public')->exists($setting->{$field})) {
@@ -95,10 +98,10 @@ class AppearanceController extends Controller
 
         $setting = GeneralSetting::firstOrCreate(['id' => 1]);
         $setting->theme_preset = $request->preset;
-        $setting->brand_color  = $preset['brand'];
+        $setting->brand_color = $preset['brand'];
         $setting->accent_color = $preset['accent'];
-        $setting->sun_color    = $preset['sun'];
-        $setting->ink_color    = $preset['ink'];
+        $setting->sun_color = $preset['sun'];
+        $setting->ink_color = $preset['ink'];
         $setting->save();
 
         BrandingComposer::flushCache();

@@ -36,24 +36,24 @@ class LessonCompletionController extends Controller
             $completed = false;
         } else {
             LessonCompletion::create([
-                'user_id'   => $user->id,
+                'user_id' => $user->id,
                 'course_id' => $course->id,
                 'lesson_id' => $lesson->id,
             ]);
             $completed = true;
         }
 
-        $totalLessons   = CourseChapterLesson::where('course_id', $course->id)->count();
+        $totalLessons = CourseChapterLesson::where('course_id', $course->id)->count();
         $completedCount = LessonCompletion::where('user_id', $user->id)
             ->where('course_id', $course->id)
             ->count();
         $progress = $totalLessons > 0 ? round($completedCount / $totalLessons * 100) : 0;
 
         return response()->json([
-            'completed'       => $completed,
-            'progress'        => $progress,
-            'completedCount'  => $completedCount,
-            'totalLessons'    => $totalLessons,
+            'completed' => $completed,
+            'progress' => $progress,
+            'completedCount' => $completedCount,
+            'totalLessons' => $totalLessons,
         ]);
     }
 }

@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Blog extends Model
 {
     /** Total de lecciones de la Fase 1 del curso (configuración de negocio). */
     public const COURSE_FREE_TOTAL = 14;
+
     public const COURSE_CATEGORY_SLUG = 'curso-cursalia';
 
     protected $fillable = [
@@ -32,7 +33,7 @@ class Blog extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
-        'faq'          => 'array', // [{q, a}, ...]
+        'faq' => 'array', // [{q, a}, ...]
     ];
 
     // ── Accessors SEO ─────────────────────────────────────────────────────────
@@ -59,13 +60,15 @@ class Blog extends Model
         }
         $base = $this->summary ?: strip_tags($this->content);
         $base = trim(preg_replace('/\s+/', ' ', $base));
-        return \Illuminate\Support\Str::limit($base, 155, '');
+
+        return Str::limit($base, 155, '');
     }
 
     /** URL absoluta de la imagen OG/Twitter del post. */
     public function getOgImageUrlAttribute(): ?string
     {
         $path = $this->og_image_custom ?: $this->thumbnail;
+
         return $path ? asset('storage/'.$path) : null;
     }
 
@@ -111,6 +114,7 @@ class Blog extends Model
         if (! preg_match('/^lec-(\d{1,3})-/', $this->slug, $m)) {
             return null;
         }
+
         return (int) $m[1];
     }
 
@@ -125,7 +129,9 @@ class Blog extends Model
     public function nextLesson(): ?Blog
     {
         $n = $this->getLessonNumber();
-        if ($n === null) return null;
+        if ($n === null) {
+            return null;
+        }
 
         return static::query()
             ->where('blog_category_id', $this->blog_category_id)
@@ -139,7 +145,9 @@ class Blog extends Model
     public function previousLesson(): ?Blog
     {
         $n = $this->getLessonNumber();
-        if ($n === null || $n === 0) return null;
+        if ($n === null || $n === 0) {
+            return null;
+        }
 
         return static::query()
             ->where('blog_category_id', $this->blog_category_id)

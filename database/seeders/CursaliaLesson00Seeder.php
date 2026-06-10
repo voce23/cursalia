@@ -22,8 +22,8 @@ class CursaliaLesson00Seeder extends Seeder
         $category = BlogCategory::updateOrCreate(
             ['slug' => 'curso-cursalia'],
             [
-                'name'   => 'Curso Cursalia',
-                'color'  => '#10B981',
+                'name' => 'Curso Cursalia',
+                'color' => '#10B981',
                 'status' => true,
             ]
         );
@@ -39,14 +39,14 @@ class CursaliaLesson00Seeder extends Seeder
         Blog::updateOrCreate(
             ['slug' => 'lec-00-construye-tu-propia-academia-online'],
             [
-                'admin_id'         => $admin?->id,
+                'admin_id' => $admin?->id,
                 'blog_category_id' => $category->id,
-                'title'            => '¿Y si construyes tu propia academia online? Bienvenido al curso',
-                'thumbnail'        => $heroPath,
-                'summary'          => 'Lección 0 del curso gratis para crear tu propia plataforma de cursos con Laravel 13. Sin pagar Hotmart. Sin programar como un loco.',
-                'content'          => $this->buildContent(),
-                'status'           => 'published',
-                'published_at'     => now(),
+                'title' => '¿Y si construyes tu propia academia online? Bienvenido al curso',
+                'thumbnail' => $heroPath,
+                'summary' => 'Lección 0 del curso gratis para crear tu propia plataforma de cursos con Laravel 13. Sin pagar Hotmart. Sin programar como un loco.',
+                'content' => $this->buildContent(),
+                'status' => 'published',
+                'published_at' => now(),
             ]
         );
 

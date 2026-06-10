@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
         Admin::updateOrCreate(
             ['email' => 'admin@lmsl13.test'],
             [
-                'name'     => 'Super Admin',
+                'name' => 'Super Admin',
                 'password' => 'password',
             ]
         );

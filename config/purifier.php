@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ok, glad you are here
  * first we get a config instance, and set the settings
@@ -17,40 +18,40 @@
  */
 
 return [
-    'encoding'           => 'UTF-8',
-    'finalize'           => true,
-    'ignoreNonStrings'   => false,
-    'cachePath'          => storage_path('app/purifier'),
-    'cacheFileMode'      => 0755,
-    'settings'      => [
+    'encoding' => 'UTF-8',
+    'finalize' => true,
+    'ignoreNonStrings' => false,
+    'cachePath' => storage_path('app/purifier'),
+    'cacheFileMode' => 0755,
+    'settings' => [
         'default' => [
-            'HTML.Doctype'             => 'HTML 4.01 Transitional',
-            'HTML.Allowed'             => 'div,b,strong,i,em,u,a[href|title],ul,ol,li,p[style],br,span[style],img[width|height|alt|src]',
-            'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align',
+            'HTML.Doctype' => 'HTML 4.01 Transitional',
+            'HTML.Allowed' => 'div,b,strong,i,em,u,a[href|title],ul,ol,li,p[style],br,span[style],img[width|height|alt|src]',
+            'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align',
             'AutoFormat.AutoParagraph' => true,
-            'AutoFormat.RemoveEmpty'   => true,
+            'AutoFormat.RemoveEmpty' => true,
         ],
         'richtext' => [
-            'HTML.Doctype'             => 'HTML 4.01 Transitional',
-            'HTML.Allowed'             => 'h1[id|class],h2[id|class],h3[id|class],h4[id|class],h5,h6,div[class|id],b,strong,i[class],em,u,s,a[href|title|target|class],ul[class],ol[class],li[class],p[style|class],br,span[style|class],img[width|height|alt|src|style|class],blockquote[class],pre[class],code[class],table[style|class],thead,tbody,tr,th[style|class],td[style|class],hr,sub,sup,mark,figure[class],figcaption[class]',
-            'Attr.EnableID'            => true,
-            'Attr.IDPrefix'             => '',
-            'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding,padding-left,margin,color,background,background-color,text-align,width,height,border,border-collapse,vertical-align,list-style-type',
-            'AutoFormat.RemoveEmpty'   => true,
-            'HTML.SafeIframe'          => true,
-            'URI.SafeIframeRegexp'     => '%^(https://)(www\.youtube\.com/embed/|player\.vimeo\.com/video/)%',
+            'HTML.Doctype' => 'HTML 4.01 Transitional',
+            'HTML.Allowed' => 'h1[id|class],h2[id|class],h3[id|class],h4[id|class],h5,h6,div[class|id],b,strong,i[class],em,u,s,a[href|title|target|class],ul[class],ol[class],li[class],p[style|class],br,span[style|class],img[width|height|alt|src|style|class],blockquote[class],pre[class],code[class],table[style|class],thead,tbody,tr,th[style|class],td[style|class],hr,sub,sup,mark,figure[class],figcaption[class]',
+            'Attr.EnableID' => true,
+            'Attr.IDPrefix' => '',
+            'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding,padding-left,margin,color,background,background-color,text-align,width,height,border,border-collapse,vertical-align,list-style-type',
+            'AutoFormat.RemoveEmpty' => true,
+            'HTML.SafeIframe' => true,
+            'URI.SafeIframeRegexp' => '%^(https://)(www\.youtube\.com/embed/|player\.vimeo\.com/video/)%',
             'Attr.AllowedFrameTargets' => ['_blank', '_self'],
-            'Attr.AllowedClasses'      => null,
+            'Attr.AllowedClasses' => null,
         ],
-        'test'    => [
+        'test' => [
             'Attr.EnableID' => 'true',
         ],
-        "youtube" => [
-            "HTML.SafeIframe"      => 'true',
-            "URI.SafeIframeRegexp" => "%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/)%",
+        'youtube' => [
+            'HTML.SafeIframe' => 'true',
+            'URI.SafeIframeRegexp' => '%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/)%',
         ],
         'custom_definition' => [
-            'id'  => 'html5-definitions',
+            'id' => 'html5-definitions',
             'rev' => 1,
             'debug' => false,
             'elements' => [
@@ -61,39 +62,39 @@ return [
                 ['aside',   'Block', 'Flow', 'Common'],
                 ['header',  'Block', 'Flow', 'Common'],
                 ['footer',  'Block', 'Flow', 'Common'],
-				
-				// Content model actually excludes several tags, not modelled here
+
+                // Content model actually excludes several tags, not modelled here
                 ['address', 'Block', 'Flow', 'Common'],
                 ['hgroup', 'Block', 'Required: h1 | h2 | h3 | h4 | h5 | h6', 'Common'],
-				
-				// http://developers.whatwg.org/grouping-content.html
+
+                // http://developers.whatwg.org/grouping-content.html
                 ['figure', 'Block', 'Optional: (figcaption, Flow) | (Flow, figcaption) | Flow', 'Common'],
                 ['figcaption', 'Inline', 'Flow', 'Common'],
-				
-				// http://developers.whatwg.org/the-video-element.html#the-video-element
+
+                // http://developers.whatwg.org/the-video-element.html#the-video-element
                 ['video', 'Block', 'Optional: (source, Flow) | (Flow, source) | Flow', 'Common', [
                     'src' => 'URI',
-					'type' => 'Text',
-					'width' => 'Length',
-					'height' => 'Length',
-					'poster' => 'URI',
-					'preload' => 'Enum#auto,metadata,none',
-					'controls' => 'Bool',
+                    'type' => 'Text',
+                    'width' => 'Length',
+                    'height' => 'Length',
+                    'poster' => 'URI',
+                    'preload' => 'Enum#auto,metadata,none',
+                    'controls' => 'Bool',
                 ]],
                 ['source', 'Block', 'Flow', 'Common', [
-					'src' => 'URI',
-					'type' => 'Text',
+                    'src' => 'URI',
+                    'type' => 'Text',
                 ]],
 
-				// http://developers.whatwg.org/text-level-semantics.html
+                // http://developers.whatwg.org/text-level-semantics.html
                 ['s',    'Inline', 'Inline', 'Common'],
                 ['var',  'Inline', 'Inline', 'Common'],
                 ['sub',  'Inline', 'Inline', 'Common'],
                 ['sup',  'Inline', 'Inline', 'Common'],
                 ['mark', 'Inline', 'Inline', 'Common'],
                 ['wbr',  'Inline', 'Empty', 'Core'],
-				
-				// http://developers.whatwg.org/edits.html
+
+                // http://developers.whatwg.org/edits.html
                 ['ins', 'Block', 'Flow', 'Common', ['cite' => 'URI', 'datetime' => 'CDATA']],
                 ['del', 'Block', 'Flow', 'Common', ['cite' => 'URI', 'datetime' => 'CDATA']],
             ],

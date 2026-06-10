@@ -10,6 +10,8 @@ use App\Models\Withdraw;
 use App\Notifications\NewWithdrawRequestNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class WithdrawController extends Controller
@@ -73,7 +75,7 @@ class WithdrawController extends Controller
         // Cálculo de saldo + creación dentro de una transacción con bloqueo
         // para serializar solicitudes concurrentes y evitar doble retiro (TOCTOU).
         try {
-            $withdraw = \Illuminate\Support\Facades\DB::transaction(function () use ($request, $user, $payoutInfo) {
+            $withdraw = DB::transaction(function () use ($request, $user, $payoutInfo) {
                 Withdraw::where('user_id', $user->id)->lockForUpdate()->get();
 
                 $totalEarnings = OrderItem::query()
@@ -93,19 +95,19 @@ class WithdrawController extends Controller
                 $availableToRequest = max(0, ((float) $totalEarnings - (float) $totalApproved) - (float) $totalPending);
 
                 if ((float) $request->amount > $availableToRequest) {
-                    throw \Illuminate\Validation\ValidationException::withMessages([
+                    throw ValidationException::withMessages([
                         'amount' => 'El monto supera tu saldo disponible para solicitar (considerando retiros pendientes).',
                     ]);
                 }
 
                 return Withdraw::create([
-                    'user_id'    => $user->id,
+                    'user_id' => $user->id,
                     'gateway_id' => $payoutInfo->gateway_id,
-                    'amount'     => $request->amount,
-                    'status'     => 'pending',
+                    'amount' => $request->amount,
+                    'status' => 'pending',
                 ]);
             });
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         }
 

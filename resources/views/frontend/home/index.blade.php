@@ -7,30 +7,28 @@
 {{-- ═══════════════════════════════════════════════════════════════════════
      HERO Cursalia — centrado, con buscador, aligerado (2 stickers máx)
      ═══════════════════════════════════════════════════════════════════════ --}}
-<section class="relative overflow-hidden">
-    {{-- Blobs orgánicos de fondo --}}
-    <div class="blob bg-brand-200 w-[30rem] h-[30rem] -top-32 -left-20"></div>
-    <div class="blob bg-coral-200 w-[26rem] h-[26rem] top-16 -right-16"></div>
-    <div class="blob bg-sun-200 w-[22rem] h-[22rem] top-60 left-1/3"></div>
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-700 via-ink-900 to-ink-950 text-white">
+    {{-- Foto de fondo + capa oscura (editable desde el admin: Apariencia o Inicio→Portada) --}}
+    <x-hero-bg :section-image="$hero?->hero_image" />
 
-    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 sm:pt-20 sm:pb-28 text-center">
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 text-center">
 
         {{-- Badge --}}
-        <div class="sr inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-ink-200 shadow-soft text-xs font-semibold">
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-100 text-brand-700 font-bold text-[10px]">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Nuevo
+        <div class="sr inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-xs font-semibold">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-500 text-white font-bold text-[10px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-white"></span> Nuevo
             </span>
-            <span class="text-ink-700">{{ $hero?->badge_text ?: 'Aprende a tu ritmo' }}</span>
+            <span class="text-white">{{ $hero?->badge_text ?: 'Aprende a tu ritmo' }}</span>
         </div>
 
         {{-- Titular --}}
-        <h1 class="sr s1 font-display font-extrabold tracking-tight text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mt-7 text-ink-900">
+        <h1 class="sr s1 font-display font-extrabold tracking-tight text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mt-7 text-white">
             {{ $hero?->title ?: '¿Qué quieres' }}<br>
-            <span class="text-brand-600">{{ $hero?->highlight_text ?: 'aprender hoy?' }}</span>
+            <span class="text-brand-300">{{ $hero?->highlight_text ?: 'aprender hoy?' }}</span>
         </h1>
 
         {{-- Subtítulo --}}
-        <p class="sr s2 text-base sm:text-lg text-ink-500 leading-relaxed mt-6 max-w-xl mx-auto">
+        <p class="sr s2 text-base sm:text-lg text-white/75 leading-relaxed mt-6 max-w-xl mx-auto">
             {{ $hero?->description ?: 'Cursos prácticos creados por mentores reales. Estudia a tu ritmo, construye proyectos de verdad y obtén un certificado al terminar.' }}
         </p>
 
@@ -47,102 +45,39 @@
             </div>
         </form>
 
-        {{-- Píldoras de categorías populares --}}
-        @if ($categories->isNotEmpty())
-            <div class="sr s4 flex flex-wrap items-center justify-center gap-2 mt-5">
-                <span class="text-xs text-ink-400 font-medium mr-1">Populares:</span>
-                @foreach ($categories->take(5) as $cat)
-                    <a href="{{ route('courses.index', ['category' => $cat->slug]) }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-ink-200/70 text-xs font-medium text-ink-700 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition">
-                        <i class="fa-solid fa-tag text-[10px] text-brand-500"></i>
-                        {{ $cat->name }}
-                    </a>
-                @endforeach
-            </div>
-        @endif
-
-        {{-- Stickers flotantes — solo en pantallas MUY anchas (xl+) y bien lejos del título --}}
-        <div class="hidden xl:block">
-            {{-- Sticker sin código (abajo-izquierda, lejos del titular) --}}
-            <div class="sr s3 absolute bottom-10 left-0 transform -rotate-[6deg] bg-white border border-ink-200/70 rounded-2xl shadow-lift px-4 py-3 flex items-center gap-3 max-w-[200px] pointer-events-none">
-                <span class="grid place-items-center w-10 h-10 rounded-2xl bg-brand-100 text-brand-600 shrink-0">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                </span>
-                <div class="text-left">
-                    <p class="text-xs font-bold text-ink-900 leading-tight">A tu ritmo<br>cuando quieras</p>
-                </div>
-            </div>
-            {{-- Sticker certificado (abajo-derecha, lejos del titular) --}}
-            <div class="sr s4 absolute bottom-10 right-0 transform rotate-[5deg] bg-white border border-ink-200/70 rounded-2xl shadow-lift px-4 py-3 flex items-center gap-3 max-w-[210px] pointer-events-none">
-                <span class="grid place-items-center w-10 h-10 rounded-2xl bg-coral-100 text-coral-500 shrink-0">
-                    <i class="fa-solid fa-award"></i>
-                </span>
-                <div class="text-left">
-                    <p class="text-[11px] font-bold text-ink-900 leading-tight">Certificado</p>
-                    <p class="text-[10px] text-ink-500">al completar el curso</p>
-                </div>
-            </div>
-        </div>
-
-        {{-- 3 propuestas de valor reales (sin métricas inventadas) --}}
-        <div class="sr s4 grid grid-cols-3 gap-4 sm:gap-8 mt-14 max-w-md mx-auto">
-            @php
-                $stats = [
-                    ['A tu ritmo',  'Sin horarios'],
-                    ['Mentores',    'Con experiencia'],
-                    ['Certificado', 'Al terminar'],
-                ];
-            @endphp
-            @foreach ($stats as [$n, $lbl])
-                <div>
-                    <p class="font-display font-extrabold text-2xl sm:text-3xl text-ink-900">{{ $n }}</p>
-                    <p class="text-xs sm:text-sm text-ink-500 mt-1">{{ $lbl }}</p>
-                </div>
-            @endforeach
-        </div>
     </div>
 </section>
 
 {{-- ═══════════════════════════════════════════════════════════════════════
-     CUATRO RAZONES — sección oscura full-bleed con pasos numerados 01–04
+     CUATRO RAZONES — tarjetas flotando sobre el final del hero
+     (mismo patrón visual que cursalia.org: cards blancas con icono gradiente)
      ═══════════════════════════════════════════════════════════════════════ --}}
-<section class="relative bg-ink-950 text-white py-20 sm:py-24 overflow-hidden">
-    <div class="blob bg-brand-600/30 w-[28rem] h-[28rem] top-0 left-1/4"></div>
+@php
+    $featureItems = ($features ?? collect())->isNotEmpty() ? $features : collect([
+        (object) ['icon' => 'fa-solid fa-code-branch', 'title' => '100% código abierto', 'description' => 'Instálalo, edítalo y adáptalo a tu gusto. Sin cajas negras ni dependencias.'],
+        (object) ['icon' => 'fa-solid fa-ban', 'title' => 'Sin mensualidades', 'description' => 'Gratis para cursos gratis. Sin comisiones por venta. Para siempre.'],
+        (object) ['icon' => 'fa-solid fa-globe', 'title' => 'En tu propio dominio', 'description' => 'Tu marca, tu dominio, tus datos de alumnos. Tu academia es tuya.'],
+        (object) ['icon' => 'fa-solid fa-puzzle-piece', 'title' => 'Plugins y plantillas PRO', 'description' => 'Amplía tu academia con pagos, certificados, gamificación y más.'],
+    ]);
+    // Gradiente cíclico para los iconos (brand → coral → sun → brand).
+    $featGrad = ['from-brand-400 to-brand-600', 'from-coral-400 to-coral-600', 'from-sun-400 to-sun-600', 'from-brand-400 to-brand-700'];
+@endphp
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="sr max-w-2xl">
-            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold uppercase tracking-wider text-brand-300">
-                Por qué Cursalia
-            </span>
-            <h2 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight mt-5">
-                Cuatro razones para<br>empezar hoy.
-            </h2>
-        </div>
-
-        @php
-            $featureItems = ($features ?? collect())->isNotEmpty() ? $features : collect([
-                (object) ['title' => 'Aprende a tu ritmo', 'description' => 'Acceso de por vida, disponible 24/7 desde cualquier dispositivo. Pausa y retoma cuando quieras.'],
-                (object) ['title' => 'Proyectos reales', 'description' => 'Construye un portafolio que impresiona. Cada curso termina con un proyecto que puedes mostrar.'],
-                (object) ['title' => 'Mentores expertos', 'description' => 'Instructores que trabajan en la industria y resuelven tus dudas en la comunidad.'],
-                (object) ['title' => 'Certificado verificable', 'description' => 'Al completar recibes un certificado que puedes compartir en LinkedIn y tu CV.'],
-            ]);
-            $colors = ['brand', 'coral', 'sun', 'brand'];
-        @endphp
-
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-14">
-            @foreach ($featureItems as $i => $f)
-                @php $c = $colors[$i % 4]; @endphp
-                <div class="sr s{{ ($i % 4) + 1 }} bg-white/[0.04] border border-white/10 rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                    <p class="font-display font-extrabold text-3xl
-                        @if($c === 'brand') text-brand-400
-                        @elseif($c === 'coral') text-coral-400
-                        @else text-sun-400 @endif">{{ sprintf('%02d', $i + 1) }}</p>
-                    <h3 class="font-display font-bold text-lg mt-5">{{ $f->title }}</h3>
-                    <p class="text-white/65 text-sm leading-relaxed mt-2">{{ $f->description }}</p>
-                </div>
-            @endforeach
-        </div>
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 sm:-mt-28 relative z-20">
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        @foreach ($featureItems as $i => $f)
+            <div class="group bg-white rounded-3xl border border-ink-200/70 shadow-lift p-6 hover:-translate-y-1 transition">
+                <span class="grid place-items-center w-14 h-14 rounded-2xl bg-gradient-to-br {{ $featGrad[$i % 4] }} text-white text-xl shadow-soft group-hover:scale-105 transition">
+                    <i class="fa-solid {{ \Illuminate\Support\Str::replaceFirst('fa-solid ', '', $f->icon ?? 'fa-circle-check') }}"></i>
+                </span>
+                <h3 class="mt-5 font-display font-bold text-lg text-ink-900">{{ $f->title }}</h3>
+                <p class="mt-2 text-sm text-ink-600 leading-relaxed">{{ $f->description }}</p>
+            </div>
+        @endforeach
     </div>
+    <h2 class="mt-12 text-center font-display font-extrabold text-3xl text-ink-900 max-w-2xl mx-auto">
+        Una plataforma completa para crear, vender y gestionar tu formación
+    </h2>
 </section>
 
 {{-- ═══════════════════════════════════════════════════════════════════════
@@ -166,33 +101,33 @@
         </a>
     </div>
 
-    {{-- Bento: 6 categorías con tamaños distintos --}}
+    {{-- Rejilla uniforme: tarjetas iguales, se ve bien con cualquier nº de categorías --}}
     @php
-        $cats = $categories->take(6);
-        $bento = [
-            // [span_class, bg_class, text_color, icon]
-            ['sm:col-span-2 lg:row-span-2',                  'bg-brand-50 hover:bg-brand-100',  'text-brand-700',  'fa-pen-ruler'],
-            ['',                                              'bg-coral-50 hover:bg-coral-100',  'text-coral-600',  'fa-code'],
-            ['',                                              'bg-sun-100 hover:bg-sun-200',     'text-sun-500',    'fa-bullhorn'],
-            ['sm:col-span-2',                                 'bg-white hover:bg-cream-2',       'text-ink-900',    'fa-briefcase'],
-            ['',                                              'bg-coral-50 hover:bg-coral-100',  'text-coral-600',  'fa-camera'],
-            ['',                                              'bg-brand-50 hover:bg-brand-100',  'text-brand-700',  'fa-music'],
+        $cats = $categories->take($featuredCategorySection?->limit_items ?: 6);
+        $palette = [
+            ['bg-brand-50',  'text-brand-600', 'fa-pen-ruler'],
+            ['bg-coral-50',  'text-coral-500', 'fa-code'],
+            ['bg-sun-100',   'text-sun-500',   'fa-bullhorn'],
+            ['bg-brand-50',  'text-brand-600', 'fa-briefcase'],
+            ['bg-coral-50',  'text-coral-500', 'fa-camera'],
+            ['bg-sun-100',   'text-sun-500',   'fa-music'],
         ];
     @endphp
 
     @if ($cats->count() > 0)
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 auto-rows-[160px] sm:auto-rows-[180px]">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             @foreach ($cats as $i => $cat)
-                @php [$span, $bg, $txt, $ic] = $bento[$i % count($bento)]; @endphp
+                @php [$bg, $txt, $ic] = $palette[$i % count($palette)]; @endphp
                 <a href="{{ route('courses.index', ['category' => $cat->slug]) }}"
-                   class="card-lift sr s{{ ($i % 4) + 1 }} {{ $span }} {{ $bg }} rounded-3xl border border-ink-200/70 p-5 flex flex-col justify-between transition group">
-                    <span class="grid place-items-center w-11 h-11 rounded-2xl bg-white {{ $txt }} shadow-soft">
+                   class="card-lift sr s{{ ($i % 4) + 1 }} group {{ $bg }} rounded-3xl border border-ink-200/70 p-6 flex items-center gap-4 transition">
+                    <span class="grid place-items-center w-14 h-14 rounded-2xl bg-white {{ $txt }} shadow-soft shrink-0 text-lg">
                         <i class="fa-solid {{ $ic }}"></i>
                     </span>
-                    <div>
-                        <h3 class="font-display font-bold text-ink-900 leading-snug group-hover:translate-x-1 transition">{{ $cat->name }}</h3>
-                        <p class="text-xs text-ink-500 mt-1">{{ $cat->all_courses_count }} cursos</p>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-display font-bold text-ink-900 leading-snug truncate">{{ $cat->name }}</h3>
+                        <p class="text-xs text-ink-500 mt-0.5">{{ $cat->all_courses_count }} {{ \Illuminate\Support\Str::plural('curso', $cat->all_courses_count) }}</p>
                     </div>
+                    <i class="fa-solid fa-arrow-right text-ink-300 group-hover:text-brand-600 group-hover:translate-x-1 transition shrink-0"></i>
                 </a>
             @endforeach
         </div>
@@ -600,6 +535,63 @@
             </figure>
         @endforeach
     </div>
+</section>
+@endif
+
+{{-- ═══════════════════════════════════════════════════════════════════════
+     ÚLTIMOS DEL BLOG — 3 tarjetas con thumbnail, categoría, título y resumen
+     ═══════════════════════════════════════════════════════════════════════ --}}
+@if ($latestBlogs->isNotEmpty())
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+    <div class="sr flex items-end justify-between gap-4 mb-10">
+        <div>
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-semibold uppercase tracking-wider">
+                Del blog
+            </span>
+            <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight mt-4 text-ink-900">
+                Últimos artículos
+            </h2>
+        </div>
+        <a href="{{ route('blog.index') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full border border-ink-200 hover:bg-cream-2 text-ink-700 text-sm font-semibold transition">
+            Ver todo <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+    </div>
+
+    <div class="grid gap-7 md:grid-cols-3">
+        @foreach ($latestBlogs as $i => $post)
+            <article class="sr s{{ ($i % 3) + 1 }} group bg-white rounded-3xl border border-ink-200/70 shadow-soft overflow-hidden hover:shadow-lift hover:-translate-y-1 transition flex flex-col">
+                <a href="{{ route('blog.show', $post->slug) }}" class="block">
+                    <div class="relative aspect-video {{ $post->thumbnail_is_svg ? 'bg-white' : 'bg-gradient-to-br from-brand-400 to-brand-700' }}">
+                        @if ($post->thumbnail)
+                            <x-image :src="$post->thumbnail" :alt="$post->title" class="absolute inset-0 w-full h-full {{ $post->thumbnail_fit_class ?? 'object-cover' }}" loading="lazy" />
+                        @else
+                            <div class="absolute inset-0 grid place-items-center">
+                                <i class="fa-solid fa-newspaper text-4xl text-white/80"></i>
+                            </div>
+                        @endif
+                    </div>
+                </a>
+                <div class="p-6 flex flex-col flex-1">
+                    @if ($post->category)
+                        <a href="{{ route('blog.index', ['category' => $post->category->slug]) }}" class="self-start px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-semibold hover:bg-brand-100 transition">
+                            {{ $post->category->name }}
+                        </a>
+                    @endif
+                    <h3 class="mt-3 font-display font-bold text-lg text-ink-900 leading-snug">
+                        <a href="{{ route('blog.show', $post->slug) }}" class="hover:text-brand-700 transition">{{ $post->title }}</a>
+                    </h3>
+                    @if ($post->summary)
+                        <p class="mt-2 text-sm text-ink-600 flex-1 leading-relaxed">{{ \Illuminate\Support\Str::limit($post->summary, 110) }}</p>
+                    @endif
+                    <a href="{{ route('blog.show', $post->slug) }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700">
+                        Leer más <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </article>
+        @endforeach
+    </div>
+
+    <a href="{{ route('blog.index') }}" class="sm:hidden mt-8 block text-center font-semibold text-brand-600">Ver todos los artículos →</a>
 </section>
 @endif
 

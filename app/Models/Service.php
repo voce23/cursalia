@@ -16,12 +16,12 @@ class Service extends Model
     ];
 
     protected $casts = [
-        'features'    => 'array',
-        'is_free'     => 'boolean',
-        'is_active'   => 'boolean',
+        'features' => 'array',
+        'is_free' => 'boolean',
+        'is_active' => 'boolean',
         'is_featured' => 'boolean',
-        'price'       => 'decimal:2',
-        'sort_order'  => 'integer',
+        'price' => 'decimal:2',
+        'sort_order' => 'integer',
     ];
 
     public function requests(): HasMany

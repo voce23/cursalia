@@ -32,9 +32,9 @@ class CursaliaLmsComparativaArticleSeeder extends Seeder
         // Categoría Comparativas (ya creada por el seeder de Hotmart).
         $category = BlogCategory::firstWhere('slug', 'comparativas')
             ?? BlogCategory::create([
-                'name'   => 'Comparativas',
-                'slug'   => 'comparativas',
-                'color'  => '#FB7185',
+                'name' => 'Comparativas',
+                'slug' => 'comparativas',
+                'color' => '#FB7185',
                 'status' => true,
             ]);
 
@@ -46,17 +46,17 @@ class CursaliaLmsComparativaArticleSeeder extends Seeder
         Blog::updateOrCreate(
             ['slug' => 'lms-open-source-espanol-2026-comparativa'],
             [
-                'admin_id'         => $admin?->id,
+                'admin_id' => $admin?->id,
                 'blog_category_id' => $category->id,
-                'title'            => 'LMS open source en español 2026: 7 alternativas comparadas (con tabla real)',
-                'thumbnail'        => $heroPath,
-                'summary'          => 'Comparativa honesta de los 7 LMS open source más usados en español: Moodle, Chamilo, Open edX, LearnDash, TutorLMS, Forma LMS y Cursalia. Stack, coste real, dificultad y para quién es cada uno.',
-                'content'          => $this->buildContent(),
-                'meta_title'       => 'LMS open source en español 2026: 7 alternativas comparadas',
+                'title' => 'LMS open source en español 2026: 7 alternativas comparadas (con tabla real)',
+                'thumbnail' => $heroPath,
+                'summary' => 'Comparativa honesta de los 7 LMS open source más usados en español: Moodle, Chamilo, Open edX, LearnDash, TutorLMS, Forma LMS y Cursalia. Stack, coste real, dificultad y para quién es cada uno.',
+                'content' => $this->buildContent(),
+                'meta_title' => 'LMS open source en español 2026: 7 alternativas comparadas',
                 'meta_description' => 'Moodle, Chamilo, Open edX, LearnDash, TutorLMS, Forma LMS y Cursalia. Comparativa honesta con stack, coste real, dificultad y a quién le sirve cada uno.',
-                'faq'              => $this->buildFaq(),
-                'status'           => 'published',
-                'published_at'     => now(),
+                'faq' => $this->buildFaq(),
+                'status' => 'published',
+                'published_at' => now(),
             ]
         );
 

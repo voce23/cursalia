@@ -21,6 +21,7 @@ class NavigationController extends Controller
     public function edit(): View
     {
         $links = HeaderNavigationLink::query()->orderBy('sort_order')->get();
+
         return view('admin.navigation.edit', compact('links'));
     }
 
@@ -28,40 +29,42 @@ class NavigationController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:60'],
-            'url'   => ['required', 'string', 'max:255'],
+            'url' => ['required', 'string', 'max:255'],
             'open_in_new_tab' => ['nullable', 'boolean'],
         ]);
 
         $max = (int) HeaderNavigationLink::max('sort_order');
         HeaderNavigationLink::create([
-            'title'           => $data['title'],
-            'url'             => $data['url'],
+            'title' => $data['title'],
+            'url' => $data['url'],
             'open_in_new_tab' => (bool) ($data['open_in_new_tab'] ?? false),
-            'is_active'       => true,
-            'sort_order'      => $max + 1,
+            'is_active' => true,
+            'sort_order' => $max + 1,
         ]);
 
         BrandingComposer::flushCache();
+
         return back()->with('success', 'Enlace "'.$data['title'].'" añadido al menú.');
     }
 
     public function update(Request $request, HeaderNavigationLink $link): RedirectResponse
     {
         $data = $request->validate([
-            'title'           => ['required', 'string', 'max:60'],
-            'url'             => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:60'],
+            'url' => ['required', 'string', 'max:255'],
             'open_in_new_tab' => ['nullable', 'boolean'],
-            'is_active'       => ['nullable', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
         ]);
 
         $link->update([
-            'title'           => $data['title'],
-            'url'             => $data['url'],
+            'title' => $data['title'],
+            'url' => $data['url'],
             'open_in_new_tab' => (bool) ($data['open_in_new_tab'] ?? false),
-            'is_active'       => (bool) ($data['is_active'] ?? false),
+            'is_active' => (bool) ($data['is_active'] ?? false),
         ]);
 
         BrandingComposer::flushCache();
+
         return back()->with('success', 'Enlace actualizado.');
     }
 
@@ -70,6 +73,7 @@ class NavigationController extends Controller
         $title = $link->title;
         $link->delete();
         BrandingComposer::flushCache();
+
         return back()->with('success', 'Enlace "'.$title.'" eliminado.');
     }
 
@@ -77,7 +81,7 @@ class NavigationController extends Controller
     public function reorder(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'order'   => ['required', 'array'],
+            'order' => ['required', 'array'],
             'order.*' => ['integer', 'exists:header_navigation_links,id'],
         ]);
 
@@ -86,6 +90,7 @@ class NavigationController extends Controller
         }
 
         BrandingComposer::flushCache();
+
         return response()->json(['ok' => true, 'message' => 'Orden actualizado.']);
     }
 
@@ -95,6 +100,7 @@ class NavigationController extends Controller
         $link->is_active = ! $link->is_active;
         $link->save();
         BrandingComposer::flushCache();
+
         return response()->json(['ok' => true, 'is_active' => $link->is_active]);
     }
 }

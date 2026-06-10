@@ -102,8 +102,10 @@
             <div class="grid sm:grid-cols-3 gap-5">
                 @foreach ([
                     ['logo',     'Logo',     'Recomendado: SVG transparente o PNG 240×64.', 'h-12'],
+                    ['logo_dark', 'Logo (fondo oscuro)', 'Versión clara/blanca de tu logo para el footer oscuro. Si no subes ninguno, se usa el logo normal.', 'h-12'],
                     ['favicon',  'Favicon',  'PNG o ICO 32×32 o 64×64.',                      'w-12 h-12'],
                     ['og_image', 'OG image', 'PNG o JPG 1200×630 para vistas previas en redes.', 'w-full aspect-[1200/630]'],
+                    ['hero_image', 'Imagen de cabecera', 'JPG/PNG horizontal ~1920×1080 para el fondo de las cabeceras (hero) de las páginas.', 'w-full aspect-video'],
                 ] as [$field, $label, $help, $previewClass])
                     <div>
                         <label class="block text-sm font-medium text-ink-700 mb-1.5" for="{{ $field }}">{{ $label }}</label>

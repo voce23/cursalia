@@ -35,15 +35,15 @@ class CourseCategoryController extends Controller
         $filename = null;
         if ($request->hasFile('image')) {
             Storage::disk('public')->makeDirectory('category');
-            $filename = 'category/' . uniqid('cat_') . '.webp';
+            $filename = 'category/'.uniqid('cat_').'.webp';
             Image::decode($request->file('image'))
                 ->cover(600, 400)
                 ->save(Storage::disk('public')->path($filename), 90);
         }
 
         CourseCategory::create([
-            'name'  => $request->name,
-            'slug'  => Str::slug($request->name),
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
             'image' => $filename,
         ]);
 
@@ -70,7 +70,7 @@ class CourseCategoryController extends Controller
             }
 
             Storage::disk('public')->makeDirectory('category');
-            $filename = 'category/' . uniqid('cat_') . '.webp';
+            $filename = 'category/'.uniqid('cat_').'.webp';
 
             Image::decode($request->file('image'))
                 ->cover(600, 400)

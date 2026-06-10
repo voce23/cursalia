@@ -22,8 +22,8 @@ class SitePageController extends Controller
 {
     public function about(): View
     {
-        $about        = AboutSection::query()->first();
-        $counter      = Counter::query()->first();
+        $about = AboutSection::query()->first();
+        $counter = Counter::query()->first();
         $testimonials = Testimonial::query()->where('is_active', true)->orderBy('sort_order')->get();
 
         return view('frontend.pages.about', compact('about', 'counter', 'testimonials'));
@@ -31,7 +31,7 @@ class SitePageController extends Controller
 
     public function contact(): View
     {
-        $contactCards   = Contact::query()->where('is_active', true)->orderBy('sort_order')->get();
+        $contactCards = Contact::query()->where('is_active', true)->orderBy('sort_order')->get();
         $contactSetting = ContactSetting::query()->first();
 
         return view('frontend.pages.contact', compact('contactCards', 'contactSetting'));
@@ -41,11 +41,11 @@ class SitePageController extends Controller
     {
         // 1) Guardar SIEMPRE en la BD → el admin lo ve en "Mensajes" aunque no haya SMTP.
         ContactMessage::create([
-            'name'    => $request->string('name')->toString(),
-            'email'   => $request->string('email')->toString(),
+            'name' => $request->string('name')->toString(),
+            'email' => $request->string('email')->toString(),
             'subject' => $request->string('subject')->toString(),
             'message' => $request->string('message')->toString(),
-            'ip'      => $request->ip(),
+            'ip' => $request->ip(),
         ]);
 
         // 2) Intentar enviar el email (si hay SMTP); no bloquea si falla.
@@ -98,7 +98,7 @@ class SitePageController extends Controller
             ->get();
 
         $courseLessons = $posts->filter(fn ($p) => $p->category?->slug === Blog::COURSE_CATEGORY_SLUG);
-        $otherPosts    = $posts->reject(fn ($p) => $p->category?->slug === Blog::COURSE_CATEGORY_SLUG);
+        $otherPosts = $posts->reject(fn ($p) => $p->category?->slug === Blog::COURSE_CATEGORY_SLUG);
 
         return view('frontend.pages.author', compact('author', 'posts', 'courseLessons', 'otherPosts'));
     }

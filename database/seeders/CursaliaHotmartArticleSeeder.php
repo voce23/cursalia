@@ -31,8 +31,8 @@ class CursaliaHotmartArticleSeeder extends Seeder
         $category = BlogCategory::updateOrCreate(
             ['slug' => 'comparativas'],
             [
-                'name'   => 'Comparativas',
-                'color'  => '#FB7185', // coral Cursalia
+                'name' => 'Comparativas',
+                'color' => '#FB7185', // coral Cursalia
                 'status' => true,
             ]
         );
@@ -48,17 +48,17 @@ class CursaliaHotmartArticleSeeder extends Seeder
         Blog::updateOrCreate(
             ['slug' => 'hotmart-vs-tu-propia-plataforma-de-cursos'],
             [
-                'admin_id'         => $admin?->id,
+                'admin_id' => $admin?->id,
                 'blog_category_id' => $category->id,
-                'title'            => 'Hotmart vs tu propia plataforma de cursos: la cuenta real que nadie te muestra',
-                'thumbnail'        => $heroPath,
-                'summary'          => 'Cuánto te cuesta REALMENTE Hotmart al año frente a tener tu propia plataforma. Comisiones, mensualidades, control, marca. Análisis honesto con números, sin humo.',
-                'content'          => $this->buildContent(),
-                'meta_title'       => 'Hotmart vs tu propia plataforma de cursos · cuenta real 2026',
+                'title' => 'Hotmart vs tu propia plataforma de cursos: la cuenta real que nadie te muestra',
+                'thumbnail' => $heroPath,
+                'summary' => 'Cuánto te cuesta REALMENTE Hotmart al año frente a tener tu propia plataforma. Comisiones, mensualidades, control, marca. Análisis honesto con números, sin humo.',
+                'content' => $this->buildContent(),
+                'meta_title' => 'Hotmart vs tu propia plataforma de cursos · cuenta real 2026',
                 'meta_description' => 'Hotmart cobra 9,9% + IVA de cada venta. Tu propia plataforma cuesta ~$100/año total. La cuenta real con números, ventajas y trampas de cada modelo.',
-                'faq'              => $this->buildFaq(),
-                'status'           => 'published',
-                'published_at'     => now(),
+                'faq' => $this->buildFaq(),
+                'status' => 'published',
+                'published_at' => now(),
             ]
         );
 

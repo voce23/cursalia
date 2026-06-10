@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GeneralSettingUpdateRequest;
 use App\Models\GeneralSetting;
 use App\Services\GeneralSettingService;
+use enshrined\svgSanitize\Sanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use enshrined\svgSanitize\Sanitizer;
 
 class GeneralSettingController extends Controller
 {
@@ -87,10 +87,9 @@ class GeneralSettingController extends Controller
             return;
         }
 
-        $clean = (new Sanitizer())->sanitize($content);
+        $clean = (new Sanitizer)->sanitize($content);
         if ($clean !== false) {
             $disk->put($path, $clean);
         }
     }
 }
-

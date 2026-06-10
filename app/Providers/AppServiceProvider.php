@@ -57,16 +57,15 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('payments', function ($request) {
             return [
-                Limit::perMinute(5)->by('payments|user|' . (optional($request->user())->id ?: $request->ip())),
-                Limit::perMinute(20)->by('payments|ip|' . $request->ip()),
+                Limit::perMinute(5)->by('payments|user|'.(optional($request->user())->id ?: $request->ip())),
+                Limit::perMinute(20)->by('payments|ip|'.$request->ip()),
             ];
         });
 
         RateLimiter::for('auth-sensitive', function ($request) {
-            $identity = (string) $request->input('email') . '|' . $request->ip();
+            $identity = (string) $request->input('email').'|'.$request->ip();
 
-            return Limit::perMinute(10)->by('auth|' . $identity);
+            return Limit::perMinute(10)->by('auth|'.$identity);
         });
     }
 }
-

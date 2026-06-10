@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('general_settings', function (Blueprint $table) {
@@ -20,11 +21,11 @@ return new class extends Migration {
 
         // Fila única inicial (patrón "single-row settings")
         DB::table('general_settings')->insert([
-            'site_name'   => 'LMSL13',
+            'site_name' => 'LMSL13',
             'site_slogan' => 'Cursos Online',
-            'copyright'   => '© ' . date('Y') . ' LMSL13. Todos los derechos reservados.',
-            'created_at'  => now(),
-            'updated_at'  => now(),
+            'copyright' => '© '.date('Y').' LMSL13. Todos los derechos reservados.',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 

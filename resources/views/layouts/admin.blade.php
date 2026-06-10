@@ -36,7 +36,8 @@
                     $admin = auth('admin')->user();
                     $groups = [
                         'General' => [
-                            ['admin.dashboard', 'fa-house',     'Resumen',  false],
+                            ['admin.dashboard', 'fa-house',      'Resumen', false],
+                            ['admin.help',      'fa-life-ring',  'Ayuda',   false],
                         ],
                         'Aprendizaje' => [
                             ['admin.course-categories.index', 'fa-folder-tree', 'Categorías', false],
@@ -62,6 +63,11 @@
                             ['admin.templates.waitlist', 'fa-bell',             'Lista de espera',     false],
                             ['admin.services.index',     'fa-handshake-angle',  'Servicios',           false],
                             ['admin.services.requests',  'fa-inbox',            'Pedidos de servicios', false],
+                        ],
+                        'Usuarios' => [
+                            ['admin.users.index',                'fa-user-group',      'Estudiantes',     false],
+                            ['admin.instructor-requests.index',  'fa-chalkboard-user', 'Instructores',    false],
+                            ['admin.admins.index',               'fa-user-shield',     'Administradores', false],
                         ],
                         'Sistema' => [
                             ['admin.profile',         'fa-user-gear',    'Mi perfil',     false],

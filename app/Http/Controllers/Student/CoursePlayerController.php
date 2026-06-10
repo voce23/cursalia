@@ -31,11 +31,11 @@ class CoursePlayerController extends Controller
             ->get();
 
         // Aplanar lecciones una sola vez y crear un mapa id→índice para búsqueda O(1)
-        $allLessons  = $chapters->flatMap(fn ($ch) => $ch->lessons)->values();
+        $allLessons = $chapters->flatMap(fn ($ch) => $ch->lessons)->values();
         $lessonIndex = $allLessons->pluck(null, 'id')->keys()->flip()->toArray();
 
         // -- Resolver leccion actual (sin queries extra: usar colección en memoria) --
-        $lessonId      = $request->query('lesson');
+        $lessonId = $request->query('lesson');
         $currentLesson = null;
 
         if ($lessonId) {
@@ -60,9 +60,9 @@ class CoursePlayerController extends Controller
 
         // -- Anterior / Siguiente (búsqueda O(1) con mapa de índices) ---------------
         $currentIndex = $currentLesson ? ($lessonIndex[$currentLesson->id] ?? false) : false;
-        $prevLesson   = ($currentIndex !== false && $currentIndex > 0)
+        $prevLesson = ($currentIndex !== false && $currentIndex > 0)
             ? $allLessons[$currentIndex - 1] : null;
-        $nextLesson   = ($currentIndex !== false && $currentIndex < $allLessons->count() - 1)
+        $nextLesson = ($currentIndex !== false && $currentIndex < $allLessons->count() - 1)
             ? $allLessons[$currentIndex + 1] : null;
 
         // -- Registrar historial de reproduccion ---------------------
@@ -85,7 +85,7 @@ class CoursePlayerController extends Controller
 
         // -- % de progreso --------------------------------------------
         $totalLessons = $allLessons->count();
-        $progress     = $totalLessons > 0
+        $progress = $totalLessons > 0
             ? round(count($completedLessonIds) / $totalLessons * 100)
             : 0;
 
@@ -102,7 +102,7 @@ class CoursePlayerController extends Controller
         //    Solo si la lección tiene un quiz activo. Cargamos preguntas+opciones
         //    y el último intento del alumno para decidir si mostrar el formulario
         //    o el resultado.
-        $quiz       = null;
+        $quiz = null;
         $lastAttempt = null;
         if ($currentLesson) {
             $quiz = Quiz::with(['questions' => fn ($q) => $q->orderBy('order'), 'questions.options' => fn ($q) => $q->orderBy('order')])

@@ -30,9 +30,9 @@ class CursaliaThinkificMigrationArticleSeeder extends Seeder
 
         $category = BlogCategory::firstWhere('slug', 'comparativas')
             ?? BlogCategory::create([
-                'name'   => 'Comparativas',
-                'slug'   => 'comparativas',
-                'color'  => '#FB7185',
+                'name' => 'Comparativas',
+                'slug' => 'comparativas',
+                'color' => '#FB7185',
                 'status' => true,
             ]);
 
@@ -44,17 +44,17 @@ class CursaliaThinkificMigrationArticleSeeder extends Seeder
         Blog::updateOrCreate(
             ['slug' => 'migrar-de-thinkific-a-tu-propio-dominio-en-7-dias'],
             [
-                'admin_id'         => $admin?->id,
+                'admin_id' => $admin?->id,
                 'blog_category_id' => $category->id,
-                'title'            => 'Cómo migrar de Thinkific a tu propio dominio en 7 días (sin perder alumnos)',
-                'thumbnail'        => $heroPath,
-                'summary'          => 'Plan día a día para salir de Thinkific con tus cursos, tus alumnos y tu lista intactos. Checklist completo, redirecciones DNS, exportación de datos y trampas que nadie te cuenta.',
-                'content'          => $this->buildContent(),
-                'meta_title'       => 'Migrar de Thinkific a dominio propio · plan de 7 días (2026)',
+                'title' => 'Cómo migrar de Thinkific a tu propio dominio en 7 días (sin perder alumnos)',
+                'thumbnail' => $heroPath,
+                'summary' => 'Plan día a día para salir de Thinkific con tus cursos, tus alumnos y tu lista intactos. Checklist completo, redirecciones DNS, exportación de datos y trampas que nadie te cuenta.',
+                'content' => $this->buildContent(),
+                'meta_title' => 'Migrar de Thinkific a dominio propio · plan de 7 días (2026)',
                 'meta_description' => 'Plan paso a paso para salir de Thinkific en 7 días sin perder alumnos. Backup, redirecciones DNS, migración de contenido y comunicación al alumno.',
-                'faq'              => $this->buildFaq(),
-                'status'           => 'published',
-                'published_at'     => now(),
+                'faq' => $this->buildFaq(),
+                'status' => 'published',
+                'published_at' => now(),
             ]
         );
 

@@ -7,20 +7,19 @@
 {{-- ═══════════════════════════════════════════════════════════════════
      HERO corto del catálogo
      ═══════════════════════════════════════════════════════════════════ --}}
-<section class="relative overflow-hidden">
-    <div class="blob bg-brand-200 w-[24rem] h-[24rem] -top-20 -left-10"></div>
-    <div class="blob bg-coral-200 w-[20rem] h-[20rem] top-10 right-0"></div>
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-700 via-ink-900 to-ink-950 text-white min-h-[22rem] sm:min-h-[26rem] flex items-center">
+    <x-hero-bg />
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
-        <div class="flex items-center gap-2 text-sm text-ink-500 mb-4">
-            <a href="{{ url('/') }}" class="hover:text-brand-700">Inicio</a>
-            <i class="fa-solid fa-angle-right text-[10px] text-ink-300"></i>
-            <span class="text-ink-900 font-medium">Cursos</span>
+    <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex items-center gap-2 text-sm text-white/60 mb-4">
+            <a href="{{ url('/') }}" class="hover:text-white">Inicio</a>
+            <i class="fa-solid fa-angle-right text-[10px] text-white/40"></i>
+            <span class="text-white font-medium">Cursos</span>
         </div>
-        <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-ink-900 leading-tight">
-            Todos los <span class="text-brand-600">cursos</span>
+        <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-white leading-tight">
+            Todos los <span class="text-brand-300">cursos</span>
         </h1>
-        <p class="text-ink-500 mt-3 max-w-2xl">
+        <p class="text-white/70 mt-3 max-w-2xl">
             {{ $courses->total() }} {{ $courses->total() === 1 ? 'curso disponible' : 'cursos disponibles' }} ·
             elige el tuyo y empieza hoy mismo.
         </p>
@@ -46,7 +45,7 @@
 {{-- ═══════════════════════════════════════════════════════════════════
      CATÁLOGO con sidebar de filtros
      ═══════════════════════════════════════════════════════════════════ --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20" x-data="{ filters: false }">
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-20" x-data="{ filters: false }">
 
     {{-- Botón filtros móvil --}}
     <div class="lg:hidden flex items-center justify-between mb-5">

@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Cache;
 class SitemapController extends Controller
 {
     public const CACHE_KEY = 'cursalia.sitemap';
+
     public const TTL = 3600;
 
     public function __invoke(): Response
@@ -52,10 +53,10 @@ class SitemapController extends Controller
             ->select('slug', 'updated_at')
             ->get()
             ->each(fn ($c) => $urls->push([
-                'loc'      => url('/courses/'.$c->slug),
+                'loc' => url('/courses/'.$c->slug),
                 'priority' => '0.8',
-                'freq'     => 'weekly',
-                'lastmod'  => $c->updated_at?->toAtomString(),
+                'freq' => 'weekly',
+                'lastmod' => $c->updated_at?->toAtomString(),
             ]));
 
         Blog::query()
@@ -64,10 +65,10 @@ class SitemapController extends Controller
             ->select('slug', 'updated_at')
             ->get()
             ->each(fn ($b) => $urls->push([
-                'loc'      => url('/blog/'.$b->slug),
+                'loc' => url('/blog/'.$b->slug),
                 'priority' => '0.7',
-                'freq'     => 'monthly',
-                'lastmod'  => $b->updated_at?->toAtomString(),
+                'freq' => 'monthly',
+                'lastmod' => $b->updated_at?->toAtomString(),
             ]));
 
         return view('sitemap', ['urls' => $urls])->render();

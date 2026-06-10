@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\CertificateBuilder;
+use App\Models\CertificateBuilderItem;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\CourseChapter;
@@ -9,15 +11,13 @@ use App\Models\CourseChapterLesson;
 use App\Models\CourseLanguage;
 use App\Models\CourseLevel;
 use App\Models\CourseReview;
-use App\Models\CertificateBuilder;
-use App\Models\CertificateBuilderItem;
 use App\Models\Enrollment;
 use App\Models\LessonCompletion;
 use App\Models\WatchHistory;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class CourseSeeder extends Seeder
 {
@@ -469,8 +469,8 @@ class CourseSeeder extends Seeder
                 foreach ($chapterData['lessons'] as $lessonIndex => $lessonData) {
                     CourseChapterLesson::query()->create([
                         'title' => $lessonData['title'],
-                        'slug' => Str::slug($course->title . ' ' . $chapterData['title'] . ' ' . $lessonData['title']),
-                        'description' => 'Leccion de muestra para el curso ' . $course->title . '.',
+                        'slug' => Str::slug($course->title.' '.$chapterData['title'].' '.$lessonData['title']),
+                        'description' => 'Leccion de muestra para el curso '.$course->title.'.',
                         'instructor_id' => $instructorId,
                         'course_id' => $course->id,
                         'chapter_id' => $chapter->id,

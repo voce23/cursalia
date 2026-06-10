@@ -64,12 +64,12 @@ class CertificateController extends Controller
             '{{instructor_name}}' => $course->instructor?->name ?? '',
         ];
 
-        $backgroundPath = public_path('storage/' . $certificate->background);
+        $backgroundPath = public_path('storage/'.$certificate->background);
         abort_if(! is_file($backgroundPath), 404);
 
         $signaturePath = null;
         if ($certificate->signature && Storage::disk('public')->exists($certificate->signature)) {
-            $signaturePath = public_path('storage/' . $certificate->signature);
+            $signaturePath = public_path('storage/'.$certificate->signature);
         }
 
         $pdf = Pdf::loadView('student.certificates.pdf', [
@@ -83,6 +83,6 @@ class CertificateController extends Controller
             'renderedDescription' => strtr((string) $certificate->description, $replacements),
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->download('certificado-' . $course->slug . '.pdf');
+        return $pdf->download('certificado-'.$course->slug.'.pdf');
     }
 }

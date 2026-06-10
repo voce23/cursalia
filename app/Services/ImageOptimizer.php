@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Encoders\AvifEncoder;
@@ -31,8 +32,10 @@ use Intervention\Image\Laravel\Facades\Image;
  */
 class ImageOptimizer
 {
-    public const QUALITY_JPG  = 85;
+    public const QUALITY_JPG = 85;
+
     public const QUALITY_WEBP = 80;
+
     public const QUALITY_AVIF = 65;
 
     /** Tamaños responsive por defecto. */
@@ -41,8 +44,8 @@ class ImageOptimizer
     /**
      * Procesa un archivo subido y guarda original + WebP + AVIF (+ responsive si se pide).
      *
-     * @return string  Ruta relativa del archivo "principal" (el que se guarda en BD).
-     *                 Para SVG: el .svg minificado. Para raster: el .webp original.
+     * @return string Ruta relativa del archivo "principal" (el que se guarda en BD).
+     *                Para SVG: el .svg minificado. Para raster: el .webp original.
      */
     public function processUpload(
         UploadedFile $file,
@@ -63,6 +66,7 @@ class ImageOptimizer
             $minified = $this->minifySvg($svg);
             $path = $base.'.svg';
             Storage::disk('public')->put($path, $minified);
+
             return $path;
         }
 
@@ -89,8 +93,8 @@ class ImageOptimizer
                 ->save(Storage::disk('public')->path($avifPath));
         } catch (\Throwable $e) {
             // Si AVIF falla por cualquier razón en este entorno, seguimos sin él.
-            \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF encode failed, falling back', [
-                'file'  => $file->getClientOriginalName(),
+            Log::warning('ImageOptimizer: AVIF encode failed, falling back', [
+                'file' => $file->getClientOriginalName(),
                 'error' => $e->getMessage(),
             ]);
         }
@@ -102,8 +106,8 @@ class ImageOptimizer
                 ->save(Storage::disk('public')->path($jpgPath));
         } catch (\Throwable $e) {
             // Si la imagen original tenía alpha (PNG transparente), JPG puede no salir bien.
-            \Illuminate\Support\Facades\Log::info('ImageOptimizer: JPG fallback skipped (PNG transparent?)', [
-                'file'  => $file->getClientOriginalName(),
+            Log::info('ImageOptimizer: JPG fallback skipped (PNG transparent?)', [
+                'file' => $file->getClientOriginalName(),
                 'error' => $e->getMessage(),
             ]);
         }
@@ -112,13 +116,13 @@ class ImageOptimizer
         foreach ($responsiveSizes as $w) {
             $variant = Image::decodePath($file->getRealPath())->scaleDown(width: $w);
             $variant->encode(new WebpEncoder(quality: self::QUALITY_WEBP))
-                    ->save(Storage::disk('public')->path($base.'-'.$w.'.webp'));
+                ->save(Storage::disk('public')->path($base.'-'.$w.'.webp'));
             try {
                 $variant->encode(new AvifEncoder(quality: self::QUALITY_AVIF))
-                        ->save(Storage::disk('public')->path($base.'-'.$w.'.avif'));
+                    ->save(Storage::disk('public')->path($base.'-'.$w.'.avif'));
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF responsive variant skipped', [
-                    'path'  => $base.'-'.$w.'.avif',
+                Log::warning('ImageOptimizer: AVIF responsive variant skipped', [
+                    'path' => $base.'-'.$w.'.avif',
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -152,6 +156,7 @@ class ImageOptimizer
                 Storage::disk('public')->put($relativePath, $minified);
                 $generated[] = "svg minified ({$before}→{$after} bytes)";
             }
+
             return $generated;
         }
 
@@ -171,8 +176,8 @@ class ImageOptimizer
                     ->save(Storage::disk('public')->path($base.'.avif'));
                 $generated[] = 'avif';
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF reprocess skipped', [
-                    'path'  => $base.'.avif',
+                Log::warning('ImageOptimizer: AVIF reprocess skipped', [
+                    'path' => $base.'.avif',
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -183,13 +188,13 @@ class ImageOptimizer
             if (! Storage::disk('public')->exists($base.'-'.$w.'.webp')) {
                 $variant = Image::decodePath($fullPath)->scaleDown(width: $w);
                 $variant->encode(new WebpEncoder(quality: self::QUALITY_WEBP))
-                        ->save(Storage::disk('public')->path($base.'-'.$w.'.webp'));
+                    ->save(Storage::disk('public')->path($base.'-'.$w.'.webp'));
                 try {
                     $variant->encode(new AvifEncoder(quality: self::QUALITY_AVIF))
-                            ->save(Storage::disk('public')->path($base.'-'.$w.'.avif'));
+                        ->save(Storage::disk('public')->path($base.'-'.$w.'.avif'));
                 } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::warning('ImageOptimizer: AVIF responsive reprocess skipped', [
-                        'path'  => $base.'-'.$w.'.avif',
+                    Log::warning('ImageOptimizer: AVIF responsive reprocess skipped', [
+                        'path' => $base.'-'.$w.'.avif',
                         'error' => $e->getMessage(),
                     ]);
                 }
@@ -219,6 +224,7 @@ class ImageOptimizer
         $svg = preg_replace('/>\s+</', '><', $svg);
         // 5. Quitar espacios al inicio/final de atributos.
         $svg = preg_replace('/\s*=\s*"/', '="', $svg);
+
         return trim($svg);
     }
 
@@ -242,10 +248,12 @@ class ImageOptimizer
             if (preg_match('/width\s*=\s*"(\d+)"/', $svg, $w) && preg_match('/height\s*=\s*"(\d+)"/', $svg, $h)) {
                 return [(int) $w[1], (int) $h[1]];
             }
+
             return [null, null];
         }
 
         $info = @getimagesize($fullPath);
+
         return $info ? [(int) $info[0], (int) $info[1]] : [null, null];
     }
 
@@ -269,10 +277,10 @@ class ImageOptimizer
         $url = fn (string $p) => Storage::disk('public')->exists($p) ? asset('storage/'.$p) : null;
 
         $result = [
-            'src'        => asset('storage/'.$relativePath),
-            'webp'       => null,
-            'avif'       => null,
-            'jpg'        => null,
+            'src' => asset('storage/'.$relativePath),
+            'webp' => null,
+            'avif' => null,
+            'jpg' => null,
             'responsive' => [],
         ];
 
@@ -294,12 +302,16 @@ class ImageOptimizer
         // Buscar variantes hermanas.
         $result['webp'] ??= $url($base.'.webp');
         $result['avif'] ??= $url($base.'.avif');
-        $result['jpg']  ??= $url($base.'.jpg');
+        $result['jpg'] ??= $url($base.'.jpg');
 
         foreach ($responsiveSizes as $w) {
             $variant = [];
-            if ($p = $url($base.'-'.$w.'.avif')) $variant['avif'] = $p;
-            if ($p = $url($base.'-'.$w.'.webp')) $variant['webp'] = $p;
+            if ($p = $url($base.'-'.$w.'.avif')) {
+                $variant['avif'] = $p;
+            }
+            if ($p = $url($base.'-'.$w.'.webp')) {
+                $variant['webp'] = $p;
+            }
             if (! empty($variant)) {
                 $result['responsive'][$w] = $variant;
             }

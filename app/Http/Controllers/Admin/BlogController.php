@@ -9,6 +9,7 @@ use App\Services\ImageOptimizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -52,7 +53,7 @@ class BlogController extends Controller
             ->get();
 
         return view('admin.blogs.form', [
-            'blog'       => new Blog(['status' => 'draft']),
+            'blog' => new Blog(['status' => 'draft']),
             'categories' => $categories,
         ]);
     }
@@ -61,7 +62,7 @@ class BlogController extends Controller
     {
         $data = $this->validateRequest($request);
         $data['admin_id'] = auth('admin')->id();
-        $data['slug']     = $this->uniqueSlug($data['slug'] ?: $data['title']);
+        $data['slug'] = $this->uniqueSlug($data['slug'] ?: $data['title']);
 
         if ($request->hasFile('thumbnail')) {
             $data['thumbnail'] = $this->saveImage($request->file('thumbnail'));
@@ -130,27 +131,26 @@ class BlogController extends Controller
     private function validateRequest(Request $request, ?int $ignoreId = null): array
     {
         $data = $request->validate([
-            'title'            => ['required', 'string', 'max:255'],
-            'slug'             => ['nullable', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255'],
             'blog_category_id' => ['required', 'exists:blog_categories,id'],
-            'summary'          => ['nullable', 'string', 'max:500'],
-            'content'          => ['required', 'string'],
+            'summary' => ['nullable', 'string', 'max:500'],
+            'content' => ['required', 'string'],
             // mimes + mimetypes: la primera valida la extensión, la segunda el tipo MIME REAL del archivo (defensa en profundidad contra `archivo.php.jpg`).
-            'thumbnail'        => ['nullable', 'file', 'mimes:jpeg,png,webp,svg', 'mimetypes:image/jpeg,image/png,image/webp,image/svg+xml', 'max:4096'],
-            'status'           => ['required', 'in:draft,published'],
+            'thumbnail' => ['nullable', 'file', 'mimes:jpeg,png,webp,svg', 'mimetypes:image/jpeg,image/png,image/webp,image/svg+xml', 'max:4096'],
+            'status' => ['required', 'in:draft,published'],
             // ─── SEO ────────────────────────────────────────────────────
-            'meta_title'       => ['nullable', 'string', 'max:70'],
+            'meta_title' => ['nullable', 'string', 'max:70'],
             'meta_description' => ['nullable', 'string', 'max:180'],
-            'og_image_custom'  => ['nullable', 'file', 'mimes:jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:4096'],
-            'faq'              => ['nullable', 'array'],
-            'faq.*.q'          => ['nullable', 'string', 'max:255'],
-            'faq.*.a'          => ['nullable', 'string', 'max:1500'],
+            'og_image_custom' => ['nullable', 'file', 'mimes:jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:4096'],
+            'faq' => ['nullable', 'array'],
+            'faq.*.q' => ['nullable', 'string', 'max:255'],
+            'faq.*.a' => ['nullable', 'string', 'max:1500'],
         ]);
 
         // Limpiar FAQ: descartar filas vacías.
-        if (!empty($data['faq'])) {
-            $data['faq'] = array_values(array_filter($data['faq'], fn ($item) =>
-                !empty(trim($item['q'] ?? '')) && !empty(trim($item['a'] ?? ''))
+        if (! empty($data['faq'])) {
+            $data['faq'] = array_values(array_filter($data['faq'], fn ($item) => ! empty(trim($item['q'] ?? '')) && ! empty(trim($item['a'] ?? ''))
             ));
             if (empty($data['faq'])) {
                 $data['faq'] = null;
@@ -176,10 +176,11 @@ class BlogController extends Controller
         ) {
             $slug = $original.'-'.$i++;
         }
+
         return $slug;
     }
 
-    private function saveImage(\Illuminate\Http\UploadedFile $file): string
+    private function saveImage(UploadedFile $file): string
     {
         // Delega al ImageOptimizer: genera WebP + AVIF + responsive (480/800/1200)
         // automáticamente, o minifica si es SVG. El nombre devuelto es el del

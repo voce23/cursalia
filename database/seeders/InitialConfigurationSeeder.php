@@ -22,7 +22,7 @@ class InitialConfigurationSeeder extends Seeder
             [
                 'site_name' => 'LMSL13',
                 'site_slogan' => 'Cursos Online',
-                'copyright' => '© ' . date('Y') . ' LMSL13. Todos los derechos reservados.',
+                'copyright' => '© '.date('Y').' LMSL13. Todos los derechos reservados.',
                 'mail_mailer' => 'log',
                 'mail_from_address' => 'info@lmsl13.test',
                 'mail_from_name' => 'LMSL13',

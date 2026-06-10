@@ -48,8 +48,8 @@ class CursaliaLaunchCleanupSeeder extends Seeder
         // y honesto de Cursalia.
         $hero = HeroSection::query()->first();
         if ($hero) {
-            $hero->badge_text     = 'Gratis y de código abierto';
-            $hero->title          = 'Crea tu propia';
+            $hero->badge_text = 'Gratis y de código abierto';
+            $hero->title = 'Crea tu propia';
             $hero->highlight_text = 'academia online';
             $realSubtitle = 'Monta tu plataforma de cursos en tu propio dominio, sin pagar mensualidades ni saber programar. En español y con tu marca.';
             foreach (['subtitle', 'description', 'subtitle_text', 'sub_title'] as $col) {
@@ -81,9 +81,9 @@ class CursaliaLaunchCleanupSeeder extends Seeder
         // AboutSection: texto genérico demo → mensaje real de Cursalia.
         $about = AboutSection::query()->first();
         if ($about) {
-            $about->title    = 'Sobre Cursalia';
+            $about->title = 'Sobre Cursalia';
             $about->subtitle = 'Tu academia online, sin pagar mensualidades';
-            $about->content  = '<p>Cursalia es un sistema de gestión de aprendizaje (LMS) gratuito y de código abierto, pensado para que cualquier persona —sin saber programar— pueda montar su propia academia online en su propio dominio, con su marca y en español de verdad.</p>'
+            $about->content = '<p>Cursalia es un sistema de gestión de aprendizaje (LMS) gratuito y de código abierto, pensado para que cualquier persona —sin saber programar— pueda montar su propia academia online en su propio dominio, con su marca y en español de verdad.</p>'
                 .'<p>Nació de una idea simple: las plataformas como Hotmart o Thinkific te cobran comisión o mensualidad por algo que debería ser tuyo. Con Cursalia, tu academia es 100% tuya.</p>';
             $about->save();
             $this->command->info('  ✓ AboutSection actualizada con mensaje real.');

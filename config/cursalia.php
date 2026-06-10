@@ -44,12 +44,12 @@ return [
     */
 
     'defaults' => [
-        'site_name'    => 'Cursalia',
-        'site_slogan'  => 'Aprende algo nuevo, a tu manera',
-        'brand_color'  => '#10B981',
+        'site_name' => 'Cursalia',
+        'site_slogan' => 'Aprende algo nuevo, a tu manera',
+        'brand_color' => '#10B981',
         'accent_color' => '#FB7185',
-        'sun_color'    => '#FBBF24',
-        'ink_color'    => '#1F2933',
+        'sun_color' => '#FBBF24',
+        'ink_color' => '#1F2933',
     ],
 
     /*
@@ -59,9 +59,9 @@ return [
     */
 
     'course' => [
-        'category_slug'   => 'curso-cursalia',
-        'lessons_free'    => 14, // Fase 1 gratis
-        'lessons_pro'     => 12, // Fase 2 PRO
+        'category_slug' => 'curso-cursalia',
+        'lessons_free' => 14, // Fase 1 gratis
+        'lessons_pro' => 12, // Fase 2 PRO
     ],
 
 ];

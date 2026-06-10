@@ -37,10 +37,10 @@ class CommissionSettingController extends Controller
         Cache::forget('commission_rate');
 
         Log::info('admin.commission_rate_updated', [
-            'admin_id'      => auth('admin')->id(),
+            'admin_id' => auth('admin')->id(),
             'previous_rate' => $previousRate,
-            'new_rate'      => $setting->commission_rate,
-            'ip'            => request()->ip(),
+            'new_rate' => $setting->commission_rate,
+            'ip' => request()->ip(),
         ]);
 
         flash()->success('Comision de plataforma actualizada correctamente.');

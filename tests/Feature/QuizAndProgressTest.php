@@ -71,7 +71,7 @@ class QuizAndProgressTest extends TestCase
         $res->assertOk()->assertJson(['completed' => true]);
 
         $this->assertDatabaseHas('lesson_completions', [
-            'user_id'   => $student->id,
+            'user_id' => $student->id,
             'lesson_id' => $lesson->id,
         ]);
     }

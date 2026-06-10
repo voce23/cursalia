@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Course extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'instructor_id',
         'category_id',
@@ -35,10 +36,10 @@ class Course extends Model
     protected function casts(): array
     {
         return [
-            'price'       => 'decimal:2',
-            'discount'    => 'decimal:2',
+            'price' => 'decimal:2',
+            'discount' => 'decimal:2',
             'certificate' => 'boolean',
-            'qna'         => 'boolean',
+            'qna' => 'boolean',
         ];
     }
 

@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
 use App\Notifications\NewEnrollmentNotification;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -17,9 +18,9 @@ class OrderService
     /**
      * Crea la orden y matricula los cursos del carrito.
      *
-     * @param  float|null  $confirmedAmount  Monto realmente confirmado/cobrado por la pasarela.
-     *                                        Si se provee, DEBE coincidir con el total del carrito
-     *                                        o la operación se aborta (no se matricula).
+     * @param float|null $confirmedAmount Monto realmente confirmado/cobrado por la pasarela.
+     *                                    Si se provee, DEBE coincidir con el total del carrito
+     *                                    o la operación se aborta (no se matricula).
      */
     public static function storeOrder(
         string $transactionId,
@@ -50,10 +51,10 @@ class OrderService
         if ($confirmedAmount !== null && abs((float) $confirmedAmount - (float) $total) > 0.01) {
             Log::warning('payment.amount_mismatch', [
                 'transaction_id' => $transactionId,
-                'user_id'        => $userId,
+                'user_id' => $userId,
                 'payment_method' => $paymentMethod,
-                'confirmed'      => $confirmedAmount,
-                'cart_total'     => $total,
+                'confirmed' => $confirmedAmount,
+                'cart_total' => $total,
             ]);
 
             throw new \RuntimeException('El monto pagado no coincide con el total del carrito.');
@@ -62,12 +63,12 @@ class OrderService
         try {
             return DB::transaction(function () use ($cartItems, $total, $transactionId, $paymentMethod, $userId, $confirmedAmount, $currency) {
                 $order = Order::create([
-                    'invoice_id'     => 'INV-' . strtoupper(Str::random(10)),
-                    'buyer_id'       => $userId,
-                    'status'         => 'completed',
-                    'total_amount'   => $total,
-                    'paid_amount'    => $confirmedAmount ?? $total,
-                    'currency'       => $currency ?: config('paypal.currency', 'USD'),
+                    'invoice_id' => 'INV-'.strtoupper(Str::random(10)),
+                    'buyer_id' => $userId,
+                    'status' => 'completed',
+                    'total_amount' => $total,
+                    'paid_amount' => $confirmedAmount ?? $total,
+                    'currency' => $currency ?: config('paypal.currency', 'USD'),
                     'payment_method' => $paymentMethod,
                     'transaction_id' => $transactionId,
                 ]);
@@ -79,15 +80,15 @@ class OrderService
                         ? $item->course->discount
                         : $item->course->price;
 
-                    $platformEarning   = round($price * ($commissionRate / 100), 2);
+                    $platformEarning = round($price * ($commissionRate / 100), 2);
                     $instructorEarning = round($price - $platformEarning, 2);
 
                     OrderItem::create([
-                        'order_id'           => $order->id,
-                        'course_id'          => $item->course_id,
-                        'price'              => $price,
-                        'commission_rate'    => $commissionRate,
-                        'platform_earning'   => $platformEarning,
+                        'order_id' => $order->id,
+                        'course_id' => $item->course_id,
+                        'price' => $price,
+                        'commission_rate' => $commissionRate,
+                        'platform_earning' => $platformEarning,
                         'instructor_earning' => $instructorEarning,
                     ]);
 
@@ -98,7 +99,7 @@ class OrderService
 
                     // Notificar al instructor sobre nueva matrícula
                     $instructor = User::find($item->course->instructor_id);
-                    $student    = User::find($userId);
+                    $student = User::find($userId);
                     if ($instructor && $student) {
                         $instructor->notify(new NewEnrollmentNotification($item->course, $student));
                     }
@@ -108,7 +109,7 @@ class OrderService
 
                 return $order;
             });
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             // Posible violación del índice único de transaction_id por carrera
             // (webhook + redirect llegando casi a la vez) → devolver la orden existente.
             $existing = Order::where('transaction_id', $transactionId)->first();

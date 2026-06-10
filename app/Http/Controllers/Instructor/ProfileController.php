@@ -37,7 +37,7 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($user->image);
             }
 
-            $filename = 'avatars/' . uniqid('avatar_') . '.webp';
+            $filename = 'avatars/'.uniqid('avatar_').'.webp';
 
             Image::decode($request->file('image'))
                 ->cover(200, 200)

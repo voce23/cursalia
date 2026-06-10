@@ -21,8 +21,8 @@ class NewInstructorRequestNotification extends Notification implements ShouldQue
     public function toArray(object $notifiable): array
     {
         return [
-            'type'         => 'new_instructor_request',
-            'message'      => "\"{$this->applicant->name}\" ha solicitado convertirse en instructor.",
+            'type' => 'new_instructor_request',
+            'message' => "\"{$this->applicant->name}\" ha solicitado convertirse en instructor.",
             'applicant_id' => $this->applicant->id,
         ];
     }

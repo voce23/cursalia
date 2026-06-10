@@ -62,14 +62,15 @@ class BlogCategoryController extends Controller
             return response()->json(['message' => 'No se puede eliminar: hay artículos en esta categoría.'], 409);
         }
         $blogCategory->delete();
+
         return response()->json(['message' => 'Categoría eliminada.']);
     }
 
     private function validateRequest(Request $request): array
     {
         return $request->validate([
-            'name'   => ['required', 'string', 'max:120'],
-            'color'  => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'name' => ['required', 'string', 'max:120'],
+            'color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'status' => ['nullable', 'boolean'],
         ]);
     }
@@ -82,6 +83,7 @@ class BlogCategoryController extends Controller
         while (BlogCategory::query()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = $base.'-'.$i++;
         }
+
         return $slug;
     }
 }

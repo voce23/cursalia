@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\HeaderNavigationLink;
+use App\View\Composers\BrandingComposer;
 use Illuminate\Database\Seeder;
 
 /**
@@ -20,12 +21,12 @@ class CursaliaMenuOrderSeeder extends Seeder
     {
         // url => sort_order (1 = primero/izquierda)
         $order = [
-            '/'                          => 1, // Inicio
-            '/courses'                   => 2, // Cursos
-            '/blog'                      => 3, // Blog
-            '/about'                     => 4, // Nosotros
-            '/contact'                   => 5, // Contacto
-            '/templates'                 => 6, // Plantillas
+            '/' => 1, // Inicio
+            '/courses' => 2, // Cursos
+            '/blog' => 3, // Blog
+            '/about' => 4, // Nosotros
+            '/contact' => 5, // Contacto
+            '/templates' => 6, // Plantillas
             '/student/become-instructor' => 7, // Ser Instructor
         ];
 
@@ -34,7 +35,7 @@ class CursaliaMenuOrderSeeder extends Seeder
             $updated += HeaderNavigationLink::where('url', $url)->update(['sort_order' => $sort]);
         }
 
-        \App\View\Composers\BrandingComposer::flushCache();
+        BrandingComposer::flushCache();
 
         $this->command->info("  ✓ Orden del menú primario corregido ({$updated} enlaces).");
         $this->command->info('  → Inicio · Cursos · Blog · Nosotros · Contacto · Plantillas · Ser Instructor');

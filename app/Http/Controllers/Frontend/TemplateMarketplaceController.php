@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Helpers\MathCaptcha;
 use App\Http\Controllers\Controller;
 use App\Models\Template;
 use App\Models\TemplateCategory;
@@ -22,26 +23,24 @@ class TemplateMarketplaceController extends Controller
     public function index(Request $request): View
     {
         $categorySlug = $request->string('category')->toString();
-        $price        = $request->string('price')->toString();   // free | paid
-        $sort         = $request->string('sort')->toString();
+        $price = $request->string('price')->toString();   // free | paid
+        $sort = $request->string('sort')->toString();
 
         $templates = Template::query()
             ->published()
             ->with('category:id,name,slug,color,icon')
-            ->when($categorySlug, fn ($q) =>
-                $q->whereHas('category', fn ($x) => $x->where('slug', $categorySlug)))
+            ->when($categorySlug, fn ($q) => $q->whereHas('category', fn ($x) => $x->where('slug', $categorySlug)))
             ->when($price === 'free', fn ($q) => $q->free())
             ->when($price === 'paid', fn ($q) => $q->paid())
             ->when($request->filled('search'), function ($q) use ($request) {
                 $s = $request->string('search')->toString();
-                $q->where(fn ($x) =>
-                    $x->where('title', 'like', "%{$s}%")
-                      ->orWhere('headline', 'like', "%{$s}%"));
+                $q->where(fn ($x) => $x->where('title', 'like', "%{$s}%")
+                    ->orWhere('headline', 'like', "%{$s}%"));
             })
-            ->when($sort === 'price_low',  fn ($q) => $q->orderByRaw('COALESCE(discount, price) asc'))
+            ->when($sort === 'price_low', fn ($q) => $q->orderByRaw('COALESCE(discount, price) asc'))
             ->when($sort === 'price_high', fn ($q) => $q->orderByRaw('COALESCE(discount, price) desc'))
-            ->when($sort === 'popular',    fn ($q) => $q->orderByDesc('sales_count')->orderByDesc('downloads_count'))
-            ->when(! in_array($sort, ['price_low','price_high','popular'], true),
+            ->when($sort === 'popular', fn ($q) => $q->orderByDesc('sales_count')->orderByDesc('downloads_count'))
+            ->when(! in_array($sort, ['price_low', 'price_high', 'popular'], true),
                 fn ($q) => $q->orderByDesc('is_featured')->orderBy('sort_order'))
             ->paginate(12)
             ->withQueryString();
@@ -74,8 +73,7 @@ class TemplateMarketplaceController extends Controller
         $related = Template::query()
             ->published()
             ->where('id', '!=', $template->id)
-            ->when($template->template_category_id, fn ($q) =>
-                $q->where('template_category_id', $template->template_category_id))
+            ->when($template->template_category_id, fn ($q) => $q->where('template_category_id', $template->template_category_id))
             ->with('category:id,name,slug,color')
             ->orderByDesc('is_featured')
             ->take(3)
@@ -90,14 +88,14 @@ class TemplateMarketplaceController extends Controller
         $template = Template::published()->where('slug', $slug)->firstOrFail();
 
         $data = $request->validate([
-            'email'          => ['required', 'email', 'max:255'],
-            'name'           => ['nullable', 'string', 'max:120'],
-            'notes'          => ['nullable', 'string', 'max:500'],
-            'captcha_token'  => ['required', 'string'],
+            'email' => ['required', 'email', 'max:255'],
+            'name' => ['nullable', 'string', 'max:120'],
+            'notes' => ['nullable', 'string', 'max:500'],
+            'captcha_token' => ['required', 'string'],
             'captcha_answer' => ['required', 'integer'],
         ]);
 
-        if (! \App\Helpers\MathCaptcha::verify($data['captcha_token'], $data['captcha_answer'])) {
+        if (! MathCaptcha::verify($data['captcha_token'], $data['captcha_answer'])) {
             return back()->withErrors(['captcha_answer' => 'La respuesta no coincide. ¿Eres humano? 😊 Inténtalo de nuevo.'])->withInput();
         }
 
@@ -119,6 +117,7 @@ class TemplateMarketplaceController extends Controller
         if ($template->download_url) {
             return redirect()->away($template->download_url);
         }
+
         return back()->with('success', 'Pronto activaremos la descarga directa. ¡Gracias por tu interés!');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Http\Controllers\Frontend\LegalPageController;
 use App\Models\CustomPage;
 use App\Models\Footer;
 use App\Models\FooterColumnOne;
@@ -35,7 +36,7 @@ class CursaliaBrandingSeeder extends Seeder
         $this->command->info('  ✓ header_navigation_links: '.HeaderNavigationLink::count());
         $this->command->info('  ✓ social_links: '.SocialLink::count());
         $this->command->info('  ✓ footer + '.FooterColumnOne::count().' / '.FooterColumnTwo::count().' columnas');
-        $this->command->info('  ✓ legales (custom_pages): '.CustomPage::where('slug','like','legal%')->count().' o más');
+        $this->command->info('  ✓ legales (custom_pages): '.CustomPage::where('slug', 'like', 'legal%')->count().' o más');
     }
 
     // ──────────────────────────────────────────────────────────────────────
@@ -44,18 +45,18 @@ class CursaliaBrandingSeeder extends Seeder
     {
         $row = GeneralSetting::firstOrNew(['id' => 1]);
         $row->fill([
-            'site_name'    => $row->site_name ?: 'Cursalia',
-            'site_slogan'  => $row->site_slogan ?: 'Aprende algo nuevo, a tu manera',
-            'copyright'    => $row->copyright ?: '© '.date('Y').' Cursalia. Todos los derechos reservados.',
+            'site_name' => $row->site_name ?: 'Cursalia',
+            'site_slogan' => $row->site_slogan ?: 'Aprende algo nuevo, a tu manera',
+            'copyright' => $row->copyright ?: '© '.date('Y').' Cursalia. Todos los derechos reservados.',
             // Marca Cursalia
-            'brand_color'   => $row->brand_color   ?: '#10B981',
-            'accent_color'  => $row->accent_color  ?: '#FB7185',
-            'sun_color'     => $row->sun_color     ?: '#FBBF24',
-            'ink_color'     => $row->ink_color     ?: '#1F2933',
-            'font_display'  => $row->font_display  ?: 'Poppins',
-            'font_body'     => $row->font_body     ?: 'Inter',
-            'theme_preset'  => $row->theme_preset  ?: 'cursalia-green',
-            'default_locale'=> $row->default_locale?: 'es',
+            'brand_color' => $row->brand_color ?: '#10B981',
+            'accent_color' => $row->accent_color ?: '#FB7185',
+            'sun_color' => $row->sun_color ?: '#FBBF24',
+            'ink_color' => $row->ink_color ?: '#1F2933',
+            'font_display' => $row->font_display ?: 'Poppins',
+            'font_body' => $row->font_body ?: 'Inter',
+            'theme_preset' => $row->theme_preset ?: 'cursalia-green',
+            'default_locale' => $row->default_locale ?: 'es',
             'seo_default_description' => $row->seo_default_description
                 ?: 'Cursalia es una academia online cálida y cercana: cursos prácticos creados por mentores reales, a tu ritmo, con certificado al terminar.',
             'enabled_sections' => $row->enabled_sections ?: array_keys(GeneralSetting::HOME_SECTIONS),
@@ -67,9 +68,9 @@ class CursaliaBrandingSeeder extends Seeder
     {
         HeaderSetting::updateOrCreate(['id' => 1], [
             'category_button_text' => 'Categorías',
-            'category_limit'       => 8,
-            'show_search'          => true,
-            'search_placeholder'   => '¿Qué quieres aprender hoy?',
+            'category_limit' => 8,
+            'show_search' => true,
+            'search_placeholder' => '¿Qué quieres aprender hoy?',
         ]);
     }
 
@@ -94,10 +95,10 @@ class CursaliaBrandingSeeder extends Seeder
     {
         $socials = [
             ['name' => 'Facebook',  'icon_class' => 'fa-brands fa-facebook-f', 'url' => 'https://facebook.com/cursalia',  'sort_order' => 1],
-            ['name' => 'X (Twitter)','icon_class' => 'fa-brands fa-x-twitter', 'url' => 'https://x.com/cursalia',         'sort_order' => 2],
+            ['name' => 'X (Twitter)', 'icon_class' => 'fa-brands fa-x-twitter', 'url' => 'https://x.com/cursalia',         'sort_order' => 2],
             ['name' => 'Instagram', 'icon_class' => 'fa-brands fa-instagram',  'url' => 'https://instagram.com/cursalia', 'sort_order' => 3],
             ['name' => 'YouTube',   'icon_class' => 'fa-brands fa-youtube',    'url' => 'https://youtube.com/@cursalia',  'sort_order' => 4],
-            ['name' => 'LinkedIn',  'icon_class' => 'fa-brands fa-linkedin-in','url' => 'https://linkedin.com/company/cursalia','sort_order' => 5],
+            ['name' => 'LinkedIn',  'icon_class' => 'fa-brands fa-linkedin-in', 'url' => 'https://linkedin.com/company/cursalia', 'sort_order' => 5],
         ];
         foreach ($socials as $s) {
             SocialLink::updateOrCreate(
@@ -110,13 +111,13 @@ class CursaliaBrandingSeeder extends Seeder
     private function seedFooter(): void
     {
         Footer::updateOrCreate(['id' => 1], [
-            'description'   => 'Aprende algo nuevo, a tu manera. Cursos prácticos creados por mentores reales.',
+            'description' => 'Aprende algo nuevo, a tu manera. Cursos prácticos creados por mentores reales.',
             'contact_title' => 'Contacto',
-            'email'         => 'hola@cursalia.com',
-            'phone'         => null,
-            'address'       => 'Madrid, España',
-            'bottom_text'   => 'Hecho con ❤️ y Laravel 13',
-            'is_active'     => true,
+            'email' => 'hola@cursalia.com',
+            'phone' => null,
+            'address' => 'Madrid, España',
+            'bottom_text' => 'Hecho con ❤️ y Laravel 13',
+            'is_active' => true,
         ]);
     }
 
@@ -150,7 +151,7 @@ class CursaliaBrandingSeeder extends Seeder
      */
     private function seedLegalPages(): void
     {
-        $controller = new \App\Http\Controllers\Frontend\LegalPageController;
+        $controller = new LegalPageController;
         $reflection = new \ReflectionClass($controller);
 
         $pages = [
@@ -173,12 +174,12 @@ class CursaliaBrandingSeeder extends Seeder
             CustomPage::updateOrCreate(
                 ['slug' => $p['slug']],
                 [
-                    'title'           => $p['title'],
-                    'description'     => $body,
-                    'seo_title'       => $p['title'].' · Cursalia',
+                    'title' => $p['title'],
+                    'description' => $body,
+                    'seo_title' => $p['title'].' · Cursalia',
                     'seo_description' => $p['summary'],
-                    'show_at_nav'     => false,
-                    'status'          => true,
+                    'show_at_nav' => false,
+                    'status' => true,
                 ]
             );
         }

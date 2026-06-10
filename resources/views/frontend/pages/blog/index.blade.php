@@ -97,18 +97,17 @@
 {{-- ═══════════════════════════════════════════════════════════════════
      HERO BLOG
      ═══════════════════════════════════════════════════════════════════ --}}
-<section class="relative overflow-hidden">
-    <div class="blob bg-brand-200 w-[26rem] h-[26rem] -top-20 -left-10"></div>
-    <div class="blob bg-coral-200 w-[22rem] h-[22rem] top-32 right-0"></div>
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-700 via-ink-900 to-ink-950 text-white min-h-[22rem] sm:min-h-[26rem] flex items-center">
+    <x-hero-bg />
 
-    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
-        <span class="sr inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-ink-200 shadow-soft text-xs font-semibold text-brand-700">
-            <i class="fa-solid fa-pen-nib"></i> Blog Cursalia
+    <div class="relative w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <span class="sr inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-white backdrop-blur-sm">
+            <i class="fa-solid fa-pen-nib text-brand-300"></i> Blog Cursalia
         </span>
-        <h1 class="sr s1 font-display font-extrabold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mt-6 text-ink-900">
-            Aprende algo nuevo, <span class="text-brand-600">cada semana.</span>
+        <h1 class="sr s1 font-display font-extrabold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mt-6 text-white">
+            Aprende algo nuevo, <span class="text-brand-300">cada semana.</span>
         </h1>
-        <p class="sr s2 text-ink-500 text-lg leading-relaxed mt-5 max-w-2xl mx-auto">
+        <p class="sr s2 text-white/70 text-lg leading-relaxed mt-5 max-w-2xl mx-auto">
             Tutoriales, novedades y consejos prácticos de nuestro equipo y de los mentores.
         </p>
 
@@ -133,7 +132,7 @@
 {{-- ═══════════════════════════════════════════════════════════════════
      LAYOUT CON SIDEBAR
      ═══════════════════════════════════════════════════════════════════ --}}
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-20">
     <div class="grid lg:grid-cols-[1fr_280px] gap-10 items-start">
 
         {{-- ═══════════════ LISTADO ═══════════════ --}}

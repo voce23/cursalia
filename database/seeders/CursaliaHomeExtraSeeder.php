@@ -39,15 +39,15 @@ class CursaliaHomeExtraSeeder extends Seeder
             $user = User::firstOrCreate(
                 ['email' => $data['email']],
                 [
-                    'name'              => $data['name'],
-                    'password'          => bcrypt('password'),
+                    'name' => $data['name'],
+                    'password' => bcrypt('password'),
                     'email_verified_at' => now(),
                 ]
             );
             $user->forceFill([
-                'role'           => 'instructor',
+                'role' => 'instructor',
                 'approve_status' => 'approved',
-                'headline'     => $data['headline'],
+                'headline' => $data['headline'],
             ])->save();
         }
 
@@ -66,22 +66,22 @@ class CursaliaHomeExtraSeeder extends Seeder
         // ── Testimonios ───────────────────────────────────────────────────────
         $testimonials = [
             [
-                'name'        => 'Sofía Reyes',
+                'name' => 'Sofía Reyes',
                 'designation' => 'Diseñadora UI',
-                'message'     => 'Pasé de no saber nada de diseño a tener un portafolio real en 4 meses. Los proyectos del curso fueron justo lo que necesitaba para conseguir mi primer trabajo.',
-                'rating'      => 5,
+                'message' => 'Pasé de no saber nada de diseño a tener un portafolio real en 4 meses. Los proyectos del curso fueron justo lo que necesitaba para conseguir mi primer trabajo.',
+                'rating' => 5,
             ],
             [
-                'name'        => 'Mateo Torres',
+                'name' => 'Mateo Torres',
                 'designation' => 'Desarrollador Frontend',
-                'message'     => 'La mejor de las plataformas. Las explicaciones son claras, los mentores responden de verdad y todo está actualizado al 2026.',
-                'rating'      => 5,
+                'message' => 'La mejor de las plataformas. Las explicaciones son claras, los mentores responden de verdad y todo está actualizado al 2026.',
+                'rating' => 5,
             ],
             [
-                'name'        => 'Valentina Cruz',
+                'name' => 'Valentina Cruz',
                 'designation' => 'Emprendedora',
-                'message'     => 'Cursalia me ayudó a lanzar mi propio emprendimiento. El curso de marketing fue práctico desde el primer día y todo lo apliqué en mi negocio.',
-                'rating'      => 5,
+                'message' => 'Cursalia me ayudó a lanzar mi propio emprendimiento. El curso de marketing fue práctico desde el primer día y todo lo apliqué en mi negocio.',
+                'rating' => 5,
             ],
         ];
         foreach ($testimonials as $i => $t) {

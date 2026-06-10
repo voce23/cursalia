@@ -30,8 +30,8 @@ class CourseSubCategoryController extends Controller
     public function store(CourseSubCategoryStoreRequest $request, CourseCategory $courseCategory): RedirectResponse
     {
         CourseCategory::create([
-            'name'      => $request->name,
-            'slug'      => Str::slug($request->name),
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
             'parent_id' => $courseCategory->id,
         ]);
 

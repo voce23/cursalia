@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Razorpay\Api\Api as RazorpayApi;
 use Stripe\Checkout\Session as StripeSession;
+use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 
 class PaymentController extends Controller
@@ -32,6 +33,7 @@ class PaymentController extends Controller
 
         return [$cartItems, $total];
     }
+
     /**
      * Obtiene la URL base y las credenciales según el modo (sandbox/live).
      */
@@ -40,10 +42,10 @@ class PaymentController extends Controller
         $mode = config('paypal.mode', 'sandbox');
 
         return [
-            'base_url'      => $mode === 'live'
+            'base_url' => $mode === 'live'
                 ? 'https://api-m.paypal.com'
                 : 'https://api-m.sandbox.paypal.com',
-            'client_id'     => config("paypal.{$mode}.client_id"),
+            'client_id' => config("paypal.{$mode}.client_id"),
             'client_secret' => config("paypal.{$mode}.client_secret"),
         ];
     }
@@ -85,11 +87,11 @@ class PaymentController extends Controller
 
         $response = Http::withToken($accessToken)
             ->post("{$cfg['base_url']}/v2/checkout/orders", [
-                'intent'          => 'CAPTURE',
-                'purchase_units'  => [[
+                'intent' => 'CAPTURE',
+                'purchase_units' => [[
                     'amount' => [
                         'currency_code' => config('paypal.currency', 'USD'),
-                        'value'         => number_format($total, 2, '.', ''),
+                        'value' => number_format($total, 2, '.', ''),
                     ],
                     'custom_id' => (string) Auth::id(),
                 ]],
@@ -138,7 +140,7 @@ class PaymentController extends Controller
         $result = $response->json();
 
         if (isset($result['status']) && $result['status'] === 'COMPLETED') {
-            $pu      = $result['purchase_units'][0] ?? [];
+            $pu = $result['purchase_units'][0] ?? [];
             $capture = $pu['payments']['captures'][0] ?? [];
 
             // Verificar que la orden de PayPal pertenece al usuario autenticado
@@ -169,6 +171,7 @@ class PaymentController extends Controller
     public function paypalCancel()
     {
         flash()->warning('Pago cancelado. Tu carrito sigue intacto.');
+
         return redirect()->route('cart.index');
     }
 
@@ -192,7 +195,7 @@ class PaymentController extends Controller
                 'payment_method_types' => ['card'],
                 'line_items' => [[
                     'price_data' => [
-                        'currency'     => config('stripe.currency', 'USD'),
+                        'currency' => config('stripe.currency', 'USD'),
                         'product_data' => [
                             'name' => 'Compra de cursos LMSL13',
                         ],
@@ -200,16 +203,17 @@ class PaymentController extends Controller
                     ],
                     'quantity' => 1,
                 ]],
-                'mode'        => 'payment',
-                'success_url' => route('stripe.success') . '?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url'  => route('stripe.cancel'),
-                'metadata'    => ['user_id' => Auth::id()],
+                'mode' => 'payment',
+                'success_url' => route('stripe.success').'?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('stripe.cancel'),
+                'metadata' => ['user_id' => Auth::id()],
             ]);
 
             return redirect()->away($session->url);
-        } catch (\Stripe\Exception\ApiErrorException $e) {
+        } catch (ApiErrorException $e) {
             report($e);
             flash()->error('No se pudo iniciar el pago con Stripe. Intenta nuevamente.');
+
             return redirect()->route('cart.index');
         }
     }
@@ -238,7 +242,7 @@ class PaymentController extends Controller
             if ($session->payment_status === 'paid') {
                 $transactionId = $session->payment_intent;
                 $confirmed = isset($session->amount_total) ? (float) $session->amount_total / 100 : null;
-                $currency  = isset($session->currency) ? strtoupper($session->currency) : null;
+                $currency = isset($session->currency) ? strtoupper($session->currency) : null;
 
                 try {
                     OrderService::storeOrder($transactionId, 'stripe', Auth::id(), $confirmed, $currency);
@@ -250,8 +254,9 @@ class PaymentController extends Controller
             }
 
             return redirect()->route('order.failed');
-        } catch (\Stripe\Exception\ApiErrorException $e) {
+        } catch (ApiErrorException $e) {
             report($e);
+
             return redirect()->route('order.failed');
         }
     }
@@ -262,6 +267,7 @@ class PaymentController extends Controller
     public function stripeCancel()
     {
         flash()->warning('Pago cancelado. Tu carrito sigue intacto.');
+
         return redirect()->route('cart.index');
     }
 
@@ -283,10 +289,10 @@ class PaymentController extends Controller
 
         return view('frontend.razorpay-redirect', [
             'razorpayKey' => config('razorpay.key'),
-            'amount'      => $amountInSmallestUnit,
-            'currency'    => config('razorpay.currency', 'INR'),
-            'userName'    => Auth::user()->name,
-            'userEmail'   => Auth::user()->email,
+            'amount' => $amountInSmallestUnit,
+            'currency' => config('razorpay.currency', 'INR'),
+            'userName' => Auth::user()->name,
+            'userEmail' => Auth::user()->email,
         ]);
     }
 
@@ -318,6 +324,7 @@ class PaymentController extends Controller
             // El monto autorizado por Razorpay debe coincidir con el total del carrito
             if ((int) $payment->amount !== $amountInSmallestUnit) {
                 report(new \RuntimeException('Razorpay: el monto no coincide con el carrito.'));
+
                 return redirect()->route('order.failed');
             }
 
@@ -333,12 +340,14 @@ class PaymentController extends Controller
                 } catch (\RuntimeException $e) {
                     return redirect()->route('order.failed');
                 }
+
                 return redirect()->route('order.success');
             }
 
             return redirect()->route('order.failed');
         } catch (\Throwable $e) {
             report($e);
+
             return redirect()->route('order.failed');
         }
     }

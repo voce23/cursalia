@@ -51,6 +51,7 @@ class QuizAttempt extends Model
         if ($this->completed_at && $this->started_at) {
             return $this->completed_at->diffInSeconds($this->started_at);
         }
+
         return null;
     }
 

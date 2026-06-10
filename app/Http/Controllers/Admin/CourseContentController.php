@@ -33,9 +33,9 @@ class CourseContentController extends Controller
 
         $course->chapters()->create([
             'instructor_id' => $course->instructor_id,
-            'title'         => $data['title'],
-            'order'         => ($course->chapters()->max('order') ?? 0) + 1,
-            'status'        => true,
+            'title' => $data['title'],
+            'order' => ($course->chapters()->max('order') ?? 0) + 1,
+            'status' => true,
         ]);
 
         return back()->with('success', 'Capítulo añadido.');
@@ -77,11 +77,11 @@ class CourseContentController extends Controller
         $data['file_path'] = $this->resolveFilePath($request, $data);
 
         $chapter->lessons()->create($data + [
-            'course_id'     => $chapter->course_id,
+            'course_id' => $chapter->course_id,
             'instructor_id' => $chapter->instructor_id,
-            'slug'          => Str::slug($data['title']).'-'.Str::random(5),
-            'order'         => ($chapter->lessons()->max('order') ?? 0) + 1,
-            'status'        => true,
+            'slug' => Str::slug($data['title']).'-'.Str::random(5),
+            'order' => ($chapter->lessons()->max('order') ?? 0) + 1,
+            'status' => true,
         ]);
 
         return back()->with('success', 'Lección añadida.');
@@ -128,16 +128,16 @@ class CourseContentController extends Controller
     private function validatedLesson(Request $request): array
     {
         $data = $request->validate([
-            'title'        => ['required', 'string', 'max:255'],
-            'storage'      => ['required', 'in:upload,youtube,vimeo,external_link'],
-            'file_type'    => ['required', 'in:video,audio,doc,pdf,file'],
-            'file_path'    => ['nullable', 'string', 'max:2000'],
-            'file'         => ['nullable', 'file', 'max:204800'],   // 200 MB
-            'duration'     => ['nullable', 'string', 'max:20'],
-            'description'  => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:255'],
+            'storage' => ['required', 'in:upload,youtube,vimeo,external_link'],
+            'file_type' => ['required', 'in:video,audio,doc,pdf,file'],
+            'file_path' => ['nullable', 'string', 'max:2000'],
+            'file' => ['nullable', 'file', 'max:204800'],   // 200 MB
+            'duration' => ['nullable', 'string', 'max:20'],
+            'description' => ['nullable', 'string'],
         ]);
 
-        $data['is_preview']   = $request->boolean('is_preview');
+        $data['is_preview'] = $request->boolean('is_preview');
         $data['downloadable'] = $request->boolean('downloadable');
         unset($data['file']);
 

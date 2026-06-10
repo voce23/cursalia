@@ -11,10 +11,13 @@ use Illuminate\Support\Facades\Storage;
  * que la vista pueda mostrar su placeholder (iniciales, gradient, etc.).
  *
  * Uso:
+ *
  *   @if ($url = \App\View\Composers\SafeImage::url($user->image))
  *       <img src="{{ $url }}" alt="{{ $user->name }}">
+ *
  *   @else
  *       <span class="iniciales">{{ ... }}</span>
+ *
  *   @endif
  */
 class SafeImage
@@ -32,6 +35,7 @@ class SafeImage
         if (! Storage::disk('public')->exists($path)) {
             return null;
         }
+
         return asset('storage/'.$path);
     }
 }

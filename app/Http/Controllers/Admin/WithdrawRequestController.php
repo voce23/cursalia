@@ -42,12 +42,12 @@ class WithdrawRequestController extends Controller
         ]);
 
         Log::info('admin.withdraw_request_updated', [
-            'admin_id'    => auth('admin')->id(),
+            'admin_id' => auth('admin')->id(),
             'withdraw_id' => $withdraw->id,
-            'user_id'     => $withdraw->user_id,
-            'amount'      => $withdraw->amount,
-            'new_status'  => $request->status,
-            'ip'          => $request->ip(),
+            'user_id' => $withdraw->user_id,
+            'amount' => $withdraw->amount,
+            'new_status' => $request->status,
+            'ip' => $request->ip(),
         ]);
 
         // Notificar al instructor

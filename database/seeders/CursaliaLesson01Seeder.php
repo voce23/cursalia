@@ -31,14 +31,14 @@ class CursaliaLesson01Seeder extends Seeder
         Blog::updateOrCreate(
             ['slug' => 'lec-01-herramientas-laravel-windows'],
             [
-                'admin_id'         => $admin?->id,
+                'admin_id' => $admin?->id,
                 'blog_category_id' => $category->id,
-                'title'            => 'Las herramientas que necesitas (e instálalas en 30 minutos)',
-                'thumbnail'        => $heroPath,
-                'summary'          => 'Laragon, Node.js, Git y VS Code: las 4 herramientas que vas a usar todo el curso. Las instalas en media hora y nunca más te tocan.',
-                'content'          => $this->buildContent(),
-                'status'           => 'published',
-                'published_at'     => now(),
+                'title' => 'Las herramientas que necesitas (e instálalas en 30 minutos)',
+                'thumbnail' => $heroPath,
+                'summary' => 'Laragon, Node.js, Git y VS Code: las 4 herramientas que vas a usar todo el curso. Las instalas en media hora y nunca más te tocan.',
+                'content' => $this->buildContent(),
+                'status' => 'published',
+                'published_at' => now(),
             ]
         );
 

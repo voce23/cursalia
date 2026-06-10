@@ -32,10 +32,10 @@ class CourseContentController extends Controller
         $order = $course->chapters()->count() + 1;
 
         $chapter = CourseChapter::create([
-            'course_id'     => $course->id,
+            'course_id' => $course->id,
             'instructor_id' => Auth::id(),
-            'title'         => $request->title,
-            'order'         => $order,
+            'title' => $request->title,
+            'order' => $order,
         ]);
 
         return response()->json([
@@ -78,24 +78,24 @@ class CourseContentController extends Controller
         $order = $chapter->lessons()->count() + 1;
 
         $lesson = CourseChapterLesson::create([
-            'title'         => $request->title,
-            'slug'          => Str::slug($request->title) . '-' . Str::random(5),
-            'description'   => $request->description,
+            'title' => $request->title,
+            'slug' => Str::slug($request->title).'-'.Str::random(5),
+            'description' => $request->description,
             'instructor_id' => Auth::id(),
-            'course_id'     => $chapter->course_id,
-            'chapter_id'    => $chapter->id,
-            'file_path'     => $request->file_path,
-            'storage'       => $request->storage,
-            'duration'      => $request->duration,
-            'file_type'     => $request->file_type,
-            'downloadable'  => $request->boolean('downloadable'),
-            'is_preview'    => $request->boolean('is_preview'),
-            'order'         => $order,
+            'course_id' => $chapter->course_id,
+            'chapter_id' => $chapter->id,
+            'file_path' => $request->file_path,
+            'storage' => $request->storage,
+            'duration' => $request->duration,
+            'file_type' => $request->file_type,
+            'downloadable' => $request->boolean('downloadable'),
+            'is_preview' => $request->boolean('is_preview'),
+            'order' => $order,
         ]);
 
         return response()->json([
             'message' => 'Lección creada correctamente.',
-            'lesson'  => $lesson,
+            'lesson' => $lesson,
         ]);
     }
 
@@ -104,20 +104,20 @@ class CourseContentController extends Controller
         $this->authorize('update', $lesson);
 
         $lesson->update([
-            'title'        => $request->title,
-            'slug'         => Str::slug($request->title) . '-' . Str::random(5),
-            'description'  => $request->description,
-            'file_path'    => $request->file_path,
-            'storage'      => $request->storage,
-            'duration'     => $request->duration,
-            'file_type'    => $request->file_type,
+            'title' => $request->title,
+            'slug' => Str::slug($request->title).'-'.Str::random(5),
+            'description' => $request->description,
+            'file_path' => $request->file_path,
+            'storage' => $request->storage,
+            'duration' => $request->duration,
+            'file_type' => $request->file_type,
             'downloadable' => $request->boolean('downloadable'),
-            'is_preview'   => $request->boolean('is_preview'),
+            'is_preview' => $request->boolean('is_preview'),
         ]);
 
         return response()->json([
             'message' => 'Lección actualizada correctamente.',
-            'lesson'  => $lesson,
+            'lesson' => $lesson,
         ]);
     }
 
@@ -139,7 +139,7 @@ class CourseContentController extends Controller
         $this->authorize('update', $chapter);
 
         $request->validate([
-            'ids'   => ['required', 'array'],
+            'ids' => ['required', 'array'],
             'ids.*' => ['integer'],
         ]);
 
@@ -157,7 +157,7 @@ class CourseContentController extends Controller
         $this->authorize('update', $course);
 
         $request->validate([
-            'ids'   => ['required', 'array'],
+            'ids' => ['required', 'array'],
             'ids.*' => ['integer'],
         ]);
 

@@ -21,11 +21,11 @@ class NewWithdrawRequestNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'type'        => 'new_withdraw_request',
-            'message'     => "Nuevo retiro solicitado por \"{$this->withdraw->user->name}\" por \${$this->withdraw->amount}.",
+            'type' => 'new_withdraw_request',
+            'message' => "Nuevo retiro solicitado por \"{$this->withdraw->user->name}\" por \${$this->withdraw->amount}.",
             'withdraw_id' => $this->withdraw->id,
-            'user_id'     => $this->withdraw->user_id,
-            'amount'      => $this->withdraw->amount,
+            'user_id' => $this->withdraw->user_id,
+            'amount' => $this->withdraw->amount,
         ];
     }
 }

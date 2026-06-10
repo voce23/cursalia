@@ -14,13 +14,13 @@ class LessonStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'        => ['required', 'string', 'max:255'],
-            'storage'      => ['required', 'in:upload,youtube,vimeo,external_link'],
-            'file_type'    => ['required', 'in:video,audio,doc,pdf,file'],
-            'file_path'    => ['nullable', 'string'],
-            'duration'     => ['nullable', 'string', 'max:20'],
-            'description'  => ['nullable', 'string'],
-            'is_preview'   => ['nullable', 'boolean'],
+            'title' => ['required', 'string', 'max:255'],
+            'storage' => ['required', 'in:upload,youtube,vimeo,external_link'],
+            'file_type' => ['required', 'in:video,audio,doc,pdf,file'],
+            'file_path' => ['nullable', 'string'],
+            'duration' => ['nullable', 'string', 'max:20'],
+            'description' => ['nullable', 'string'],
+            'is_preview' => ['nullable', 'boolean'],
             'downloadable' => ['nullable', 'boolean'],
         ];
     }

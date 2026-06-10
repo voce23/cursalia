@@ -8,21 +8,20 @@
 {{-- ═══════════════════════════════════════════════════════════════════
      HERO Contacto
      ═══════════════════════════════════════════════════════════════════ --}}
-<section class="relative overflow-hidden">
-    <div class="blob bg-coral-200 w-[26rem] h-[26rem] -top-20 -right-10"></div>
-    <div class="blob bg-brand-200 w-[22rem] h-[22rem] top-32 -left-10"></div>
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-700 via-ink-900 to-ink-950 text-white min-h-[22rem] sm:min-h-[26rem] flex items-center">
+    <x-hero-bg />
 
-    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
-        <span class="sr inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-ink-200 shadow-soft text-xs font-semibold text-coral-500">
-            <i class="fa-solid fa-paper-plane"></i> Contacto
+    <div class="relative w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <span class="sr inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-white backdrop-blur-sm">
+            <i class="fa-solid fa-paper-plane text-coral-300"></i> Contacto
         </span>
-        <h1 class="sr s1 font-display font-extrabold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mt-6 text-ink-900">
+        <h1 class="sr s1 font-display font-extrabold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mt-6 text-white">
             {{ $contactSetting?->title ?: 'Hablemos' }}
         </h1>
         @if ($contactSetting?->subtitle)
-            <p class="sr s2 text-ink-500 text-lg leading-relaxed mt-5 max-w-2xl mx-auto">{{ $contactSetting->subtitle }}</p>
+            <p class="sr s2 text-white/70 text-lg leading-relaxed mt-5 max-w-2xl mx-auto">{{ $contactSetting->subtitle }}</p>
         @else
-            <p class="sr s2 text-ink-500 text-lg leading-relaxed mt-5 max-w-2xl mx-auto">¿Una duda, una idea, un curso que te gustaría que ofrezcamos? Escríbenos y te respondemos en menos de 24 horas.</p>
+            <p class="sr s2 text-white/70 text-lg leading-relaxed mt-5 max-w-2xl mx-auto">¿Una duda, una idea, un curso que te gustaría que ofrezcamos? Escríbenos y te respondemos en menos de 24 horas.</p>
         @endif
     </div>
 </section>
@@ -31,7 +30,7 @@
      TARJETAS DE CONTACTO
      ═══════════════════════════════════════════════════════════════════ --}}
 @if ($contactCards->isNotEmpty())
-<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 pb-4">
+<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-4">
     @php $cardColors = ['brand', 'coral', 'sun', 'brand']; @endphp
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @foreach ($contactCards as $i => $card)

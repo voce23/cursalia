@@ -29,7 +29,7 @@ class EnrolledCourseController extends Controller
             ->paginate(9);
 
         // Historial de reproduccion (ultima leccion vista por curso)
-        $courseIds   = $enrolledCourses->pluck('course_id')->filter()->toArray();
+        $courseIds = $enrolledCourses->pluck('course_id')->filter()->toArray();
         $watchHistories = WatchHistory::where('user_id', $userId)
             ->whereIn('course_id', $courseIds)
             ->get()

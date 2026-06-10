@@ -21,6 +21,7 @@ class FooterUpdateRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:255'],
             'bottom_text' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
+            'dark' => ['nullable', 'boolean'],
         ];
     }
 }

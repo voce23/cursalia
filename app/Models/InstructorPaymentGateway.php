@@ -24,10 +24,10 @@ class InstructorPaymentGateway extends Model
     public function getTypeLabelAttribute(): string
     {
         return match ($this->type) {
-            'paypal'         => 'PayPal Personal',
-            'bank_transfer'  => 'Transferencia Bancaria',
+            'paypal' => 'PayPal Personal',
+            'bank_transfer' => 'Transferencia Bancaria',
             'stripe_connect' => 'Stripe Connect',
-            default          => 'Otro',
+            default => 'Otro',
         };
     }
 
