@@ -98,6 +98,16 @@ class CoursePlayerController extends Controller
                 ->get();
         }
 
+        // -- Comentarios (estilo blog, moderados) de la lección actual --
+        $lessonComments = collect();
+        if ($currentLesson) {
+            $lessonComments = $currentLesson->comments()
+                ->where('is_approved', true)
+                ->latest('approved_at')
+                ->paginate(15)
+                ->withQueryString();
+        }
+
         // -- Quiz (autoevaluación) de la lección actual · FREE mínimo ----------
         //    Solo si la lección tiene un quiz activo. Cargamos preguntas+opciones
         //    y el último intento del alumno para decidir si mostrar el formulario
@@ -131,6 +141,7 @@ class CoursePlayerController extends Controller
             'progress',
             'totalLessons',
             'questions',
+            'lessonComments',
             'quiz',
             'lastAttempt',
         ));

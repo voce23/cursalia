@@ -54,6 +54,9 @@
     @include('partials.theme-vars')
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Red de seguridad: si el usuario tiene JS desactivado, revelamos el
+         contenido (.sr empieza invisible y normalmente lo revela el JS). --}}
+    <noscript><style>.sr{opacity:1 !important;transform:none !important}</style></noscript>
     {{-- Font Awesome cargado de forma asíncrona (no bloquea LCP).
          preconnect: TCP handshake hecho antes; CSS asíncrono: hace "print" hasta que carga. --}}
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -124,6 +127,17 @@
             gtag('config', '{{ $generalSetting->google_analytics_id }}', { anonymize_ip: true });
         </script>
     @endif
+
+    {{-- Red de seguridad anti "página en blanco": si app.js no llegó a inicializar
+         el scroll-reveal (p. ej. fallo de carga del bundle), revelamos todo el
+         contenido pasados 1,5 s para que NUNCA quede invisible. --}}
+    <script>
+        setTimeout(function () {
+            if (!window.__srReady) {
+                document.querySelectorAll('.sr').forEach(function (el) { el.classList.add('in'); });
+            }
+        }, 1500);
+    </script>
 
 </body>
 </html>

@@ -240,6 +240,65 @@
                 </div>
             @endif
 
+            {{-- ════════ COMENTARIOS de la lección (estilo blog, moderados) ════════ --}}
+            @if ($currentLesson)
+                <div class="bg-white border border-ink-200/70 rounded-3xl p-5 md:p-6 shadow-soft">
+                    <h3 class="font-display font-extrabold text-lg text-ink-900 flex items-center gap-2">
+                        <i class="fa-regular fa-comments text-brand-600"></i>
+                        Comentarios <span class="text-ink-400 text-sm font-normal">({{ $lessonComments->total() }})</span>
+                    </h3>
+
+                    @if ($lessonComments->isNotEmpty())
+                        <ul class="mt-5 space-y-5">
+                            @foreach ($lessonComments as $c)
+                                <li class="flex gap-3">
+                                    <span class="grid place-items-center w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-coral-400 text-white font-bold shrink-0">
+                                        {{ strtoupper(substr($c->name, 0, 1)) }}
+                                    </span>
+                                    <div class="flex-1">
+                                        <div class="flex items-baseline gap-2 flex-wrap">
+                                            <p class="font-bold text-ink-900 text-sm">{{ $c->name }}</p>
+                                            <span class="text-xs text-ink-400">{{ $c->approved_at?->diffForHumans() ?? $c->created_at?->diffForHumans() }}</span>
+                                        </div>
+                                        <p class="text-sm text-ink-700 leading-relaxed mt-1">{{ $c->comment }}</p>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                        @if ($lessonComments->hasPages())<div class="mt-5">{{ $lessonComments->links() }}</div>@endif
+                    @else
+                        <p class="text-sm text-ink-500 mt-4">Aún no hay comentarios en esta lección. ¡Sé el primero!</p>
+                    @endif
+
+                    <div class="mt-6 pt-6 border-t border-ink-200/70">
+                        <h4 class="font-bold text-ink-900">Deja tu comentario</h4>
+                        <p class="text-xs text-ink-500 mt-1">Los comentarios pasan por una moderación rápida.</p>
+                        @if (session('success'))
+                            <div class="mt-4 px-4 py-3 rounded-2xl bg-brand-50 border border-brand-200 text-brand-700 text-sm flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check mt-0.5"></i><span>{{ session('success') }}</span>
+                            </div>
+                        @endif
+                        <form method="POST" action="{{ route('lesson.comments.store', $currentLesson->id) }}" class="mt-4 space-y-3">
+                            @csrf
+                            <div class="grid sm:grid-cols-2 gap-3">
+                                <input type="text" name="name" value="{{ old('name') }}" required maxlength="120" placeholder="Tu nombre"
+                                    class="w-full px-4 py-2.5 rounded-2xl bg-cream-2 border border-ink-200 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:bg-white text-sm">
+                                <input type="email" name="email" value="{{ old('email') }}" required maxlength="255" placeholder="Tu correo (no se publica)"
+                                    class="w-full px-4 py-2.5 rounded-2xl bg-cream-2 border border-ink-200 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:bg-white text-sm">
+                            </div>
+                            <textarea name="comment" rows="3" required minlength="5" maxlength="1000" placeholder="Escribe tu comentario…"
+                                class="w-full px-4 py-2.5 rounded-2xl bg-cream-2 border border-ink-200 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:bg-white text-sm resize-none">{{ old('comment') }}</textarea>
+
+                            <x-math-captcha label="Para evitar spam, demuéstranos que eres humano:" />
+
+                            <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-soft transition">
+                                Publicar <i class="fa-solid fa-paper-plane text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endif
+
             {{-- ════════ QUIZ · autoevaluación (FREE mínimo) ════════ --}}
             @if ($quiz && $quiz->questions->isNotEmpty())
                 @php
@@ -423,5 +482,48 @@ function completionBtn(lessonId, initialCompleted, initialProgress) {
 }
 </script>
 
+@if ($currentLesson && (str_contains($currentLesson->description ?? '', '<pre') || str_contains($currentLesson->description ?? '', 'language-')))
+    {{-- Prism.js (resaltado de código) · solo si la lección tiene bloques <pre><code> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js" referrerpolicy="no-referrer" defer></script>
+    <script>
+    window.addEventListener('load', function () {
+        document.querySelectorAll('.article-prose pre').forEach(function (pre) {
+            if (pre.parentElement && pre.parentElement.classList.contains('code-block')) return;
+            var code = pre.querySelector('code'), lang = 'code';
+            if (code) {
+                var cls = [].slice.call(code.classList).find(function (c) { return c.indexOf('language-') === 0; });
+                if (cls) lang = cls.replace('language-', '');
+            } else {
+                code = document.createElement('code');
+                code.className = 'language-' + lang;
+                code.innerHTML = pre.innerHTML;
+                pre.innerHTML = '';
+                pre.appendChild(code);
+            }
+            var wrap = document.createElement('div');
+            wrap.className = 'code-block';
+            wrap.innerHTML = '<div class="code-header"><span class="code-lang">' + lang + '</span><button type="button" class="code-copy" title="Copiar código"><i class="fa-regular fa-copy"></i><span>Copiar</span></button></div>';
+            pre.parentNode.insertBefore(wrap, pre);
+            wrap.appendChild(pre);
+            wrap.querySelector('.code-copy').addEventListener('click', function (e) {
+                var btn = e.currentTarget, text = (pre.querySelector('code') || pre).innerText;
+                navigator.clipboard.writeText(text).then(function () {
+                    btn.querySelector('span').textContent = '¡Copiado!';
+                    btn.querySelector('i').className = 'fa-solid fa-check';
+                    setTimeout(function () { btn.querySelector('span').textContent = 'Copiar'; btn.querySelector('i').className = 'fa-regular fa-copy'; }, 2000);
+                });
+            });
+        });
+        if (window.Prism) Prism.highlightAll();
+    });
+    </script>
+@endif
 </body>
 </html>

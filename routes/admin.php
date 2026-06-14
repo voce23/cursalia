@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuthController;
 use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogCommentController;
+use App\Http\Controllers\Admin\LessonCommentController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ContactCardController;
@@ -41,6 +42,8 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Admin\TemplateController;
+use App\Http\Controllers\Admin\TemplateImportController;
+use App\Http\Controllers\Admin\EditorImageController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +130,9 @@ Route::prefix('admin')->as('admin.')->group(function () {
 
         // ── Plantillas (marketplace) ──────────────────────────────────────────
         Route::get('/templates/waitlist', [TemplateController::class, 'waitlist'])->name('templates.waitlist');
+        Route::get('/templates/import', [TemplateImportController::class, 'form'])->name('templates.import.form');
+        Route::post('/templates/import', [TemplateImportController::class, 'import'])->name('templates.import');
+        Route::post('/editor/image', [EditorImageController::class, 'store'])->name('editor.image');
         Route::resource('templates', TemplateController::class)->except(['show']);
 
         // ── Servicios (planes + bandeja de pedidos) ───────────────────────────
@@ -139,6 +145,10 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::get('/blog-comments', [BlogCommentController::class, 'index'])->name('blog-comments.index');
         Route::post('/blog-comments/{blogComment}/approve', [BlogCommentController::class, 'approve'])->name('blog-comments.approve');
         Route::delete('/blog-comments/{blogComment}', [BlogCommentController::class, 'destroy'])->name('blog-comments.destroy');
+
+        Route::get('/lesson-comments', [LessonCommentController::class, 'index'])->name('lesson-comments.index');
+        Route::post('/lesson-comments/{lessonComment}/approve', [LessonCommentController::class, 'approve'])->name('lesson-comments.approve');
+        Route::delete('/lesson-comments/{lessonComment}', [LessonCommentController::class, 'destroy'])->name('lesson-comments.destroy');
         Route::resource('blogs', BlogController::class)->except(['show']);
 
         // ── Quizzes · autoevaluaciones por lección (Cursalia FREE) ────────────

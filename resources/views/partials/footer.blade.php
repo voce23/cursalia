@@ -168,7 +168,11 @@
 
         {{-- Línea inferior --}}
         <div class="mt-12 pt-6 border-t {{ $fBorder }} flex flex-col sm:flex-row items-center justify-between gap-3 text-sm {{ $fMuted }}">
-            <p>{{ $copyright }}</p>
+            <div class="flex items-center gap-3">
+                <p>{{ $copyright }}</p>
+                <span class="opacity-40">·</span>
+                <a href="{{ route('admin.login') }}" class="{{ $fHover }} transition opacity-70 hover:opacity-100" title="Acceso para instructores y administradores">Acceso instructores</a>
+            </div>
             @if ($footerInfo->bottom_text)
                 {{-- SEGURIDAD: bottom_text se imprime como texto escapado (NO {!! !!})
                      para evitar XSS persistente si un admin malicioso o una sesión

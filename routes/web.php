@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Frontend\BlogCommentController;
+use App\Http\Controllers\Frontend\LessonCommentController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\CoursePageController;
 use App\Http\Controllers\Frontend\FreeEnrollmentController;
@@ -88,6 +89,10 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('blog.comments.store');
+
+Route::post('/lessons/{lesson}/comments', [LessonCommentController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('lesson.comments.store');
 
 Route::get('/instructors/{username}', fn ($u) => view('soon', [
     'title' => 'Perfil de instructor',

@@ -20,19 +20,19 @@ class InitialConfigurationSeeder extends Seeder
         GeneralSetting::updateOrCreate(
             ['id' => 1],
             [
-                'site_name' => 'LMSL13',
+                'site_name' => 'Cursalia',
                 'site_slogan' => 'Cursos Online',
-                'copyright' => '© '.date('Y').' LMSL13. Todos los derechos reservados.',
+                'copyright' => '© '.date('Y').' Cursalia. Todos los derechos reservados.',
                 'mail_mailer' => 'log',
-                'mail_from_address' => 'info@lmsl13.test',
-                'mail_from_name' => 'LMSL13',
+                'mail_from_address' => 'info@cursalia.test',
+                'mail_from_name' => 'Cursalia',
             ]
         );
 
         TopBar::updateOrCreate(
             ['id' => 1],
             [
-                'email' => 'info@lmsl13.test',
+                'email' => 'info@cursalia.test',
                 'phone' => '+591 7000 0000',
                 'offer_text' => 'Inscripciones abiertas para nuevos cursos',
                 'offer_url' => '/courses',
@@ -57,7 +57,7 @@ class InitialConfigurationSeeder extends Seeder
             [
                 'description' => 'Plataforma de cursos online con los mejores instructores de Bolivia y Latinoamérica.',
                 'contact_title' => 'Contacto',
-                'email' => 'info@lmsl13.test',
+                'email' => 'info@cursalia.test',
                 'phone' => '+591 7000 0000',
                 'address' => 'La Paz, Bolivia',
                 'bottom_text' => 'Hecho con amor en Bolivia',

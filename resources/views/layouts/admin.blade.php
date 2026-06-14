@@ -43,6 +43,7 @@
                             ['admin.course-categories.index', 'fa-folder-tree', 'Categorías', false],
                             ['admin.courses.index', 'fa-book-open', 'Cursos',      false],
                             ['admin.quizzes.index', 'fa-circle-question', 'Autoevaluaciones', false],
+                            ['admin.lesson-comments.index', 'fa-comments', 'Coment. de lecciones', false],
                         ],
                         'Contenido' => [
                             ['admin.blogs.index',            'fa-newspaper',  'Artículos blog',    false],
@@ -59,8 +60,9 @@
                             ['admin.brands.index',       'fa-building',     'Marcas',      false],
                         ],
                         'Marketplace' => [
-                            ['admin.templates.index',    'fa-boxes-stacked',    'Plantillas',          false],
-                            ['admin.templates.waitlist', 'fa-bell',             'Lista de espera',     false],
+                            ['admin.templates.index',       'fa-boxes-stacked',    'Plantillas',          false],
+                            ['admin.templates.import.form', 'fa-file-import',      'Importar plantilla',  false],
+                            ['admin.templates.waitlist',    'fa-bell',             'Lista de espera',     false],
                             ['admin.services.index',     'fa-handshake-angle',  'Servicios',           false],
                             ['admin.services.requests',  'fa-inbox',            'Pedidos de servicios', false],
                         ],

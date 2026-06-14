@@ -34,7 +34,10 @@ class SecurityHeaders
             if (app()->environment('production')) {
                 $response->headers->set('Content-Security-Policy', implode('; ', [
                     "default-src 'self'",
-                    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
+                    // 'unsafe-eval' es OBLIGATORIO para Alpine.js (evalúa x-data/@click
+                    // con new Function()). Sin él, todo lo interactivo deja de funcionar
+                    // (banner de cookies, menús, medidores de contraseña…).
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
                     "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com",
                     "img-src 'self' data: blob: https:",
                     "font-src 'self' https://cdnjs.cloudflare.com data:",
