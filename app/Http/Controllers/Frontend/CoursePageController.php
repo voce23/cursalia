@@ -221,6 +221,8 @@ class CoursePageController extends Controller
             $canReview = $isEnrolled;
         }
 
-        return view('frontend.courses.show', compact('course', 'reviews', 'myReview', 'canReview', 'isEnrolled'));
+        $paymentsActive = \App\Http\Controllers\Admin\PaymentSettingController::isActive();
+
+        return view('frontend.courses.show', compact('course', 'reviews', 'myReview', 'canReview', 'isEnrolled', 'paymentsActive'));
     }
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\Frontend\BlogCommentController;
 use App\Http\Controllers\Frontend\LessonCommentController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\CoursePageController;
+use App\Http\Controllers\Frontend\CourseCheckoutController;
 use App\Http\Controllers\Frontend\FreeEnrollmentController;
 use App\Http\Controllers\Frontend\LegalPageController;
 use App\Http\Controllers\Frontend\NewsletterSubscribeController;
@@ -69,10 +70,19 @@ Route::get('/robots.txt', function () {
 Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CoursePageController::class, 'show'])->name('courses.show');
 
-// Inscripción GRATUITA (solo cursos con price=0). Pagos = FASE 2.
+// Inscripción GRATUITA (solo cursos con price=0).
 Route::post('/courses/{course:slug}/enroll-free', [FreeEnrollmentController::class, 'store'])
     ->middleware(['auth', 'throttle:10,1'])
     ->name('courses.enroll-free');
+
+// Compra de un curso (complemento "Pagos internacionales": Stripe + PayPal).
+// Solo funciona si el complemento está activado con la llave PAY en Admin → Pagos.
+Route::middleware(['auth', 'throttle:10,1'])->group(function () {
+    Route::post('/courses/{course:slug}/pay/stripe', [CourseCheckoutController::class, 'stripe'])->name('checkout.stripe');
+    Route::get('/checkout/stripe/success', [CourseCheckoutController::class, 'stripeSuccess'])->name('checkout.stripe.success');
+    Route::post('/courses/{course:slug}/pay/paypal', [CourseCheckoutController::class, 'paypal_start'])->name('checkout.paypal');
+    Route::get('/checkout/paypal/success', [CourseCheckoutController::class, 'paypalSuccess'])->name('checkout.paypal.success');
+});
 
 // ── Nosotros / Contacto (Sprint 5) ───────────────────────────────────────────
 Route::get('/about', [SitePageController::class, 'about'])->name('about');

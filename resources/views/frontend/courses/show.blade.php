@@ -146,9 +146,34 @@
                                         Inicia sesión para inscribirte <i class="fa-solid fa-arrow-right text-xs"></i>
                                     </a>
                                 @endauth
+                            @elseif (! empty($paymentsActive))
+                                {{-- Curso de pago + complemento "Pagos internacionales" activo --}}
+                                @auth
+                                    @if (session('error'))
+                                        <p class="mb-3 px-4 py-3 rounded-2xl bg-coral-50 border border-coral-200 text-coral-700 text-sm">
+                                            <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
+                                        </p>
+                                    @endif
+                                    <form method="POST" action="{{ route('checkout.stripe', $course->slug) }}">
+                                        @csrf
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90" style="background:#635BFF">
+                                            <i class="fa-solid fa-credit-card"></i> Pagar con tarjeta
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('checkout.paypal', $course->slug) }}" class="mt-2.5">
+                                        @csrf
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90" style="background:#0070BA">
+                                            <i class="fa-brands fa-paypal"></i> Pagar con PayPal
+                                        </button>
+                                    </form>
+                                    <p class="text-center text-xs text-ink-400 mt-2"><i class="fa-solid fa-shield-halved"></i> Pago seguro · acceso inmediato al curso</p>
+                                @else
+                                    <a href="{{ route('login') }}" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-soft transition">
+                                        Inicia sesión para comprar <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </a>
+                                @endauth
                             @else
-                                {{-- Cursos de pago: la pasarela de pagos es parte del plan profesional.
-                                     En la versión gratuita estos cursos no se pueden adquirir. --}}
+                                {{-- Curso de pago pero el complemento de pagos NO está activado --}}
                                 <button disabled class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold bg-ink-100 text-ink-400 cursor-not-allowed">
                                     <i class="fa-solid fa-lock"></i> Inscripción no disponible
                                 </button>
