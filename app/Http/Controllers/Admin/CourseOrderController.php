@@ -28,10 +28,18 @@ class CourseOrderController extends Controller
             return back()->with('error', 'Este pedido ya fue procesado.');
         }
 
-        Enrollment::firstOrCreate(
-            ['user_id' => $order->user_id, 'course_id' => $order->course_id],
-            ['instructor_id' => $order->instructor_id, 'have_access' => true]
-        );
+        // withTrashed: recupera la inscripción si fue retirada antes (borrado suave),
+        // en vez de chocar con el índice único.
+        $enrollment = Enrollment::withTrashed()->firstOrNew([
+            'user_id' => $order->user_id,
+            'course_id' => $order->course_id,
+        ]);
+        $enrollment->instructor_id = $order->instructor_id;
+        $enrollment->have_access = true;
+        if ($enrollment->trashed()) {
+            $enrollment->restore();
+        }
+        $enrollment->save();
 
         $order->update(['status' => 'approved']);
         flash()->success('Pago aprobado. El alumno ya tiene acceso al curso.');

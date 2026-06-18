@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('currency', 3)->default('USD');
             $table->string('status', 12)->default('pending'); // pending | approved | rejected
             $table->string('proof_path')->nullable();     // comprobante (QR/transfer)
-            $table->string('transaction_id')->nullable();  // id de Stripe/PayPal
+            $table->string('transaction_id')->nullable()->unique(); // id Stripe/PayPal (evita duplicados; manual = NULL)
             $table->string('reference')->nullable();       // nota del alumno
             $table->timestamps();
 

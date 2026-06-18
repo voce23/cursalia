@@ -59,19 +59,33 @@ class CourseCheckoutController extends Controller
      * Inscribe al alumno autenticado (idempotente), registra la venta como aprobada
      * (Stripe/PayPal son automáticos) y lo lleva al reproductor.
      */
-    private function enroll(Course $course, string $method, ?string $txn = null, string $currency = 'USD')
+    private function enroll(Course $course, string $method, ?string $txn = null, string $currency = 'USD', ?float $amount = null)
     {
-        Enrollment::firstOrCreate(
-            ['user_id' => Auth::id(), 'course_id' => $course->id],
-            ['instructor_id' => $course->instructor_id, 'have_access' => true]
-        );
+        // withTrashed: si la inscripción fue retirada antes (borrado suave), se
+        // recupera en vez de chocar con el índice único al recomprar.
+        $enrollment = Enrollment::withTrashed()->firstOrNew([
+            'user_id' => Auth::id(),
+            'course_id' => $course->id,
+        ]);
+        $enrollment->instructor_id = $course->instructor_id;
+        $enrollment->have_access = true;
+        if ($enrollment->trashed()) {
+            $enrollment->restore();
+        }
+        $enrollment->save();
 
-        CourseOrder::create([
+        // Idempotente: si el alumno recarga la página de éxito, la transacción ya
+        // registrada NO crea una venta duplicada (se busca por transaction_id).
+        $attributes = $txn
+            ? ['method' => $method, 'transaction_id' => $txn]
+            : ['user_id' => Auth::id(), 'course_id' => $course->id, 'method' => $method];
+
+        CourseOrder::firstOrCreate($attributes, [
             'user_id' => Auth::id(),
             'course_id' => $course->id,
             'instructor_id' => $course->instructor_id,
             'method' => $method,
-            'amount' => $this->price($course),
+            'amount' => $amount ?? $this->price($course),
             'currency' => $currency,
             'status' => 'approved',
             'transaction_id' => $txn,
@@ -140,8 +154,10 @@ class CourseCheckoutController extends Controller
 
             if ($session->payment_status === 'paid') {
                 $course = Course::findOrFail($session->metadata->course_id);
+                // Monto/moneda REALMENTE cobrados por Stripe (no recalculados).
+                $amount = isset($session->amount_total) ? (float) $session->amount_total / 100 : null;
 
-                return $this->enroll($course, 'stripe', (string) $session->payment_intent, strtoupper($session->currency ?? 'USD'));
+                return $this->enroll($course, 'stripe', (string) $session->payment_intent, strtoupper($session->currency ?? 'USD'), $amount);
             }
         } catch (ApiErrorException $e) {
             report($e);
@@ -236,9 +252,13 @@ class CourseCheckoutController extends Controller
             [$courseId, $userId] = array_pad(explode('|', (string) $custom), 2, null);
 
             if ((string) $userId === (string) Auth::id() && $courseId) {
-                $txn = $capture['purchase_units'][0]['payments']['captures'][0]['id'] ?? ($capture['id'] ?? null);
+                $cap = $capture['purchase_units'][0]['payments']['captures'][0] ?? [];
+                $txn = $cap['id'] ?? ($capture['id'] ?? null);
+                // Monto/moneda REALMENTE cobrados por PayPal.
+                $amount = isset($cap['amount']['value']) ? (float) $cap['amount']['value'] : null;
+                $currency = $cap['amount']['currency_code'] ?? $cfg['currency'];
 
-                return $this->enroll(Course::findOrFail($courseId), 'paypal', $txn, $cfg['currency']);
+                return $this->enroll(Course::findOrFail($courseId), 'paypal', $txn, $currency, $amount);
             }
         }
 
@@ -267,6 +287,17 @@ class CourseCheckoutController extends Controller
         $this->ensureBuyable($course);
         abort_unless(in_array($method, ['qr', 'transfer'], true) && PaymentSettingController::methodEnabled($method), 404);
 
+        // Evita comprobantes/pedidos duplicados: si ya está inscrito o ya tiene un
+        // pago en revisión para este curso, no se crea otro pedido.
+        $yaInscrito = Enrollment::where('user_id', Auth::id())->where('course_id', $course->id)->where('have_access', true)->exists();
+        $yaPendiente = CourseOrder::where('user_id', Auth::id())->where('course_id', $course->id)->where('status', 'pending')->exists();
+        if ($yaInscrito || $yaPendiente) {
+            return redirect()->route('courses.show', $course->slug)
+                ->with('status', $yaInscrito
+                    ? 'Ya tienes acceso a este curso.'
+                    : 'Ya tienes un pago en revisión para este curso. Te avisaremos al confirmarlo.');
+        }
+
         $request->validate([
             'proof' => 'required|image|max:5120',
             'reference' => 'nullable|string|max:160',
@@ -278,7 +309,7 @@ class CourseCheckoutController extends Controller
             'instructor_id' => $course->instructor_id,
             'method' => $method,
             'amount' => $this->price($course),
-            'currency' => 'USD',
+            'currency' => $this->settings()['manual_currency'] ?? 'USD',
             'status' => 'pending',
             'proof_path' => $request->file('proof')->store('proofs', 'public'),
             'reference' => $request->input('reference'),

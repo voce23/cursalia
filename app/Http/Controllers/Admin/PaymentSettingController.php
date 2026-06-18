@@ -30,10 +30,16 @@ class PaymentSettingController extends Controller
         ]);
     }
 
+    /** Todos los ajustes (sin descifrar), cacheados para evitar N+1 en cada render. */
+    private static function raw(): array
+    {
+        return Cache::rememberForever('payment_settings', fn () => PaymentSetting::pluck('value', 'key')->all());
+    }
+
     /** ¿Está activo el complemento de pasarelas de pago? (llave PAY válida). */
     public static function isActive(): bool
     {
-        $key = (string) PaymentSetting::where('key', 'payments_key')->value('value');
+        $key = (string) (self::raw()['payments_key'] ?? '');
 
         return $key !== '' && ActivationKey::validate($key, 'PAY');
     }
@@ -42,7 +48,7 @@ class PaymentSettingController extends Controller
     public static function methodEnabled(string $method): bool
     {
         return self::isActive()
-            && (string) PaymentSetting::where('key', $method.'_enabled')->value('value') === '1';
+            && (string) (self::raw()[$method.'_enabled'] ?? '') === '1';
     }
 
     /** Métodos encendidos (para mostrar en el checkout del curso). */
@@ -178,7 +184,9 @@ class PaymentSettingController extends Controller
             'transfer_account' => 'nullable|string|max:160',
             'transfer_holder' => 'nullable|string|max:160',
             'transfer_instructions' => 'nullable|string|max:600',
+            'manual_currency' => 'nullable|string|max:3',
         ]);
+        $v['manual_currency'] = strtoupper($v['manual_currency'] ?? '') ?: 'USD';
         $v['transfer_enabled'] = $request->boolean('transfer_enabled') ? '1' : '0';
 
         $this->save($v);
