@@ -1,0 +1,72 @@
+============================================================
+  CURSALIA LMS v3.2 · Guía rápida de instalación
+============================================================
+
+Cursalia es el LMS (Learning Management System) gratuito y de
+código abierto que te permite crear tu propia academia online
+en TU dominio, sin mensualidades y sin comisiones por venta.
+
+NOVEDAD v3.2 — Pasarelas de Pago integradas
+  Ahora puedes COBRAR tus cursos con tarjeta (Stripe), PayPal,
+  QR y transferencia bancaria. Se activa con una llave desde
+  Admin → Pagos (es el complemento "Cursalia Pasarelas de Pago").
+  Si no la activas, el LMS funciona igual de bien con cursos gratis.
+
+REQUISITOS MÍNIMOS DE TU HOSTING:
+  - PHP 8.3 o superior (con la extensión "sodium" activa)
+  - MySQL 5.7 o superior
+  - Extensiones: mbstring, openssl, pdo_mysql, tokenizer, xml,
+    ctype, json, fileinfo, curl, zip, bcmath, gd, intl, sodium
+
+------------------------------------------------------------
+ESCENARIO 1 — INSTALACIÓN EN HOSTING COMPARTIDO (recomendado)
+------------------------------------------------------------
+(ejemplo: BanaHosting, SiteGround, Hostinger, HostGator, etc.)
+
+PASO 1 — Crea la BASE DE DATOS en cPanel
+  - Entra a cPanel → "MySQL Databases"
+  - Crea una nueva BD (anota el nombre completo)
+  - Crea un usuario nuevo (anota usuario y contraseña EXACTOS)
+  - Asigna ese usuario a la BD con TODOS los privilegios
+  ⚠️  Anota los 3 datos. Los pedirá el instalador.
+
+PASO 2 — Sube el ZIP a tu hosting
+  - Entra al "File Manager" de cPanel
+  - Ve a la carpeta de tu dominio:
+       Subdominio o dominio adicional → la carpeta del dominio
+       Dominio principal              → public_html/
+  - Sube "cursalia-lms-v3.2.zip" y EXTRÁELO ahí (Extract)
+  - Borra el .zip después de extraer
+  (Tip: si el File Manager se atasca con tantos archivos, extrae
+   por la Terminal de cPanel con:  unzip cursalia-lms-v3.2.zip )
+
+PASO 3 — Abre tu dominio en el navegador
+  - Visita https://tudominio.com
+  - El instalador WEB se abre automáticamente
+  - Sigue el asistente:
+      a) Acepta términos
+      b) Ingresa datos de BD (los del Paso 1)
+      c) Crea tu usuario administrador
+      d) Espera ~1-2 minutos mientras instala
+  El instalador deja tu sitio en modo producción y seguro.
+
+------------------------------------------------------------
+ACTIVAR LOS PAGOS (opcional)
+------------------------------------------------------------
+  1. Compra el complemento "Cursalia Pasarelas de Pago" en
+     cursalia.org/tienda → recibirás una LLAVE por correo.
+  2. En tu Cursalia: Admin → Pagos → pega la llave → Activar.
+  3. Enciende los métodos que quieras (tarjeta, PayPal, QR,
+     transferencia) y pon tus datos. ¡Listo para cobrar!
+  - Los pagos por QR y transferencia se aprueban en Admin → Ventas.
+
+------------------------------------------------------------
+DESPUÉS DE INSTALAR
+------------------------------------------------------------
+  - Entra a /admin con el usuario que creaste.
+  - Cambia textos, logo y colores en Admin → Apariencia.
+  - El sitio viene con cursos y artículos de ejemplo: edítalos
+    o bórralos a tu gusto.
+
+¿Dudas? Escríbenos a admin@cursalia.org · cursalia.org
+============================================================

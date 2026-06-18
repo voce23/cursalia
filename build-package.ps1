@@ -16,7 +16,7 @@
 $ErrorActionPreference = 'Stop'
 
 $src   = 'C:\laragon\www\cursalia'
-$ver   = '2.01'
+$ver   = '3.2'
 $name  = "cursalia-lms-v$ver"
 $stage = Join-Path $env:TEMP $name
 $out   = Join-Path ([Environment]::GetFolderPath('Desktop')) "$name.zip"
