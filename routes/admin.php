@@ -128,6 +128,12 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
         Route::post('/appearance/preset', [AppearanceController::class, 'applyPreset'])->name('appearance.preset');
 
+        // Pagos internacionales (Stripe + PayPal) · activable por llave
+        Route::get('/pagos', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'index'])->name('payment-settings.index');
+        Route::post('/pagos/activar', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'activate'])->name('payment-settings.activate');
+        Route::post('/pagos/stripe', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updateStripe'])->name('payment-settings.stripe');
+        Route::post('/pagos/paypal', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updatePaypal'])->name('payment-settings.paypal');
+
         // ── Plantillas (marketplace) ──────────────────────────────────────────
         Route::get('/templates/waitlist', [TemplateController::class, 'waitlist'])->name('templates.waitlist');
         Route::get('/templates/import', [TemplateImportController::class, 'form'])->name('templates.import.form');

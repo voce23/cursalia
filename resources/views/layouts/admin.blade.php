@@ -73,6 +73,7 @@
                         ],
                         'Sistema' => [
                             ['admin.profile',         'fa-user-gear',    'Mi perfil',     false],
+                            ['admin.payment-settings.index', 'fa-credit-card', 'Pagos',    false],
                             ['admin.appearance.edit', 'fa-paint-roller', 'Apariencia',    false],
                             ['admin.navigation.edit', 'fa-bars',         'Navegación',    false],
                             ['admin.header-settings.index', 'fa-window-maximize', 'Cabecera', false],
