@@ -82,6 +82,9 @@ Route::middleware(['auth', 'throttle:10,1'])->group(function () {
     Route::get('/checkout/stripe/success', [CourseCheckoutController::class, 'stripeSuccess'])->name('checkout.stripe.success');
     Route::post('/courses/{course:slug}/pay/paypal', [CourseCheckoutController::class, 'paypal_start'])->name('checkout.paypal');
     Route::get('/checkout/paypal/success', [CourseCheckoutController::class, 'paypalSuccess'])->name('checkout.paypal.success');
+    // QR / Transferencia (pago manual con comprobante)
+    Route::get('/courses/{course:slug}/pay/manual/{method}', [CourseCheckoutController::class, 'manual'])->name('checkout.manual');
+    Route::post('/courses/{course:slug}/pay/manual/{method}', [CourseCheckoutController::class, 'manualSubmit'])->name('checkout.manual.submit');
 });
 
 // ── Nosotros / Contacto (Sprint 5) ───────────────────────────────────────────

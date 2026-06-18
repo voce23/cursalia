@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Admin\PaymentSettingController;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\CourseOrder;
 use App\Models\Enrollment;
 use App\Models\PaymentSetting;
 use Illuminate\Http\Request;
@@ -54,13 +55,27 @@ class CourseCheckoutController extends Controller
         );
     }
 
-    /** Inscribe al alumno autenticado en el curso (idempotente) y lo lleva al reproductor. */
-    private function enroll(Course $course)
+    /**
+     * Inscribe al alumno autenticado (idempotente), registra la venta como aprobada
+     * (Stripe/PayPal son automáticos) y lo lleva al reproductor.
+     */
+    private function enroll(Course $course, string $method, ?string $txn = null, string $currency = 'USD')
     {
         Enrollment::firstOrCreate(
             ['user_id' => Auth::id(), 'course_id' => $course->id],
             ['instructor_id' => $course->instructor_id, 'have_access' => true]
         );
+
+        CourseOrder::create([
+            'user_id' => Auth::id(),
+            'course_id' => $course->id,
+            'instructor_id' => $course->instructor_id,
+            'method' => $method,
+            'amount' => $this->price($course),
+            'currency' => $currency,
+            'status' => 'approved',
+            'transaction_id' => $txn,
+        ]);
 
         return redirect()
             ->route('student.player.show', $course)
@@ -72,6 +87,7 @@ class CourseCheckoutController extends Controller
     public function stripe(Course $course)
     {
         $this->ensureBuyable($course);
+        abort_unless(PaymentSettingController::methodEnabled('stripe'), 404, 'El pago con tarjeta no está disponible.');
         $s = $this->settings();
 
         if (empty($s['stripe_secret'])) {
@@ -125,7 +141,7 @@ class CourseCheckoutController extends Controller
             if ($session->payment_status === 'paid') {
                 $course = Course::findOrFail($session->metadata->course_id);
 
-                return $this->enroll($course);
+                return $this->enroll($course, 'stripe', (string) $session->payment_intent, strtoupper($session->currency ?? 'USD'));
             }
         } catch (ApiErrorException $e) {
             report($e);
@@ -159,6 +175,7 @@ class CourseCheckoutController extends Controller
     public function paypal_start(Course $course)
     {
         $this->ensureBuyable($course);
+        abort_unless(PaymentSettingController::methodEnabled('paypal'), 404, 'El pago con PayPal no está disponible.');
         $cfg = $this->paypal($this->settings());
 
         if (! $cfg['id'] || ! $cfg['secret']) {
@@ -219,10 +236,56 @@ class CourseCheckoutController extends Controller
             [$courseId, $userId] = array_pad(explode('|', (string) $custom), 2, null);
 
             if ((string) $userId === (string) Auth::id() && $courseId) {
-                return $this->enroll(Course::findOrFail($courseId));
+                $txn = $capture['purchase_units'][0]['payments']['captures'][0]['id'] ?? ($capture['id'] ?? null);
+
+                return $this->enroll(Course::findOrFail($courseId), 'paypal', $txn, $cfg['currency']);
             }
         }
 
         return redirect('/')->with('error', 'El pago no se completó. No se hizo ningún cobro.');
+    }
+
+    // ───────────────────────── QR / TRANSFERENCIA (manual) ─────────────────────────
+
+    /** Muestra las instrucciones de pago (QR o datos bancarios) + subir comprobante. */
+    public function manual(Course $course, string $method)
+    {
+        $this->ensureBuyable($course);
+        abort_unless(in_array($method, ['qr', 'transfer'], true) && PaymentSettingController::methodEnabled($method), 404);
+
+        return view('frontend.checkout.manual', [
+            'course' => $course,
+            'method' => $method,
+            'price' => $this->price($course),
+            's' => $this->settings(),
+        ]);
+    }
+
+    /** El alumno sube su comprobante → crea un pedido PENDIENTE para que el dueño lo apruebe. */
+    public function manualSubmit(Request $request, Course $course, string $method)
+    {
+        $this->ensureBuyable($course);
+        abort_unless(in_array($method, ['qr', 'transfer'], true) && PaymentSettingController::methodEnabled($method), 404);
+
+        $request->validate([
+            'proof' => 'required|image|max:5120',
+            'reference' => 'nullable|string|max:160',
+        ]);
+
+        CourseOrder::create([
+            'user_id' => Auth::id(),
+            'course_id' => $course->id,
+            'instructor_id' => $course->instructor_id,
+            'method' => $method,
+            'amount' => $this->price($course),
+            'currency' => 'USD',
+            'status' => 'pending',
+            'proof_path' => $request->file('proof')->store('proofs', 'public'),
+            'reference' => $request->input('reference'),
+        ]);
+
+        return redirect()
+            ->route('courses.show', $course->slug)
+            ->with('status', '¡Recibido! Tu pago está en revisión. Te daremos acceso al curso en cuanto lo confirmemos.');
     }
 }

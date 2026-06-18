@@ -146,27 +146,43 @@
                                         Inicia sesión para inscribirte <i class="fa-solid fa-arrow-right text-xs"></i>
                                     </a>
                                 @endauth
-                            @elseif (! empty($paymentsActive))
-                                {{-- Curso de pago + complemento "Pagos internacionales" activo --}}
+                            @elseif (! empty($paymentMethods))
+                                {{-- Curso de pago + pasarelas activas: muestra los métodos encendidos --}}
                                 @auth
                                     @if (session('error'))
                                         <p class="mb-3 px-4 py-3 rounded-2xl bg-coral-50 border border-coral-200 text-coral-700 text-sm">
                                             <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
                                         </p>
                                     @endif
-                                    <form method="POST" action="{{ route('checkout.stripe', $course->slug) }}">
-                                        @csrf
-                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90" style="background:#635BFF">
-                                            <i class="fa-solid fa-credit-card"></i> Pagar con tarjeta
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="{{ route('checkout.paypal', $course->slug) }}" class="mt-2.5">
-                                        @csrf
-                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90" style="background:#0070BA">
-                                            <i class="fa-brands fa-paypal"></i> Pagar con PayPal
-                                        </button>
-                                    </form>
-                                    <p class="text-center text-xs text-ink-400 mt-2"><i class="fa-solid fa-shield-halved"></i> Pago seguro · acceso inmediato al curso</p>
+                                    <div class="space-y-2.5">
+                                        @if (in_array('stripe', $paymentMethods))
+                                            <form method="POST" action="{{ route('checkout.stripe', $course->slug) }}">
+                                                @csrf
+                                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90" style="background:#635BFF">
+                                                    <i class="fa-solid fa-credit-card"></i> Pagar con tarjeta
+                                                </button>
+                                            </form>
+                                        @endif
+                                        @if (in_array('paypal', $paymentMethods))
+                                            <form method="POST" action="{{ route('checkout.paypal', $course->slug) }}">
+                                                @csrf
+                                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90" style="background:#0070BA">
+                                                    <i class="fa-brands fa-paypal"></i> Pagar con PayPal
+                                                </button>
+                                            </form>
+                                        @endif
+                                        @if (in_array('qr', $paymentMethods))
+                                            <a href="{{ route('checkout.manual', [$course->slug, 'qr']) }}" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90 bg-ink-800 hover:bg-ink-900">
+                                                <i class="fa-solid fa-qrcode"></i> Pagar con QR
+                                            </a>
+                                        @endif
+                                        @if (in_array('transfer', $paymentMethods))
+                                            <a href="{{ route('checkout.manual', [$course->slug, 'transfer']) }}" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-white shadow-soft transition hover:opacity-90 bg-emerald-600 hover:bg-emerald-700">
+                                                <i class="fa-solid fa-building-columns"></i> Transferencia bancaria
+                                            </a>
+                                        @endif
+                                    </div>
+                                    <p class="text-center text-xs text-ink-400 mt-3"><i class="fa-solid fa-shield-halved"></i> Pago seguro · elige tu método preferido</p>
                                 @else
                                     <a href="{{ route('login') }}" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-soft transition">
                                         Inicia sesión para comprar <i class="fa-solid fa-arrow-right text-xs"></i>

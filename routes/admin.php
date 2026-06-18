@@ -128,11 +128,18 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::post('/appearance', [AppearanceController::class, 'update'])->name('appearance.update');
         Route::post('/appearance/preset', [AppearanceController::class, 'applyPreset'])->name('appearance.preset');
 
-        // Pagos internacionales (Stripe + PayPal) · activable por llave
+        // Pasarelas de pago (Stripe + PayPal + QR + Transferencia) · activable por llave
         Route::get('/pagos', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'index'])->name('payment-settings.index');
         Route::post('/pagos/activar', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'activate'])->name('payment-settings.activate');
         Route::post('/pagos/stripe', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updateStripe'])->name('payment-settings.stripe');
         Route::post('/pagos/paypal', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updatePaypal'])->name('payment-settings.paypal');
+        Route::post('/pagos/qr', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updateQr'])->name('payment-settings.qr');
+        Route::post('/pagos/transferencia', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updateTransfer'])->name('payment-settings.transfer');
+
+        // Ventas de cursos (aprobar/rechazar pagos manuales: QR y transferencia)
+        Route::get('/ventas', [\App\Http\Controllers\Admin\CourseOrderController::class, 'index'])->name('course-orders.index');
+        Route::post('/ventas/{order}/aprobar', [\App\Http\Controllers\Admin\CourseOrderController::class, 'approve'])->name('course-orders.approve');
+        Route::post('/ventas/{order}/rechazar', [\App\Http\Controllers\Admin\CourseOrderController::class, 'reject'])->name('course-orders.reject');
 
         // ── Plantillas (marketplace) ──────────────────────────────────────────
         Route::get('/templates/waitlist', [TemplateController::class, 'waitlist'])->name('templates.waitlist');
