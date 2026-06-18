@@ -67,9 +67,10 @@ class PaymentSettingController extends Controller
     /** Activa el complemento con la llave PAY (la que entrega cursalia.org). */
     public function activate(Request $request)
     {
-        $request->validate(['payments_key' => 'required|string|max:40']);
+        $request->validate(['payments_key' => 'required|string|max:160']);
 
-        $key = strtoupper(trim($request->input('payments_key')));
+        // No se hace strtoupper: la llave es case-sensitive (base64url).
+        $key = trim((string) $request->input('payments_key'));
         if (! ActivationKey::validate($key, 'PAY')) {
             return back()->withErrors(['payments_key' => 'La llave de pagos no es válida. Consíguela en cursalia.org/tienda.']);
         }

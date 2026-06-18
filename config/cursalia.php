@@ -66,12 +66,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Llaves de activación de complementos gratuitos
+    | Llaves de activación de complementos · firma ASIMÉTRICA (Ed25519)
     |--------------------------------------------------------------------------
-    | Secreto compartido con cursalia.org para validar OFFLINE (sin API) las
-    | llaves de activación (ej. botón de WhatsApp). DEBE ser idéntico al de
-    | cursalia-web (config cursalia.activation_secret allá).
+    | Este LMS SOLO lleva la clave PÚBLICA para VERIFICAR las llaves que firma
+    | cursalia.org con su clave privada. La privada NUNCA se distribuye, así que
+    | tener este código no permite fabricar llaves. (Validación offline, sin API.)
+    | La clave pública NO es secreta: es seguro que viaje en el instalador.
     */
-    'activation_secret' => env('CURSALIA_ACTIVATION_SECRET', 'cursalia-llave-2026-x7K9pQ2mZ'),
+    'activation_public_key' => env('CURSALIA_ACTIVATION_PUBLIC_KEY', '/7xfa6p8XMsNzX8ON7Rm5aZkiYPsOjS69o9Kej0L1WU='),
 
 ];

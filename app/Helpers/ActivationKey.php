@@ -3,34 +3,48 @@
 namespace App\Helpers;
 
 /**
- * Valida (offline, sin API) las llaves de activación gratuitas que entrega
- * cursalia.org (ej. botón de WhatsApp). Usa el MISMO secreto compartido
- * (config cursalia.activation_secret) que cursalia-web.
+ * Verifica (offline, sin API) las llaves de activación que entrega cursalia.org.
  *
- * Formato: PREFIJO-XXXXXXXX-YYYY  (ej. WA-A3B7K9P2-1F4E)
+ * Seguridad ASIMÉTRICA (Ed25519 / libsodium): este LMS SOLO lleva la clave PÚBLICA
+ * (config cursalia.activation_public_key) y verifica. La clave PRIVADA que firma las
+ * llaves vive únicamente en cursalia.org y NO se distribuye, así que tener este código
+ * no permite fabricar llaves válidas.
+ *
+ * Formato: PREFIJO-<base64url(nonce[6] + firma[64])>
  */
 class ActivationKey
 {
-    /** Valida una llave para un complemento (por su prefijo). */
-    public static function validate(string $key, string $prefix = 'WA'): bool
-    {
-        $prefix = strtoupper($prefix);
-        $key = strtoupper(trim($key));
+    private const NONCE_BYTES = 6;
 
-        if (! preg_match('/^([A-Z0-9]+)-([A-Z0-9]{8})-([A-Z0-9]{4})$/', $key, $m)) {
+    /** Verifica una llave para un complemento (por su prefijo). */
+    public static function validate(string $key, string $prefix = 'PAY'): bool
+    {
+        $prefix = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $prefix)) ?: 'PAY';
+        $key = trim($key);
+
+        $dash = strpos($key, '-');
+        if ($dash === false || substr($key, 0, $dash) !== $prefix) {
             return false;
         }
-        if ($m[1] !== $prefix) {
+
+        $body = substr($key, $dash + 1);
+        $blob = base64_decode(strtr($body, '-_', '+/'), true);
+        $canonical = $blob === false ? '' : rtrim(strtr(base64_encode($blob), '+/', '-_'), '=');
+        if ($blob === false
+            || strlen($blob) !== self::NONCE_BYTES + SODIUM_CRYPTO_SIGN_BYTES
+            || $canonical !== $body) { // exige codificación canónica
             return false;
         }
 
-        return hash_equals(self::signature($m[1], $m[2]), $m[3]);
-    }
+        $nonce = substr($blob, 0, self::NONCE_BYTES);
+        $sig = substr($blob, self::NONCE_BYTES);
+        $message = $prefix.':'.bin2hex($nonce);
+        $publicKey = base64_decode((string) config('cursalia.activation_public_key'));
 
-    private static function signature(string $prefix, string $core): string
-    {
-        $secret = (string) config('cursalia.activation_secret');
-
-        return strtoupper(substr(hash_hmac('sha256', $prefix.':'.$core, $secret), 0, 4));
+        try {
+            return sodium_crypto_sign_verify_detached($sig, $message, $publicKey);
+        } catch (\SodiumException $e) {
+            return false;
+        }
     }
 }

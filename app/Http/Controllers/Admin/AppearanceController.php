@@ -59,7 +59,7 @@ class AppearanceController extends Controller
             'whatsapp_enabled' => ['nullable', 'boolean'],
             'whatsapp_number' => ['nullable', 'string', 'max:32'],
             'whatsapp_default_message' => ['nullable', 'string', 'max:255'],
-            'whatsapp_key' => ['nullable', 'string', 'max:40'],
+            'whatsapp_key' => ['nullable', 'string', 'max:160'],
         ]);
 
         // Si activan el botón de WhatsApp, la llave debe ser válida y el número obligatorio.
