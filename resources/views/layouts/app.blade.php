@@ -139,5 +139,8 @@
         }, 1500);
     </script>
 
+    {{-- Botón flotante de WhatsApp (complemento gratis activable desde Ajustes) --}}
+    @include('partials.whatsapp-float')
+
 </body>
 </html>

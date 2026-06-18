@@ -21,6 +21,8 @@ class GeneralSetting extends Model
         'enabled_sections',
         'whatsapp_number',
         'whatsapp_default_message',
+        'whatsapp_enabled',
+        'whatsapp_key',
         'services_email',
         'mail_mailer',
         'mail_scheme',
@@ -40,6 +42,7 @@ class GeneralSetting extends Model
     protected $casts = [
         'mail_port' => 'integer',
         'enabled_sections' => 'array',
+        'whatsapp_enabled' => 'boolean',
     ];
 
     /** Paletas predefinidas que el admin puede aplicar de un click. */

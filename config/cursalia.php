@@ -64,4 +64,14 @@ return [
         'lessons_pro' => 12, // Fase 2 PRO
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Llaves de activación de complementos gratuitos
+    |--------------------------------------------------------------------------
+    | Secreto compartido con cursalia.org para validar OFFLINE (sin API) las
+    | llaves de activación (ej. botón de WhatsApp). DEBE ser idéntico al de
+    | cursalia-web (config cursalia.activation_secret allá).
+    */
+    'activation_secret' => env('CURSALIA_ACTIVATION_SECRET', 'cursalia-llave-2026-x7K9pQ2mZ'),
+
 ];

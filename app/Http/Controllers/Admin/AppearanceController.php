@@ -55,9 +55,32 @@ class AppearanceController extends Controller
             'favicon' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg,ico', 'max:1024'],
             'og_image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:3072'],
             'hero_image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
+            // Botón flotante de WhatsApp (complemento gratis)
+            'whatsapp_enabled' => ['nullable', 'boolean'],
+            'whatsapp_number' => ['nullable', 'string', 'max:32'],
+            'whatsapp_default_message' => ['nullable', 'string', 'max:255'],
+            'whatsapp_key' => ['nullable', 'string', 'max:40'],
         ]);
 
+        // Si activan el botón de WhatsApp, la llave debe ser válida y el número obligatorio.
+        if ($request->boolean('whatsapp_enabled')) {
+            if (! \App\Helpers\ActivationKey::validate((string) $request->input('whatsapp_key'), 'WA')) {
+                return back()->withInput()->withErrors([
+                    'whatsapp_key' => 'La llave de activación no es válida. Consíguela gratis en cursalia.org/whatsapp',
+                ]);
+            }
+            if (! $request->filled('whatsapp_number')) {
+                return back()->withInput()->withErrors([
+                    'whatsapp_number' => 'Escribe tu número de WhatsApp (con código de país) para activar el botón.',
+                ]);
+            }
+        }
+
         $setting = GeneralSetting::firstOrCreate(['id' => 1]);
+        $setting->whatsapp_enabled = $request->boolean('whatsapp_enabled');
+        $setting->whatsapp_number = $request->input('whatsapp_number');
+        $setting->whatsapp_default_message = $request->input('whatsapp_default_message');
+        $setting->whatsapp_key = $request->input('whatsapp_key');
         $setting->fill($request->only([
             'site_name', 'site_slogan', 'copyright',
             'brand_color', 'accent_color', 'sun_color', 'ink_color',

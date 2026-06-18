@@ -248,6 +248,43 @@
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Abrir
                     </a>
                 </div>
+
+                {{-- ══════ Botón de WhatsApp (complemento gratis) ══════ --}}
+                <div class="rounded-2xl border border-green-200 p-5" style="background:linear-gradient(135deg,#f0fdf4,#ffffff)">
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fa-brands fa-whatsapp text-green-600 text-xl"></i>
+                        <h3 class="text-sm font-bold text-ink-900">Botón de WhatsApp</h3>
+                        <span class="ml-auto text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-green-100 text-green-700">Gratis</span>
+                    </div>
+                    <p class="text-xs text-ink-500 mb-4">Muestra un botón flotante de WhatsApp en tu academia para que tus alumnos te escriban con un clic.</p>
+
+                    <label class="flex items-center gap-2.5 cursor-pointer mb-4">
+                        <input type="checkbox" name="whatsapp_enabled" value="1" @checked(old('whatsapp_enabled', $setting->whatsapp_enabled))
+                               class="w-5 h-5 rounded border-ink-300 text-green-600 focus:ring-green-200">
+                        <span class="text-sm font-semibold text-ink-700">Activar el botón de WhatsApp</span>
+                    </label>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-ink-700 mb-1">Llave de activación</label>
+                            <input type="text" name="whatsapp_key" value="{{ old('whatsapp_key', $setting->whatsapp_key) }}" placeholder="WA-XXXXXXXX-XXXX"
+                                   class="w-full px-4 py-2.5 rounded-xl bg-white border border-ink-200 font-mono uppercase focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 transition">
+                            <p class="mt-1 text-xs text-ink-400">¿No tienes tu llave? <a href="https://cursalia.org/whatsapp" target="_blank" rel="noopener" class="text-green-700 font-semibold hover:underline">Consíguela gratis aquí</a>.</p>
+                            @error('whatsapp_key')<p class="text-xs text-coral-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-ink-700 mb-1">Tu número de WhatsApp (con código de país)</label>
+                            <input type="text" name="whatsapp_number" value="{{ old('whatsapp_number', $setting->whatsapp_number) }}" placeholder="+591 70000000"
+                                   class="w-full px-4 py-2.5 rounded-xl bg-white border border-ink-200 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 transition">
+                            @error('whatsapp_number')<p class="text-xs text-coral-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-ink-700 mb-1">Mensaje de bienvenida (opcional)</label>
+                            <input type="text" name="whatsapp_default_message" value="{{ old('whatsapp_default_message', $setting->whatsapp_default_message) }}" maxlength="255" placeholder="Hola, quiero información sobre tus cursos"
+                                   class="w-full px-4 py-2.5 rounded-xl bg-white border border-ink-200 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 transition">
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
