@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Http\Controllers\Admin\PaymentSettingController;
 use App\Http\Controllers\Controller;
 use App\Models\AboutSection;
 use App\Models\Blog;
@@ -221,7 +222,7 @@ class CoursePageController extends Controller
             $canReview = $isEnrolled;
         }
 
-        $paymentMethods = \App\Http\Controllers\Admin\PaymentSettingController::enabledMethods();
+        $paymentMethods = PaymentSettingController::enabledMethods();
 
         return view('frontend.courses.show', compact('course', 'reviews', 'myReview', 'canReview', 'isEnrolled', 'paymentMethods'));
     }

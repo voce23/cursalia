@@ -16,7 +16,6 @@ use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuthController;
 use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogCommentController;
-use App\Http\Controllers\Admin\LessonCommentController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ContactCardController;
@@ -26,8 +25,10 @@ use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseContentController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\CourseOrderController;
 use App\Http\Controllers\Admin\CustomPageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\EditorImageController;
 use App\Http\Controllers\Admin\FooterColumnOneController;
 use App\Http\Controllers\Admin\FooterColumnTwoController;
 use App\Http\Controllers\Admin\FooterController;
@@ -35,15 +36,16 @@ use App\Http\Controllers\Admin\HeaderSettingController;
 use App\Http\Controllers\Admin\HomeMiscSectionController;
 use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\InstructorRequestController;
+use App\Http\Controllers\Admin\LessonCommentController;
 use App\Http\Controllers\Admin\NavigationController;
 use App\Http\Controllers\Admin\NewsletterController;
+use App\Http\Controllers\Admin\PaymentSettingController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\TemplateImportController;
-use App\Http\Controllers\Admin\EditorImageController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -129,17 +131,17 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::post('/appearance/preset', [AppearanceController::class, 'applyPreset'])->name('appearance.preset');
 
         // Pasarelas de pago (Stripe + PayPal + QR + Transferencia) · activable por llave
-        Route::get('/pagos', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'index'])->name('payment-settings.index');
-        Route::post('/pagos/activar', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'activate'])->name('payment-settings.activate');
-        Route::post('/pagos/stripe', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updateStripe'])->name('payment-settings.stripe');
-        Route::post('/pagos/paypal', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updatePaypal'])->name('payment-settings.paypal');
-        Route::post('/pagos/qr', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updateQr'])->name('payment-settings.qr');
-        Route::post('/pagos/transferencia', [\App\Http\Controllers\Admin\PaymentSettingController::class, 'updateTransfer'])->name('payment-settings.transfer');
+        Route::get('/pagos', [PaymentSettingController::class, 'index'])->name('payment-settings.index');
+        Route::post('/pagos/activar', [PaymentSettingController::class, 'activate'])->name('payment-settings.activate');
+        Route::post('/pagos/stripe', [PaymentSettingController::class, 'updateStripe'])->name('payment-settings.stripe');
+        Route::post('/pagos/paypal', [PaymentSettingController::class, 'updatePaypal'])->name('payment-settings.paypal');
+        Route::post('/pagos/qr', [PaymentSettingController::class, 'updateQr'])->name('payment-settings.qr');
+        Route::post('/pagos/transferencia', [PaymentSettingController::class, 'updateTransfer'])->name('payment-settings.transfer');
 
         // Ventas de cursos (aprobar/rechazar pagos manuales: QR y transferencia)
-        Route::get('/ventas', [\App\Http\Controllers\Admin\CourseOrderController::class, 'index'])->name('course-orders.index');
-        Route::post('/ventas/{order}/aprobar', [\App\Http\Controllers\Admin\CourseOrderController::class, 'approve'])->name('course-orders.approve');
-        Route::post('/ventas/{order}/rechazar', [\App\Http\Controllers\Admin\CourseOrderController::class, 'reject'])->name('course-orders.reject');
+        Route::get('/ventas', [CourseOrderController::class, 'index'])->name('course-orders.index');
+        Route::post('/ventas/{order}/aprobar', [CourseOrderController::class, 'approve'])->name('course-orders.approve');
+        Route::post('/ventas/{order}/rechazar', [CourseOrderController::class, 'reject'])->name('course-orders.reject');
 
         // ── Plantillas (marketplace) ──────────────────────────────────────────
         Route::get('/templates/waitlist', [TemplateController::class, 'waitlist'])->name('templates.waitlist');

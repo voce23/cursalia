@@ -70,8 +70,8 @@ class FabricacionLimpiezaSeeder extends Seeder
                     'seo_description' => "Aprende a fabricar {$p['noun']} paso a paso: insumos, proceso, envasado y venta.",
                     'thumbnail' => $this->thumbnail($p['slug'], $p['title'], $p['colors']),
                     'description' => "Curso práctico para fabricar {$p['noun']} de calidad desde casa o tu taller. "
-                        ."Cubre los insumos, el proceso paso a paso, el control de calidad, el envasado y cómo venderlo. "
-                        ."Ideal para emprender con productos de limpieza.",
+                        .'Cubre los insumos, el proceso paso a paso, el control de calidad, el envasado y cómo venderlo. '
+                        .'Ideal para emprender con productos de limpieza.',
                     'price' => 0,
                     'discount' => 0,
                     'duration' => 'A tu ritmo',
@@ -135,7 +135,7 @@ class FabricacionLimpiezaSeeder extends Seeder
                     ['title' => 'Equipo, utensilios y área de trabajo',
                         'desc' => "Lista del equipo básico (recipientes, balanza, agitador, moldes, envases) y cómo montar un área de trabajo limpia y ordenada para fabricar {$noun}."],
                     ['title' => 'Seguridad, higiene y primeros auxilios',
-                        'desc' => "Manejo seguro de los insumos, equipo de protección (guantes, lentes, mascarilla), ventilación y qué hacer ante salpicaduras. Buenas prácticas de higiene."],
+                        'desc' => 'Manejo seguro de los insumos, equipo de protección (guantes, lentes, mascarilla), ventilación y qué hacer ante salpicaduras. Buenas prácticas de higiene.'],
                 ],
             ],
             [
@@ -146,7 +146,7 @@ class FabricacionLimpiezaSeeder extends Seeder
                     ['title' => 'La función de cada ingrediente',
                         'desc' => "Para qué sirve cada componente de la fórmula del {$noun} y cómo afecta al resultado final (limpieza, espuma, aroma, textura)."],
                     ['title' => 'Proporciones, medidas y rendimiento',
-                        'desc' => "Cómo medir correctamente cada insumo y calcular el rendimiento: cuánto producto obtienes por lote y cómo escalar la receta."],
+                        'desc' => 'Cómo medir correctamente cada insumo y calcular el rendimiento: cuánto producto obtienes por lote y cómo escalar la receta.'],
                 ],
             ],
             [
@@ -181,7 +181,7 @@ class FabricacionLimpiezaSeeder extends Seeder
                     ['title' => 'Marca, presentación y fotos',
                         'desc' => "Crea una imagen de marca atractiva y aprende a fotografiar tu {$noun} para que se venda mejor en redes y tienda."],
                     ['title' => 'Dónde y cómo vender tu producto',
-                        'desc' => "Canales de venta (tienda, redes, mayoreo, ferias), cómo conseguir tus primeros clientes y fidelizarlos."],
+                        'desc' => 'Canales de venta (tienda, redes, mayoreo, ferias), cómo conseguir tus primeros clientes y fidelizarlos.'],
                 ],
             ],
         ];

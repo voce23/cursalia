@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\Admin;
+use App\Models\GeneralSetting;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Foundation\Application;
+
 /**
  * ============================================================================
  *  Instalador web de Cursalia LMS  —  estilo WordPress
@@ -19,16 +24,15 @@
  *  un .env con APP_KEY o el lock, el instalador se niega a re-ejecutarse.
  * ============================================================================
  */
-
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 @ini_set('display_errors', '0'); // no filtrar errores crudos al navegador; el instalador muestra mensajes controlados
 @set_time_limit(300);            // las migraciones pueden tardar en hosting compartido
 @ini_set('memory_limit', '256M'); // 82 migraciones + seeders pueden superar 128M
 
 define('CURSALIA_BASE', dirname(__DIR__));
-define('CURSALIA_ENV', CURSALIA_BASE . '/.env');
-define('CURSALIA_ENV_EXAMPLE', CURSALIA_BASE . '/.env.example');
-define('CURSALIA_LOCK', CURSALIA_BASE . '/storage/installed');
+define('CURSALIA_ENV', CURSALIA_BASE.'/.env');
+define('CURSALIA_ENV_EXAMPLE', CURSALIA_BASE.'/.env.example');
+define('CURSALIA_LOCK', CURSALIA_BASE.'/storage/installed');
 define('CURSALIA_DEFAULT_ADMIN_EMAIL', 'admin@lmsl13.test');
 define('CURSALIA_VERSION', '2.01');
 
@@ -46,11 +50,11 @@ $alreadyInstalled = is_file(CURSALIA_LOCK)
 
 if ($alreadyInstalled) {
     layout('Cursalia ya está instalado', wizard_shell(0,
-        '<div class="big ok">' . icon_check_lg() . '</div>'
-        . '<h1 class="center">Cursalia ya está instalado</h1>'
-        . '<p class="sub center">Tu plataforma ya está configurada. Por seguridad, el instalador está bloqueado.</p>'
-        . '<a class="btn" href="' . e(base_url()) . '/admin/login">Ir al panel de administración ' . icon_arrow() . '</a>'
-        . '<p class="fine">¿Reinstalar desde cero? Borra el archivo <code>storage/installed</code> de tu hosting y vuelve a abrir esta página. (Atención: reinstalar puede sobrescribir tus datos.)</p>'
+        '<div class="big ok">'.icon_check_lg().'</div>'
+        .'<h1 class="center">Cursalia ya está instalado</h1>'
+        .'<p class="sub center">Tu plataforma ya está configurada. Por seguridad, el instalador está bloqueado.</p>'
+        .'<a class="btn" href="'.e(base_url()).'/admin/login">Ir al panel de administración '.icon_arrow().'</a>'
+        .'<p class="fine">¿Reinstalar desde cero? Borra el archivo <code>storage/installed</code> de tu hosting y vuelve a abrir esta página. (Atención: reinstalar puede sobrescribir tus datos.)</p>'
     ));
     exit;
 }
@@ -75,7 +79,6 @@ if ($step === '2') {
 }
 exit;
 
-
 // ═══════════════════════════════════════════════════════════════════════════
 //  PASO 1 — Requisitos
 // ═══════════════════════════════════════════════════════════════════════════
@@ -96,7 +99,7 @@ function check_requirements(): array
     $missing = array_values(array_filter($exts, fn ($x) => ! extension_loaded($x)));
     $checks[] = [
         'label' => 'Extensiones de PHP',
-        'detail' => $missing ? 'Faltan: ' . implode(', ', $missing) : 'pdo_mysql, mbstring, openssl…',
+        'detail' => $missing ? 'Faltan: '.implode(', ', $missing) : 'pdo_mysql, mbstring, openssl…',
         'ok' => count($missing) === 0,
         'critical' => true,
     ];
@@ -115,13 +118,13 @@ function check_requirements(): array
     ];
     $vendorMissing = array_values(array_filter(
         $vendorCritical,
-        fn ($f) => ! is_file(CURSALIA_BASE . $f)
+        fn ($f) => ! is_file(CURSALIA_BASE.$f)
     ));
     $checks[] = [
         'label' => 'Dependencias completas (vendor/)',
         'detail' => $vendorMissing
-            ? 'Extracción INCOMPLETA (faltan ' . implode(', ', array_map('basename', $vendorMissing))
-                . '). Re-extrae el paquete; lo más fiable es «unzip» por Terminal.'
+            ? 'Extracción INCOMPLETA (faltan '.implode(', ', array_map('basename', $vendorMissing))
+                .'). Re-extrae el paquete; lo más fiable es «unzip» por Terminal.'
             : 'vendor/ completa y verificada',
         'ok' => count($vendorMissing) === 0,
         'critical' => true,
@@ -137,7 +140,7 @@ function check_requirements(): array
 
     // Si storage/ no es escribible, intentamos auto-corregir el permiso (una
     // extracción defectuosa la deja a veces en 0644, sin bit de ejecución).
-    $storageDir = CURSALIA_BASE . '/storage';
+    $storageDir = CURSALIA_BASE.'/storage';
     if (! is_writable($storageDir)) {
         @chmod($storageDir, 0755);
     }
@@ -172,6 +175,7 @@ function requirements_ok(array $checks): bool
             return false;
         }
     }
+
     return true;
 }
 
@@ -182,15 +186,15 @@ function render_requirements(array $checks): void
     $rows = '';
     foreach ($checks as $c) {
         $rows .= '<div class="chk">'
-            . status_dot($c['ok'])
-            . '<span class="chk-l">' . e($c['label']) . '</span>'
-            . '<span class="chk-d">' . e($c['detail']) . '</span>'
-            . '</div>';
+            .status_dot($c['ok'])
+            .'<span class="chk-l">'.e($c['label']).'</span>'
+            .'<span class="chk-d">'.e($c['detail']).'</span>'
+            .'</div>';
     }
 
     if ($allOk) {
-        $note = '<div class="note ok">' . icon_check() . '<span>Tu hosting cumple todo. ¡Listo para continuar!</span></div>';
-        $cta = '<a class="btn" href="?step=2">Continuar con la instalación ' . icon_arrow() . '</a>';
+        $note = '<div class="note ok">'.icon_check().'<span>Tu hosting cumple todo. ¡Listo para continuar!</span></div>';
+        $cta = '<a class="btn" href="?step=2">Continuar con la instalación '.icon_arrow().'</a>';
     } else {
         $note = '<div class="note bad"><span>Hay requisitos sin cumplir (en rojo). Corrígelos y recarga esta página. Si tienes dudas, tu hosting puede ayudarte a activarlos.</span></div>';
         $cta = '<a class="btn ghost" href="?step=1">Volver a comprobar</a>';
@@ -198,13 +202,12 @@ function render_requirements(array $checks): void
 
     layout('Instalar Cursalia · Requisitos', wizard_shell(1,
         '<h1>Vamos a instalar Cursalia</h1>'
-        . '<p class="sub">Comprobamos que tu hosting cumple lo necesario. Tarda unos segundos.</p>'
-        . '<div class="checks">' . $rows . '</div>'
-        . $note
-        . $cta
+        .'<p class="sub">Comprobamos que tu hosting cumple lo necesario. Tarda unos segundos.</p>'
+        .'<div class="checks">'.$rows.'</div>'
+        .$note
+        .$cta
     ));
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  PASO 2 — Formulario
@@ -223,16 +226,16 @@ function render_form(array $old = [], array $errors = []): void
 
     $errBox = '';
     if ($errors) {
-        $errBox = '<div class="note bad"><span><strong>No se pudo continuar:</strong> ' . e(implode(' ', $errors)) . '</span></div>';
+        $errBox = '<div class="note bad"><span><strong>No se pudo continuar:</strong> '.e(implode(' ', $errors)).'</span></div>';
     }
 
     // En montaje de 2 carpetas, mostramos el nombre de la carpeta de la app.
     $splitBox = '';
     if (CURSALIA_SPLIT) {
-        $splitBox = '<div class="note info"><span>' . icon_shield()
-            . ' <strong>Montaje seguro detectado.</strong> Instalaremos el código de Cursalia en una carpeta aparte (fuera de la web) para máxima seguridad. Tú solo confirma el nombre.</span></div>'
-            . '<label>Carpeta de la aplicación
-                <input name="app_folder" value="' . $v('app_folder', default_app_folder()) . '" placeholder="midominio_app" required>
+        $splitBox = '<div class="note info"><span>'.icon_shield()
+            .' <strong>Montaje seguro detectado.</strong> Instalaremos el código de Cursalia en una carpeta aparte (fuera de la web) para máxima seguridad. Tú solo confirma el nombre.</span></div>'
+            .'<label>Carpeta de la aplicación
+                <input name="app_folder" value="'.$v('app_folder', default_app_folder()).'" placeholder="midominio_app" required>
                 <span class="hint">Se creará junto a <code>public_html</code>. Déjalo así si no estás seguro.</span>
             </label>';
     }
@@ -242,80 +245,79 @@ function render_form(array $old = [], array $errors = []): void
             <h1>Configura tu plataforma</h1>
             <p class="sub">Estos datos los crea tu hosting (cPanel). Si no tienes la base de datos, créala primero en <em>cPanel → Bases de datos MySQL</em>.</p>
 
-            ' . $errBox . $splitBox . '
+            '.$errBox.$splitBox.'
 
-            <div class="sec">' . icon_db() . ' Base de datos</div>
+            <div class="sec">'.icon_db().' Base de datos</div>
             <div class="grid">
                 <label>Servidor (host)
-                    <input name="db_host" value="' . $v('db_host', 'localhost') . '" placeholder="localhost" required>
+                    <input name="db_host" value="'.$v('db_host', 'localhost').'" placeholder="localhost" required>
                     <span class="hint">Casi siempre <code>localhost</code>.</span>
                 </label>
                 <label>Puerto
-                    <input name="db_port" value="' . $v('db_port', '3306') . '" placeholder="3306" required>
+                    <input name="db_port" value="'.$v('db_port', '3306').'" placeholder="3306" required>
                 </label>
             </div>
             <label>Nombre de la base de datos
-                <input name="db_database" value="' . $v('db_database') . '" placeholder="usuario_cursalia" required>
+                <input name="db_database" value="'.$v('db_database').'" placeholder="usuario_cursalia" required>
             </label>
             <div class="grid">
                 <label>Usuario de la base de datos
-                    <input name="db_username" value="' . $v('db_username') . '" placeholder="usuario_cursalia" required>
+                    <input name="db_username" value="'.$v('db_username').'" placeholder="usuario_cursalia" required>
                 </label>
                 <label>Contraseña de la base de datos
-                    <input type="password" name="db_password" value="' . $v('db_password') . '" placeholder="••••••••">
+                    <input type="password" name="db_password" value="'.$v('db_password').'" placeholder="••••••••">
                 </label>
             </div>
 
-            <div class="sec">' . icon_globe() . ' Tu sitio</div>
+            <div class="sec">'.icon_globe().' Tu sitio</div>
             <div class="grid">
                 <label>Nombre del sitio
-                    <input name="site_name" value="' . $v('site_name', 'Cursalia') . '" placeholder="Mi Academia" required>
+                    <input name="site_name" value="'.$v('site_name', 'Cursalia').'" placeholder="Mi Academia" required>
                 </label>
                 <label>Dirección web (URL)
-                    <input name="app_url" value="' . $v('app_url', detected_url()) . '" placeholder="https://midominio.com" required>
+                    <input name="app_url" value="'.$v('app_url', detected_url()).'" placeholder="https://midominio.com" required>
                 </label>
             </div>
 
-            <div class="sec">' . icon_user() . ' Administrador</div>
+            <div class="sec">'.icon_user().' Administrador</div>
             <p class="fine" style="margin-top:-4px">Con esta cuenta entrarás al panel para crear cursos y publicar.</p>
             <label>Nombre del administrador
-                <input name="admin_name" value="' . $v('admin_name') . '" placeholder="Tu nombre" required>
+                <input name="admin_name" value="'.$v('admin_name').'" placeholder="Tu nombre" required>
             </label>
             <div class="grid">
                 <label>Email del administrador
-                    <input type="email" name="admin_email" value="' . $v('admin_email') . '" placeholder="tu@correo.com" required>
+                    <input type="email" name="admin_email" value="'.$v('admin_email').'" placeholder="tu@correo.com" required>
                 </label>
                 <label>Contraseña (mín. 8)
                     <input type="password" name="admin_password" placeholder="••••••••" minlength="8" required>
                 </label>
             </div>
 
-            <div class="sec optional">' . icon_mail() . ' Correo <span>(opcional)</span></div>
+            <div class="sec optional">'.icon_mail().' Correo <span>(opcional)</span></div>
             <p class="fine" style="margin-top:-4px">Para la recuperación de contraseña. Puedes dejarlo y configurarlo más tarde. Crea antes la cuenta de correo en cPanel.</p>
             <div class="grid">
                 <label>Servidor SMTP
-                    <input name="mail_host" value="' . $v('mail_host') . '" placeholder="mail.midominio.com">
+                    <input name="mail_host" value="'.$v('mail_host').'" placeholder="mail.midominio.com">
                 </label>
                 <label>Puerto
-                    <input name="mail_port" value="' . $v('mail_port', '465') . '" placeholder="465">
+                    <input name="mail_port" value="'.$v('mail_port', '465').'" placeholder="465">
                 </label>
             </div>
             <div class="grid">
                 <label>Usuario (email)
-                    <input name="mail_username" value="' . $v('mail_username') . '" placeholder="hola@midominio.com">
+                    <input name="mail_username" value="'.$v('mail_username').'" placeholder="hola@midominio.com">
                 </label>
                 <label>Contraseña del correo
-                    <input type="password" name="mail_password" value="' . $v('mail_password') . '" placeholder="••••••••">
+                    <input type="password" name="mail_password" value="'.$v('mail_password').'" placeholder="••••••••">
                 </label>
             </div>
 
-            <button class="btn" type="submit">Instalar Cursalia ahora ' . icon_arrow() . '</button>
+            <button class="btn" type="submit">Instalar Cursalia ahora '.icon_arrow().'</button>
             <p class="fine center" style="margin-top:14px">El proceso tarda hasta un minuto. No cierres esta ventana.</p>
         </form>';
 
     layout('Instalar Cursalia · Configuración', wizard_shell(2, $form));
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  PASO 3 — Proceso de instalación
@@ -363,6 +365,7 @@ function handle_install(): void
     }
     if ($errors) {
         render_form($data, $errors);
+
         return;
     }
 
@@ -381,6 +384,7 @@ function handle_install(): void
                 ? 'La base de datos indicada no existe. Créala en cPanel → Bases de datos MySQL.'
                 : 'No se pudo conectar. Revisa el servidor, el nombre de la base de datos, el usuario y la contraseña en cPanel.');
         render_form($data, [$hint]);
+
         return;
     }
 
@@ -391,11 +395,12 @@ function handle_install(): void
     if (CURSALIA_SPLIT) {
         try {
             $appBase = cursalia_prepare_split($data['app_folder']);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             render_form($data, [
-                'No se pudo preparar el montaje seguro de 2 carpetas: ' . $e->getMessage()
-                . ' Como alternativa, instala en un subdominio con el document root apuntando a /public.',
+                'No se pudo preparar el montaje seguro de 2 carpetas: '.$e->getMessage()
+                .' Como alternativa, instala en un subdominio con el document root apuntando a /public.',
             ]);
+
             return;
         }
     }
@@ -407,11 +412,11 @@ function handle_install(): void
     cursalia_fix_permissions($appBase);
 
     // ── 3) Escribir el .env (con APP_KEY único) en la carpeta de la app ──────
-    $envPath = $appBase . '/.env';
-    $examplePath = $appBase . '/.env.example';
+    $envPath = $appBase.'/.env';
+    $examplePath = $appBase.'/.env.example';
     $template = is_file($examplePath) ? file_get_contents($examplePath) : default_env_template();
 
-    $appKey = 'base64:' . base64_encode(random_bytes(32));
+    $appKey = 'base64:'.base64_encode(random_bytes(32));
     $secureCookie = str_starts_with($data['app_url'], 'https://') ? 'true' : 'false';
 
     $repl = [
@@ -451,23 +456,24 @@ function handle_install(): void
 
     if (@file_put_contents($envPath, $env) === false) {
         render_install_error('No se pudo escribir el archivo .env en la carpeta de la app.');
+
         return;
     }
 
     // ── 4) Arrancar Laravel y migrar + sembrar ───────────────────────────────
     try {
-        require_once $appBase . '/vendor/autoload.php';
+        require_once $appBase.'/vendor/autoload.php';
 
-        /** @var \Illuminate\Foundation\Application $app */
-        $app = require $appBase . '/bootstrap/app.php';
+        /** @var Application $app */
+        $app = require $appBase.'/bootstrap/app.php';
 
         // En 2 carpetas, la web es public_html aunque la app viva aparte.
         if (CURSALIA_SPLIT) {
             $app->usePublicPath(CURSALIA_BASE);
         }
 
-        /** @var \Illuminate\Contracts\Console\Kernel $kernel */
-        $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        /** @var Kernel $kernel */
+        $kernel = $app->make(Kernel::class);
         $kernel->bootstrap();
 
         $log = '';
@@ -475,44 +481,44 @@ function handle_install(): void
         $migrate = $kernel->call('migrate', ['--force' => true]);
         $log .= $kernel->output();
         if ($migrate !== 0) {
-            throw new RuntimeException("Fallaron las migraciones:\n" . $log);
+            throw new RuntimeException("Fallaron las migraciones:\n".$log);
         }
 
         $seed = $kernel->call('db:seed', ['--force' => true]);
         $log .= $kernel->output();
         if ($seed !== 0) {
-            throw new RuntimeException("Falló la siembra de datos:\n" . $log);
+            throw new RuntimeException("Falló la siembra de datos:\n".$log);
         }
 
         // ── Crear/ajustar el administrador con TUS credenciales ───────────────
-        $admin = \App\Models\Admin::query()->firstWhere('email', CURSALIA_DEFAULT_ADMIN_EMAIL)
-            ?? \App\Models\Admin::query()->first()
-            ?? new \App\Models\Admin();
+        $admin = Admin::query()->firstWhere('email', CURSALIA_DEFAULT_ADMIN_EMAIL)
+            ?? Admin::query()->first()
+            ?? new Admin;
 
         $admin->name = $data['admin_name'];
         $admin->email = $data['admin_email'];
         $admin->password = $data['admin_password']; // el cast 'hashed' lo cifra al guardar
         $admin->save();
 
-        \App\Models\Admin::query()
+        Admin::query()
             ->where('email', CURSALIA_DEFAULT_ADMIN_EMAIL)
             ->where('id', '!=', $admin->id)
             ->delete();
 
         // Reflejar el nombre del sitio elegido como marca visible.
         try {
-            \App\Models\GeneralSetting::query()->where('id', 1)->update(['site_name' => $data['site_name']]);
-        } catch (\Throwable $e) {
+            GeneralSetting::query()->where('id', 1)->update(['site_name' => $data['site_name']]);
+        } catch (Throwable $e) {
         }
 
         // ── Enlace de storage hacia la web (con fallback a copia) ─────────────
         try {
             $kernel->call('storage:link');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // continuamos al fallback
         }
-        $webStorage = (CURSALIA_SPLIT ? CURSALIA_BASE : CURSALIA_BASE . '/public') . '/storage';
-        $storageSource = $appBase . '/storage/app/public';
+        $webStorage = (CURSALIA_SPLIT ? CURSALIA_BASE : CURSALIA_BASE.'/public').'/storage';
+        $storageSource = $appBase.'/storage/app/public';
         if (! is_dir($webStorage) && is_dir($storageSource)) {
             cursalia_copy_dir($storageSource, $webStorage);
         }
@@ -525,25 +531,25 @@ function handle_install(): void
         try {
             $kernel->call('config:clear');
             $kernel->call('cache:clear');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
         }
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         @unlink($envPath);
-        @unlink($appBase . '/storage/installed');
+        @unlink($appBase.'/storage/installed');
         $note = CURSALIA_SPLIT
-            ? "\n\nNota: la app se movió a la carpeta «" . $data['app_folder'] . "». Si vas a reintentar, borra primero esa carpeta."
+            ? "\n\nNota: la app se movió a la carpeta «".$data['app_folder'].'». Si vas a reintentar, borra primero esa carpeta.'
             : '';
-        render_install_error($e->getMessage() . $note);
+        render_install_error($e->getMessage().$note);
+
         return;
     }
 
     // ── 5) Bloquear el instalador y autoeliminarlo ───────────────────────────
-    @file_put_contents($appBase . '/storage/installed', 'Cursalia instalado el ' . date('c') . "\n");
+    @file_put_contents($appBase.'/storage/installed', 'Cursalia instalado el '.date('c')."\n");
     @unlink(__FILE__);
 
     render_success($data);
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  Montaje de 2 carpetas — helpers
@@ -555,12 +561,14 @@ function default_app_folder(): string
     $host = preg_replace('/^www\./', '', strtolower($_SERVER['HTTP_HOST'] ?? 'cursalia'));
     $label = explode('.', explode(':', $host)[0])[0];   // antes del puerto y del primer punto
     $label = preg_replace('/[^a-z0-9_]/', '', $label);
-    return ($label !== '' ? $label : 'cursalia') . '_app';
+
+    return ($label !== '' ? $label : 'cursalia').'_app';
 }
 
 function sanitize_app_folder(string $name): string
 {
     $name = preg_replace('/[^a-z0-9_\-]/', '', strtolower(trim($name)));
+
     return $name !== '' ? $name : default_app_folder();
 }
 
@@ -572,21 +580,21 @@ function sanitize_app_folder(string $name): string
 function cursalia_prepare_split(string $folder): string
 {
     $home = dirname(CURSALIA_BASE);          // .../  (padre de public_html)
-    $newApp = $home . '/' . $folder;
+    $newApp = $home.'/'.$folder;
 
     if (! is_writable($home)) {
         throw new RuntimeException('no se puede escribir fuera de public_html');
     }
     if (is_dir($newApp) && count(@scandir($newApp) ?: []) > 2) {
-        throw new RuntimeException('la carpeta «' . $folder . '» ya existe y no está vacía; elige otro nombre');
+        throw new RuntimeException('la carpeta «'.$folder.'» ya existe y no está vacía; elige otro nombre');
     }
     if (! is_dir($newApp) && ! @mkdir($newApp, 0755)) {
-        throw new RuntimeException('no se pudo crear la carpeta «' . $folder . '»');
+        throw new RuntimeException('no se pudo crear la carpeta «'.$folder.'»');
     }
     // Prueba de escritura real antes de mover nada.
-    $probe = $newApp . '/.write_probe';
+    $probe = $newApp.'/.write_probe';
     if (@file_put_contents($probe, 'ok') === false) {
-        throw new RuntimeException('sin permiso de escritura en «' . $folder . '»');
+        throw new RuntimeException('sin permiso de escritura en «'.$folder.'»');
     }
     @unlink($probe);
 
@@ -598,8 +606,8 @@ function cursalia_prepare_split(string $folder): string
         if (in_array($it, $skip, true)) {
             continue;
         }
-        if (! @rename(CURSALIA_BASE . '/' . $it, $newApp . '/' . $it)) {
-            throw new RuntimeException('no se pudo mover «' . $it . '»');
+        if (! @rename(CURSALIA_BASE.'/'.$it, $newApp.'/'.$it)) {
+            throw new RuntimeException('no se pudo mover «'.$it.'»');
         }
     }
 
@@ -613,7 +621,7 @@ function cursalia_prepare_split(string $folder): string
 function cursalia_finalize_split(string $newApp, string $appFolder): void
 {
     $web = CURSALIA_BASE;          // public_html
-    $pub = $web . '/public';
+    $pub = $web.'/public';
 
     // Subir los assets públicos (build, .htaccess, favicon, robots…) a la raíz web.
     if (is_dir($pub)) {
@@ -621,76 +629,74 @@ function cursalia_finalize_split(string $newApp, string $appFolder): void
             if (in_array($it, ['.', '..', 'index.php', 'install.php'], true)) {
                 continue;
             }
-            @rename($pub . '/' . $it, $web . '/' . $it);
+            @rename($pub.'/'.$it, $web.'/'.$it);
         }
     }
 
     // index.php definitivo: arranca Laravel desde la carpeta hermana de la app.
     $idx = "<?php\n\n"
-        . "use Illuminate\\Foundation\\Application;\n"
-        . "use Illuminate\\Http\\Request;\n\n"
-        . "define('LARAVEL_START', microtime(true));\n\n"
-        . "\$APP = __DIR__ . '/../" . $appFolder . "';\n\n"
-        . "if (file_exists(\$m = \$APP . '/storage/framework/maintenance.php')) {\n    require \$m;\n}\n\n"
-        . "require \$APP . '/vendor/autoload.php';\n\n"
-        . "/** @var Application \$app */\n"
-        . "\$app = require \$APP . '/bootstrap/app.php';\n"
-        . "\$app->usePublicPath(__DIR__);\n\n"
-        . "\$app->handleRequest(Request::capture());\n";
-    @file_put_contents($web . '/index.php', $idx);
+        ."use Illuminate\\Foundation\\Application;\n"
+        ."use Illuminate\\Http\\Request;\n\n"
+        ."define('LARAVEL_START', microtime(true));\n\n"
+        ."\$APP = __DIR__ . '/../".$appFolder."';\n\n"
+        ."if (file_exists(\$m = \$APP . '/storage/framework/maintenance.php')) {\n    require \$m;\n}\n\n"
+        ."require \$APP . '/vendor/autoload.php';\n\n"
+        ."/** @var Application \$app */\n"
+        ."\$app = require \$APP . '/bootstrap/app.php';\n"
+        ."\$app->usePublicPath(__DIR__);\n\n"
+        ."\$app->handleRequest(Request::capture());\n";
+    @file_put_contents($web.'/index.php', $idx);
 
     // Limpiar la carpeta /public sobrante (incluido este instalador).
-    @unlink($pub . '/index.php');
-    @unlink($pub . '/install.php');
+    @unlink($pub.'/index.php');
+    @unlink($pub.'/install.php');
     @rmdir($pub);
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  Pantallas de resultado
 // ═══════════════════════════════════════════════════════════════════════════
 function render_success(array $data): void
 {
-    $login = e(rtrim($data['app_url'], '/') . '/admin/login');
+    $login = e(rtrim($data['app_url'], '/').'/admin/login');
 
     $extra = '';
     if (CURSALIA_SPLIT && ! empty($data['app_folder'])) {
-        $extra = '<div class="note ok" style="margin-top:14px"><span>' . icon_shield()
-            . ' El código de Cursalia se instaló de forma segura en la carpeta <code>' . e($data['app_folder'])
-            . '</code>, fuera de la web.</span></div>';
+        $extra = '<div class="note ok" style="margin-top:14px"><span>'.icon_shield()
+            .' El código de Cursalia se instaló de forma segura en la carpeta <code>'.e($data['app_folder'])
+            .'</code>, fuera de la web.</span></div>';
     }
 
     layout('¡Cursalia instalado!', wizard_shell(3,
-        '<div class="big ok">' . icon_check_lg() . '</div>'
-        . '<h1 class="center">¡Listo! Cursalia está instalado</h1>'
-        . '<p class="sub center">Tu plataforma de cursos ya está funcionando en tu dominio.</p>'
-        . '<div class="cred">'
-        . '<span>Entra al panel con:</span>'
-        . '<strong>' . e($data['admin_email']) . '</strong>'
-        . '<em>la contraseña que acabas de elegir</em>'
-        . '</div>'
-        . '<a class="btn" href="' . $login . '">Entrar al panel de administración ' . icon_arrow() . '</a>'
-        . $extra
-        . '<div class="note info" style="margin-top:14px"><span><strong>¿Sale un error 500 al entrar?</strong> Tu dominio puede estar usando una versión de PHP antigua. En cPanel → <em>MultiPHP Manager</em>, selecciona tu dominio y ponlo en <strong>PHP 8.3</strong>.</span></div>'
-        . '<div class="note info" style="margin-top:14px"><span><strong>Consejo:</strong> si el archivo <code>install.php</code> sigue en tu hosting, bórralo. El instalador ya está bloqueado, pero eliminarlo es lo más limpio.</span></div>'
+        '<div class="big ok">'.icon_check_lg().'</div>'
+        .'<h1 class="center">¡Listo! Cursalia está instalado</h1>'
+        .'<p class="sub center">Tu plataforma de cursos ya está funcionando en tu dominio.</p>'
+        .'<div class="cred">'
+        .'<span>Entra al panel con:</span>'
+        .'<strong>'.e($data['admin_email']).'</strong>'
+        .'<em>la contraseña que acabas de elegir</em>'
+        .'</div>'
+        .'<a class="btn" href="'.$login.'">Entrar al panel de administración '.icon_arrow().'</a>'
+        .$extra
+        .'<div class="note info" style="margin-top:14px"><span><strong>¿Sale un error 500 al entrar?</strong> Tu dominio puede estar usando una versión de PHP antigua. En cPanel → <em>MultiPHP Manager</em>, selecciona tu dominio y ponlo en <strong>PHP 8.3</strong>.</span></div>'
+        .'<div class="note info" style="margin-top:14px"><span><strong>Consejo:</strong> si el archivo <code>install.php</code> sigue en tu hosting, bórralo. El instalador ya está bloqueado, pero eliminarlo es lo más limpio.</span></div>'
     ));
 }
 
 function render_install_error(string $message): void
 {
     layout('Error durante la instalación', wizard_shell(0,
-        '<div class="big bad">' . icon_cross_lg() . '</div>'
-        . '<h1 class="center">Algo falló durante la instalación</h1>'
-        . '<p class="sub center">No te preocupes. Revisa el detalle, corrige y vuelve a intentarlo.</p>'
-        . '<pre class="log">' . e($message) . '</pre>'
-        . '<a class="btn ghost" href="?step=2">← Volver al formulario</a>'
-        . '<p class="fine">Si menciona la <strong>base de datos</strong>, revisa sus datos en cPanel. '
-        . 'Si menciona <strong>permisos</strong>, da 755 a <code>storage</code> y <code>bootstrap/cache</code>. '
-        . 'Si menciona <strong>«platform»</strong> o una versión de PHP, pon tu dominio en <strong>PHP 8.3</strong> (cPanel → MultiPHP Manager). '
-        . 'Si menciona un <strong>archivo que falta</strong> en <code>vendor/</code>, la extracción quedó incompleta: re-extrae el paquete con <code>unzip</code> por Terminal.</p>'
+        '<div class="big bad">'.icon_cross_lg().'</div>'
+        .'<h1 class="center">Algo falló durante la instalación</h1>'
+        .'<p class="sub center">No te preocupes. Revisa el detalle, corrige y vuelve a intentarlo.</p>'
+        .'<pre class="log">'.e($message).'</pre>'
+        .'<a class="btn ghost" href="?step=2">← Volver al formulario</a>'
+        .'<p class="fine">Si menciona la <strong>base de datos</strong>, revisa sus datos en cPanel. '
+        .'Si menciona <strong>permisos</strong>, da 755 a <code>storage</code> y <code>bootstrap/cache</code>. '
+        .'Si menciona <strong>«platform»</strong> o una versión de PHP, pon tu dominio en <strong>PHP 8.3</strong> (cPanel → MultiPHP Manager). '
+        .'Si menciona un <strong>archivo que falta</strong> en <code>vendor/</code>, la extracción quedó incompleta: re-extrae el paquete con <code>unzip</code> por Terminal.</p>'
     ));
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  Utilidades
@@ -705,17 +711,17 @@ function env_set(string $content, string $key, string $value): string
     if ($value !== '' && ! preg_match('/[\s#"\'\\\\$]/', $value)) {
         $quoted = $value;
     } elseif (! str_contains($value, "'")) {
-        $quoted = "'" . $value . "'";
+        $quoted = "'".$value."'";
     } else {
-        $quoted = '"' . str_replace(['\\', '"'], ['\\\\', '\\"'], $value) . '"';
+        $quoted = '"'.str_replace(['\\', '"'], ['\\\\', '\\"'], $value).'"';
     }
 
-    $pattern = '/^' . preg_quote($key, '/') . '=.*$/m';
+    $pattern = '/^'.preg_quote($key, '/').'=.*$/m';
     if (preg_match($pattern, $content)) {
-        return preg_replace($pattern, $key . '=' . $quoted, $content, 1);
+        return preg_replace($pattern, $key.'='.$quoted, $content, 1);
     }
 
-    return rtrim($content) . "\n" . $key . '=' . $quoted . "\n";
+    return rtrim($content)."\n".$key.'='.$quoted."\n";
 }
 
 /**
@@ -737,7 +743,7 @@ function cursalia_fix_permissions(string $base): void
                 @chmod($item->getPathname(), 0755);
             }
         }
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         // best-effort: si algo no se puede, seguimos.
     }
 }
@@ -751,8 +757,8 @@ function cursalia_copy_dir(string $src, string $dst): void
         if ($item === '.' || $item === '..') {
             continue;
         }
-        $from = $src . '/' . $item;
-        $to = $dst . '/' . $item;
+        $from = $src.'/'.$item;
+        $to = $dst.'/'.$item;
         if (is_dir($from)) {
             cursalia_copy_dir($from, $to);
         } else {
@@ -764,16 +770,16 @@ function cursalia_copy_dir(string $src, string $dst): void
 function default_env_template(): string
 {
     return "APP_NAME=Cursalia\nAPP_ENV=production\nAPP_KEY=\nAPP_DEBUG=false\nAPP_URL=http://localhost\n"
-        . "APP_LOCALE=es\nAPP_FALLBACK_LOCALE=es\n\nLOG_CHANNEL=stack\nLOG_LEVEL=error\n\n"
-        . "DB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=cursalia\nDB_USERNAME=root\nDB_PASSWORD=\n\n"
-        . "SESSION_DRIVER=file\nSESSION_LIFETIME=120\nCACHE_STORE=file\nQUEUE_CONNECTION=sync\n\n"
-        . "MAIL_MAILER=log\nMAIL_FROM_ADDRESS=\"hola@cursalia.test\"\nMAIL_FROM_NAME=\"\${APP_NAME}\"\n\n"
-        . "CURSALIA_PAYMENTS_ENABLED=false\n";
+        ."APP_LOCALE=es\nAPP_FALLBACK_LOCALE=es\n\nLOG_CHANNEL=stack\nLOG_LEVEL=error\n\n"
+        ."DB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=cursalia\nDB_USERNAME=root\nDB_PASSWORD=\n\n"
+        ."SESSION_DRIVER=file\nSESSION_LIFETIME=120\nCACHE_STORE=file\nQUEUE_CONNECTION=sync\n\n"
+        ."MAIL_MAILER=log\nMAIL_FROM_ADDRESS=\"hola@cursalia.test\"\nMAIL_FROM_NAME=\"\${APP_NAME}\"\n\n"
+        ."CURSALIA_PAYMENTS_ENABLED=false\n";
 }
 
 function detected_url(): string
 {
-    return detected_scheme() . '://' . ($_SERVER['HTTP_HOST'] ?? 'midominio.com');
+    return detected_scheme().'://'.($_SERVER['HTTP_HOST'] ?? 'midominio.com');
 }
 
 function detected_scheme(): string
@@ -787,14 +793,13 @@ function detected_scheme(): string
 
 function base_url(): string
 {
-    return detected_scheme() . '://' . ($_SERVER['HTTP_HOST'] ?? '');
+    return detected_scheme().'://'.($_SERVER['HTTP_HOST'] ?? '');
 }
 
 function e(string $s): string
 {
     return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  Componentes visuales (cabecera, pasos, iconos SVG en línea)
@@ -807,20 +812,20 @@ function wizard_shell(int $step, string $inner): string
         $bars = '';
         $tabs = '';
         foreach ($labels as $i => $lbl) {
-            $bars .= '<div class="bar' . ($i <= $step ? ' on' : '') . '"></div>';
+            $bars .= '<div class="bar'.($i <= $step ? ' on' : '').'"></div>';
             $cls = $i === $step ? 'now' : ($i < $step ? 'done' : '');
-            $tabs .= '<span class="' . $cls . '">' . $i . ' · ' . e($lbl) . '</span>';
+            $tabs .= '<span class="'.$cls.'">'.$i.' · '.e($lbl).'</span>';
         }
-        $progress = '<div class="bars">' . $bars . '</div><div class="tabs">' . $tabs . '</div>';
+        $progress = '<div class="bars">'.$bars.'</div><div class="tabs">'.$tabs.'</div>';
     }
 
     return '<div class="card">'
-        . '<div class="hd">' . logo_mark()
-        . '<div><div class="hd-t">Cursalia</div><div class="hd-s">Asistente de instalación · v' . CURSALIA_VERSION . '</div></div>'
-        . '</div>'
-        . $progress
-        . '<div class="bd">' . $inner . '</div>'
-        . '</div>';
+        .'<div class="hd">'.logo_mark()
+        .'<div><div class="hd-t">Cursalia</div><div class="hd-s">Asistente de instalación · v'.CURSALIA_VERSION.'</div></div>'
+        .'</div>'
+        .$progress
+        .'<div class="bd">'.$inner.'</div>'
+        .'</div>';
 }
 
 function logo_mark(): string
@@ -830,7 +835,7 @@ function logo_mark(): string
 
 function status_dot(bool $ok): string
 {
-    return '<span class="dot ' . ($ok ? 'ok' : 'bad') . '">' . ($ok ? icon_check() : icon_cross()) . '</span>';
+    return '<span class="dot '.($ok ? 'ok' : 'bad').'">'.($ok ? icon_check() : icon_cross()).'</span>';
 }
 
 function icon_check(): string
@@ -883,22 +888,21 @@ function icon_mail(): string
     return '<svg class="si" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
 }
 
-
 // ═══════════════════════════════════════════════════════════════════════════
 //  Plantilla / estilos
 // ═══════════════════════════════════════════════════════════════════════════
 function layout(string $title, string $body): void
 {
     echo '<!doctype html><html lang="es"><head><meta charset="utf-8">'
-        . '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        . '<meta name="robots" content="noindex,nofollow">'
-        . '<title>' . e($title) . '</title><style>' . styles() . '</style></head>'
-        . '<body><main>' . $body . '</main></body></html>';
+        .'<meta name="viewport" content="width=device-width, initial-scale=1">'
+        .'<meta name="robots" content="noindex,nofollow">'
+        .'<title>'.e($title).'</title><style>'.styles().'</style></head>'
+        .'<body><main>'.$body.'</main></body></html>';
 }
 
 function styles(): string
 {
-    return <<<CSS
+    return <<<'CSS'
         *{box-sizing:border-box;margin:0;padding:0}
         :root{--green:#16a34a;--green-d:#15803d;--green-t:#dcfce7;--dark:#0f172a;
               --ink:#0f172a;--muted:#64748b;--faint:#94a3b8;--line:#e2e8f0;

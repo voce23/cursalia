@@ -12,12 +12,12 @@
  */
 $base = __DIR__;
 
-if (is_file($base . '/public/install.php')) {
-    require $base . '/public/install.php';
+if (is_file($base.'/public/install.php')) {
+    require $base.'/public/install.php';
     exit;
 }
 
 // Fallback defensivo (no debería alcanzarse): intenta el front controller estándar.
-if (is_file($base . '/public/index.php')) {
-    require $base . '/public/index.php';
+if (is_file($base.'/public/index.php')) {
+    require $base.'/public/index.php';
 }

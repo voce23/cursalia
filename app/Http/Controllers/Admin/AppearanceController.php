@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ActivationKey;
 use App\Http\Controllers\Controller;
 use App\Models\GeneralSetting;
 use App\View\Composers\BrandingComposer;
@@ -64,7 +65,7 @@ class AppearanceController extends Controller
 
         // Si activan el botón de WhatsApp, la llave debe ser válida y el número obligatorio.
         if ($request->boolean('whatsapp_enabled')) {
-            if (! \App\Helpers\ActivationKey::validate((string) $request->input('whatsapp_key'), 'WA')) {
+            if (! ActivationKey::validate((string) $request->input('whatsapp_key'), 'WA')) {
                 return back()->withInput()->withErrors([
                     'whatsapp_key' => 'La llave de activación no es válida. Consíguela gratis en cursalia.org/whatsapp',
                 ]);

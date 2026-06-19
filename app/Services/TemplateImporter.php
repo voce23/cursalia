@@ -40,7 +40,7 @@ class TemplateImporter
      * Importa los datos ya decodificados de una plantilla.
      * Devuelve un resumen: ['name', 'courses', 'lessons'].
      *
-     * @param  array<string,mixed>  $data
+     * @param array<string,mixed> $data
      */
     public function import(array $data, bool $replaceDemo = false): array
     {
