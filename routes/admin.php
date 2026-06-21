@@ -35,12 +35,14 @@ use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\Admin\HeaderSettingController;
 use App\Http\Controllers\Admin\HomeMiscSectionController;
 use App\Http\Controllers\Admin\HomeSectionController;
+use App\Http\Controllers\Admin\ImageToolController;
 use App\Http\Controllers\Admin\InstructorRequestController;
 use App\Http\Controllers\Admin\LessonCommentController;
 use App\Http\Controllers\Admin\MigradorController;
 use App\Http\Controllers\Admin\NavigationController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\PaymentSettingController;
+use App\Http\Controllers\Admin\ProController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -146,6 +148,12 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::get('/migrador/instalador', [MigradorController::class, 'downloadInstaller'])->name('migrador.installer');
         Route::get('/migrador/{file}/descargar', [MigradorController::class, 'downloadPackage'])->name('migrador.download');
         Route::delete('/migrador/{file}', [MigradorController::class, 'destroyPackage'])->name('migrador.destroy');
+
+        // PRO: activación compartida (una llave desbloquea todos los complementos)
+        Route::post('/pro/activar', [ProController::class, 'activate'])->name('pro.activate');
+        // Complemento PRO: optimizar imágenes a WebP
+        Route::get('/optimizar-imagenes', [ImageToolController::class, 'index'])->name('image-tools.index');
+        Route::post('/optimizar-imagenes', [ImageToolController::class, 'optimize'])->name('image-tools.optimize');
 
         // Ventas de cursos (aprobar/rechazar pagos manuales: QR y transferencia)
         Route::get('/ventas', [CourseOrderController::class, 'index'])->name('course-orders.index');

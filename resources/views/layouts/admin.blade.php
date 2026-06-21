@@ -75,6 +75,7 @@
                             ['admin.profile',         'fa-user-gear',    'Mi perfil',     false],
                             ['admin.payment-settings.index', 'fa-credit-card', 'Pagos',    false],
                             ['admin.migrador.index', 'fa-truck-fast', 'Migrador PRO', false],
+                            ['admin.image-tools.index', 'fa-images', 'Optimizar imágenes', false],
                             ['admin.course-orders.index', 'fa-receipt', 'Ventas',    false],
                             ['admin.appearance.edit', 'fa-paint-roller', 'Apariencia',    false],
                             ['admin.navigation.edit', 'fa-bars',         'Navegación',    false],
