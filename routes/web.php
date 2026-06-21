@@ -29,6 +29,7 @@ use App\Http\Controllers\Frontend\SitePageController;
 use App\Http\Controllers\Frontend\TemplateMarketplaceController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Student\CertificateController;
 use App\Http\Controllers\Student\CoursePlayerController as StudentCoursePlayerController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\EnrolledCourseController as StudentEnrolledCourseController;
@@ -197,6 +198,9 @@ Route::middleware(['auth', 'is.student'])
         Route::post('/quiz/{quiz}/submit', [FrontendQuizController::class, 'submit'])
             ->middleware('throttle:20,1')
             ->name('quiz.submit');
+
+        // ── Certificado de finalización (complemento PRO) ────────────────────
+        Route::get('/certificado/{course:slug}', [CertificateController::class, 'show'])->name('certificate');
     });
 
 // ── Instructor (mínimo: dashboard) ──────────────────────────────────────────

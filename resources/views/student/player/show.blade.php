@@ -31,6 +31,13 @@
                         <div id="sidebar-progress-bar" class="h-2 rounded-full bg-gradient-to-r from-brand-400 to-brand-600 transition-all duration-500"
                              style="width: {{ $progress }}%"></div>
                     </div>
+
+                    @if ($progress >= 100 && $course->certificate && \App\Helpers\Pro::isActive())
+                        <a href="{{ route('student.certificate', $course->slug) }}" target="_blank"
+                           class="mt-3 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 shadow-soft transition">
+                            <i class="fa-solid fa-award"></i> Descargar mi certificado
+                        </a>
+                    @endif
                 </div>
             </div>
 

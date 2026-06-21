@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CertificatesController;
 use App\Http\Controllers\Admin\ContactCardController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\ContactSettingController;
@@ -154,6 +155,8 @@ Route::prefix('admin')->as('admin.')->group(function () {
         // Complemento PRO: optimizar imágenes a WebP
         Route::get('/optimizar-imagenes', [ImageToolController::class, 'index'])->name('image-tools.index');
         Route::post('/optimizar-imagenes', [ImageToolController::class, 'optimize'])->name('image-tools.optimize');
+        // Complemento PRO: certificados de finalización
+        Route::get('/certificados', [CertificatesController::class, 'index'])->name('certificates.index');
 
         // Ventas de cursos (aprobar/rechazar pagos manuales: QR y transferencia)
         Route::get('/ventas', [CourseOrderController::class, 'index'])->name('course-orders.index');
