@@ -64,6 +64,34 @@
         </form>
     </div>
 
+    {{-- Exportar el contenido actual como plantilla --}}
+    <div class="mt-6 bg-white border border-ink-200/70 rounded-3xl shadow-soft p-7">
+        <div class="flex items-center gap-3 mb-2">
+            <span class="grid place-items-center w-11 h-11 rounded-2xl bg-brand-100 text-brand-600">
+                <i class="fa-solid fa-file-export text-lg"></i>
+            </span>
+            <div>
+                <h2 class="font-display font-extrabold text-lg text-ink-900">Exportar como plantilla</h2>
+                <p class="text-sm text-ink-500">Convierte el contenido de tu sitio en un archivo <code class="px-1.5 py-0.5 rounded bg-cream-2 text-ink-700">.json</code> reutilizable o vendible.</p>
+            </div>
+        </div>
+
+        <p class="mt-3 text-sm text-ink-600">
+            Se exportarán <strong>{{ $exportCounts['courses'] ?? 0 }} curso(s)</strong> y <strong>{{ $exportCounts['lessons'] ?? 0 }} lección(es)</strong> activos (estructura, textos, quizzes y reseñas). Luego lo importas en otro Cursalia.
+        </p>
+
+        @if (($exportCounts['courses'] ?? 0) > 0)
+            <a href="{{ route('admin.templates.export') }}"
+               class="mt-5 inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-soft transition">
+                <i class="fa-solid fa-download text-xs"></i> Descargar plantilla (.json)
+            </a>
+        @else
+            <p class="mt-4 text-sm text-ink-400"><i class="fa-solid fa-circle-info"></i> No hay cursos activos para exportar todavía.</p>
+        @endif
+
+        <p class="mt-3 text-xs text-ink-400"><i class="fa-solid fa-lightbulb text-brand-500 mr-1"></i> Consejo: para que la plantilla sirva en cualquier sitio, usa videos enlazados (YouTube/Bunny), no subidos al hosting.</p>
+    </div>
+
     {{-- Cómo funciona --}}
     <div class="mt-6 bg-cream-2 border border-ink-200/70 rounded-3xl p-6 text-sm text-ink-600 leading-relaxed">
         <h3 class="font-bold text-ink-800 mb-2"><i class="fa-solid fa-circle-info text-brand-600 mr-1.5"></i> Cómo funciona</h3>

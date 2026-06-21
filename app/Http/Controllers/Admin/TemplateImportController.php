@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\TemplateExporter;
 use App\Services\TemplateImporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 /**
@@ -16,9 +19,21 @@ use Throwable;
  */
 class TemplateImportController extends Controller
 {
-    public function form(): View
+    public function form(TemplateExporter $exporter): View
     {
-        return view('admin.templates.import');
+        return view('admin.templates.import', ['exportCounts' => $exporter->counts()]);
+    }
+
+    /** Exporta el contenido actual del LMS como una plantilla .json descargable. */
+    public function export(Request $request, TemplateExporter $exporter): StreamedResponse
+    {
+        $data = $exporter->export($request->input('name'));
+        $json = (string) json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $filename = 'plantilla-'.Str::slug($data['category']['name'] ?? 'cursalia').'-'.now()->format('Y-m-d').'.json';
+
+        return response()->streamDownload(fn () => print ($json), $filename, [
+            'Content-Type' => 'application/json',
+        ]);
     }
 
     public function import(Request $request, TemplateImporter $importer): RedirectResponse

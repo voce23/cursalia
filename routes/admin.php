@@ -164,6 +164,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::get('/templates/waitlist', [TemplateController::class, 'waitlist'])->name('templates.waitlist');
         Route::get('/templates/import', [TemplateImportController::class, 'form'])->name('templates.import.form');
         Route::post('/templates/import', [TemplateImportController::class, 'import'])->name('templates.import');
+        Route::get('/templates/exportar', [TemplateImportController::class, 'export'])->name('templates.export');
         Route::post('/editor/image', [EditorImageController::class, 'store'])->name('editor.image');
         Route::resource('templates', TemplateController::class)->except(['show']);
 
