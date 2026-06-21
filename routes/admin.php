@@ -37,6 +37,7 @@ use App\Http\Controllers\Admin\HomeMiscSectionController;
 use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\InstructorRequestController;
 use App\Http\Controllers\Admin\LessonCommentController;
+use App\Http\Controllers\Admin\MigradorController;
 use App\Http\Controllers\Admin\NavigationController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\PaymentSettingController;
@@ -137,6 +138,14 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::post('/pagos/paypal', [PaymentSettingController::class, 'updatePaypal'])->name('payment-settings.paypal');
         Route::post('/pagos/qr', [PaymentSettingController::class, 'updateQr'])->name('payment-settings.qr');
         Route::post('/pagos/transferencia', [PaymentSettingController::class, 'updateTransfer'])->name('payment-settings.transfer');
+
+        // Migrador PRO (complemento estilo Duplicator) · activable por llave PRO
+        Route::get('/migrador', [MigradorController::class, 'index'])->name('migrador.index');
+        Route::post('/migrador/activar', [MigradorController::class, 'activate'])->name('migrador.activate');
+        Route::post('/migrador/crear', [MigradorController::class, 'build'])->name('migrador.build');
+        Route::get('/migrador/instalador', [MigradorController::class, 'downloadInstaller'])->name('migrador.installer');
+        Route::get('/migrador/{file}/descargar', [MigradorController::class, 'downloadPackage'])->name('migrador.download');
+        Route::delete('/migrador/{file}', [MigradorController::class, 'destroyPackage'])->name('migrador.destroy');
 
         // Ventas de cursos (aprobar/rechazar pagos manuales: QR y transferencia)
         Route::get('/ventas', [CourseOrderController::class, 'index'])->name('course-orders.index');
